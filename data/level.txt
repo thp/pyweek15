@@ -16,12 +16,17 @@
 # m=oyster2
 # n=oyster3
 #
+# :meta:
+# speed=10
+#
 
 abcde
 
 
 
 a a a
+a
+
 
 f
 f
@@ -37,6 +42,20 @@ f a
 f
 a
 
+  f
+  f
+ f
+ f
+f
+f
+ f
+ f
+  f
+  f
+   f
+   f
+    f
+    f
 a aaa
 a aaa
 b bbb

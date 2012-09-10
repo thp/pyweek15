@@ -39,20 +39,31 @@ class Row:
 
 
 class Level:
+    DEFAULT_SPEED = 10
+
+    ENEMIES, PICKUP, META = range(3)
+
     def __init__(self, filename):
         self.charmap = {}
         self.rows = []
-        is_enemy = False
+        self.speed = self.DEFAULT_SPEED
+
+        section = self.ENEMIES
         for line in open(filename):
             if ':enemies:' in line:
-                is_enemy = True
+                section = self.ENEMIES
             elif ':pickups:' in line:
-                is_enemy = False
+                section = self.PICKUP
+            elif ':meta:' in line:
+                section = self.META
 
-            definition = re.match(r'^# (.)=(.*)$', line.strip())
+            definition = re.match(r'^# ([^=]+)=(.*)$', line.strip())
             if definition:
-                char, name = definition.groups()
-                self.add_item(char, name, is_enemy)
+                key, value = definition.groups()
+                if section in (self.ENEMIES, self.PICKUP):
+                    self.add_item(key, value, section == self.ENEMIES)
+                else:
+                    self.set_meta(key, value)
 
             if line.startswith('#'):
                 continue
@@ -62,6 +73,11 @@ class Level:
     def add_item(self, char, name, is_enemy):
         assert char not in self.charmap
         self.charmap[char] = (name, is_enemy)
+
+    def set_meta(self, key, value):
+        if key == 'speed':
+            self.speed = int(value)
+            print 'level speed:', self.speed
 
     def lookup(self, char):
         if char == ' ':

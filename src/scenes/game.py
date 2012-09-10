@@ -46,7 +46,7 @@ class Game(Scene):
     def process(self):
         self.i += 1
 
-        self.time += .1
+        self.time += .01 * self.level.speed
         if self.time > 1.:
             self.time -= 1.
             self.player.y += 1
