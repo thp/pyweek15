@@ -2,7 +2,7 @@ import pygame
 
 
 class App(object):
-    def __init__(self, title="PyWeek 15", resolution=(1024, 768)):
+    def __init__(self, title, resolution):
         pygame.display.set_mode(resolution)
         self.screen = pygame.display.get_surface()
         pygame.display.set_caption(title)
