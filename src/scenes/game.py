@@ -41,6 +41,8 @@ class Game(Scene):
     def __init__(self, app):
         super(Game, self).__init__(app)
         self.time = 0.
+        self.i = 0
+        self.direction = 0
         self.font = font.SysFont('dejavu sans', 16)
 
         self.level = Level(app.get_filename('level.txt'))
@@ -53,11 +55,18 @@ class Game(Scene):
         pass
 
     def process(self):
+        self.i += 1
+
         self.time += .1
         if self.time > 1.:
             self.time -= 1.
             self.player.y += 1
+
+        if self.i % 5 == 0:
+            self.player.dest_x += self.direction
+
         self.player.step()
+
 
         return super(Game, self).process()
 
@@ -67,12 +76,21 @@ class Game(Scene):
         elif event.type == KEYDOWN:
             if event.key == K_RETURN:
                 pass
-            elif event.key == K_LEFT:
-                self.player.dest_x -= 1
-            elif event.key == K_RIGHT:
-                self.player.dest_x += 1
             elif event.key == K_ESCAPE:
                 self.next_state = ("GoodBye", None)
+            elif event.key == K_LEFT:
+                self.direction = -1
+                self.i = 0
+                self.player.dest_x -= 1
+            elif event.key == K_RIGHT:
+                self.direction = 1
+                self.i = 0
+                self.player.dest_x += 1
+        elif event.type == KEYUP:
+            if event.key == K_LEFT:
+                self.direction = 0
+            elif event.key == K_RIGHT:
+                self.direction = 0
 
     def map_coords(self, x, y, z):
         w = self.width
