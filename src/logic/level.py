@@ -9,7 +9,7 @@ class Item:
 
     def collide(self, player):
         if self.is_enemy:
-            print 'AARGH!'
+            player.crashed()
             return True
         elif self.name:
             player.picked_up(self.name)

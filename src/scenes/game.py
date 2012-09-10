@@ -38,8 +38,6 @@ class Game(Scene):
         self.width = 0
         self.height = 0
 
-        self.bg_color = (0, 0, 0)
-
     def resume(self, *args):
         pass
 
@@ -56,6 +54,9 @@ class Game(Scene):
 
         self.player.step()
 
+        if self.player.health <= 0:
+            print 'YOU ARE DEAD!'
+            self.next_state = ("GoodBye", None)
 
         return super(Game, self).process()
 
@@ -99,9 +100,8 @@ class Game(Scene):
         return (w/2+xoffset, h/5 + yoffset*2/3 - y)
 
     def draw(self, screen):
-        screen.fill(self.bg_color)
+        screen.fill((0, 0, 0))
         self.width, self.height = screen.get_size()
-        self.bg_color = (0, 0, 0)
         for yidx, offset in enumerate(range(self.player.y, self.player.y+self.DEPTH)):
             if offset < len(self.level.rows):
                 for xidx, column in enumerate(self.level.rows[offset].items):
@@ -115,7 +115,8 @@ class Game(Scene):
 
                     if yidx == 1 and xidx == self.player.dest_x and self.player.height < 10:
                         if column.collide(self.player):
-                            self.bg_color = (255, 0, 0)
+                            # do something when the player collides
+                            pass
 
                     points = self.mkpoints(x, y)
                     color = shade_color(color, yidx-self.time, self.DEPTH)
@@ -127,6 +128,14 @@ class Game(Scene):
         y = self.time
         points = self.mkpoints(x, y, self.player.height)
         draw.polygon(screen, (255, 255, 255), points)
+
+        text_surf = self.font.render('Coins: %d' % (self.player.coins_collected,), True, (255, 255, 0))
+        screen.blit(text_surf, (20, 20))
+
+        text_surf = self.font.render('Health:', True, (0, 255, 0))
+        screen.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
+        draw.rect(screen, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
+        draw.rect(screen, (0, 90, 0), (self.width - 100 - 20, 20, self.player.health, 15))
 
     def mkpoints(self, x, y, height=0.):
         return [
