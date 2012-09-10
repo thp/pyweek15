@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import pygame
 
 pygame.display.set_mode((1024, 768))
