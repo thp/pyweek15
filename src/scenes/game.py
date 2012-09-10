@@ -38,6 +38,9 @@ class Player:
 class Game(Scene):
     DEPTH = 15
 
+    # keyboard repeat rate (modulo) -> higher value = less repeat
+    KEYBOARD_REPEAT_MOD = 7
+
     def __init__(self, app):
         super(Game, self).__init__(app)
         self.time = 0.
@@ -62,7 +65,7 @@ class Game(Scene):
             self.time -= 1.
             self.player.y += 1
 
-        if self.i % 5 == 0:
+        if self.i % self.KEYBOARD_REPEAT_MOD == 0:
             self.player.dest_x += self.direction
 
         self.player.step()
