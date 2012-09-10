@@ -10,7 +10,8 @@ class Player:
         self.vertical_velocity = 0
 
     def jump(self):
-        self.vertical_velocity = 10
+        if self.height == 0:
+            self.vertical_velocity = 10
 
     def picked_up(self, thingie):
         print 'i picked up a', thingie
