@@ -7,6 +7,16 @@ class Item:
         self.name = name
         self.is_enemy = is_enemy
 
+    def collide(self, player):
+        if self.is_enemy:
+            print 'AARGH!'
+            return True
+        elif self.name:
+            player.picked_up(self.name)
+            self.name = ''
+
+        return False
+
     def __repr__(self):
         return '%s%s' % (self.name, ' (enemy)' if self.is_enemy else '')
 
@@ -51,12 +61,12 @@ class Level:
 
     def add_item(self, char, name, is_enemy):
         assert char not in self.charmap
-        self.charmap[char] = Item(name, is_enemy)
+        self.charmap[char] = (name, is_enemy)
 
     def lookup(self, char):
         if char == ' ':
             return None
-        return self.charmap[char]
+        return Item(*self.charmap[char])
 
 
 if __name__ == '__main__':

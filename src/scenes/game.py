@@ -1,38 +1,22 @@
 
 from ..engine.scene import Scene
 from ..logic.level import Level
+from ..logic.player import Player
 
-import pygame
+from ..logic.lamemath import center, center_in
+
 from pygame import draw, font
 from pygame.locals import *
 
 import math
 
+# XXX: This should be removed once we have proper gfx
 colors = {
     'coin': (255, 255, 0),
     'stone': (0, 0, 255),
     'lanternfish': (0, 255, 0),
     'sixpack': (100, 100, 100),
 }
-
-def center(points):
-    sum_x, sum_y = map(sum, zip(*points))
-    return float(sum_x) / len(points), float(sum_y) / len(points)
-
-def center_in(surf, center_point):
-    x, y = center_point
-    w, h = surf.get_size()
-    return x-w/2, y-h/2
-
-class Player:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.dest_x = 0
-
-    def step(self):
-        self.x = self.x * .5 + self.dest_x * .5
-
 
 
 class Game(Scene):
@@ -53,6 +37,8 @@ class Game(Scene):
 
         self.width = 0
         self.height = 0
+
+        self.bg_color = (0, 0, 0)
 
     def resume(self, *args):
         pass
@@ -79,6 +65,8 @@ class Game(Scene):
         elif event.type == KEYDOWN:
             if event.key == K_RETURN:
                 pass
+            elif event.key == K_SPACE:
+                self.player.jump()
             elif event.key == K_ESCAPE:
                 self.next_state = ("GoodBye", None)
             elif event.key == K_LEFT:
@@ -96,16 +84,24 @@ class Game(Scene):
                 self.direction = 0
 
     def map_coords(self, x, y, z):
+        """
+        Map 3D coordinates to 2D coordinates
+
+        These are not "real" screen coordinates, but imaginary 2D coordinates
+        based on the lanes (x = 0..5, y = ???, z = 0..DEPTH+1)
+        """
         w = self.width
         h = self.height
+        z = self.DEPTH - z + self.time
         xoffset = (x-2)*100./(.0000001+math.pow(self.DEPTH-z+2, .2))
         yoffset = z*(h/float(self.DEPTH))
         xoffset *= yoffset/500.
-        return (w/2+xoffset, h/5 + yoffset*2/3)
+        return (w/2+xoffset, h/5 + yoffset*2/3 - y)
 
     def draw(self, screen):
-        screen.fill((0, 0, 0))
+        screen.fill(self.bg_color)
         self.width, self.height = screen.get_size()
+        self.bg_color = (0, 0, 0)
         for yidx, offset in enumerate(range(self.player.y, self.player.y+self.DEPTH)):
             if offset < len(self.level.rows):
                 for xidx, column in enumerate(self.level.rows[offset].items):
@@ -114,29 +110,28 @@ class Game(Scene):
 
                     color = colors.get(column.name, (0, 0, 0))
 
-                    y = self.DEPTH - yidx + self.time
                     x = xidx
+                    y = yidx
 
-                    if yidx == 1 and xidx == self.player.dest_x:
-                        color = (255, 0, 0)
+                    if yidx == 1 and xidx == self.player.dest_x and self.player.height < 10:
+                        if column.collide(self.player):
+                            self.bg_color = (255, 0, 0)
 
-                    points = [
-                            self.map_coords(x-.45, 0, y-.45),
-                            self.map_coords(x+.45, 0, y-.45),
-                            self.map_coords(x+.45, 0, y+.45),
-                            self.map_coords(x-.45, 0, y+.45),
-                    ]
+                    points = self.mkpoints(x, y)
                     draw.polygon(screen, color, points)
                     text_surf = self.font.render('%d/%d' % (xidx, yidx), True, (255, 0, 255))
                     screen.blit(text_surf, center_in(text_surf, center(points)))
 
         x = self.player.x
-        y = self.DEPTH
-        points = [
-                self.map_coords(x-.45, 0, y-.45),
-                self.map_coords(x+.45, 0, y-.45),
-                self.map_coords(x+.45, 0, y+.45),
-                self.map_coords(x-.45, 0, y+.45),
-        ]
+        y = self.time
+        points = self.mkpoints(x, y, self.player.height)
         draw.polygon(screen, (255, 255, 255), points)
+
+    def mkpoints(self, x, y, height=0.):
+        return [
+                self.map_coords(x-.45, height, y-.45),
+                self.map_coords(x+.45, height, y-.45),
+                self.map_coords(x+.45, height, y+.45),
+                self.map_coords(x-.45, height, y+.45),
+        ]
 
