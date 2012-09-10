@@ -3,7 +3,7 @@ from ..engine.scene import Scene
 from ..logic.level import Level
 from ..logic.player import Player
 
-from ..logic.lamemath import center, center_in
+from ..logic.lamemath import center, center_in, shade_color
 
 from pygame import draw, font
 from pygame.locals import *
@@ -118,9 +118,10 @@ class Game(Scene):
                             self.bg_color = (255, 0, 0)
 
                     points = self.mkpoints(x, y)
+                    color = shade_color(color, yidx-self.time, self.DEPTH)
                     draw.polygon(screen, color, points)
-                    text_surf = self.font.render('%d/%d' % (xidx, yidx), True, (255, 0, 255))
-                    screen.blit(text_surf, center_in(text_surf, center(points)))
+                    #text_surf = self.font.render('%d/%d' % (xidx, yidx), True, (255, 0, 255))
+                    #screen.blit(text_surf, center_in(text_surf, center(points)))
 
         x = self.player.x
         y = self.time
