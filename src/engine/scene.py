@@ -4,8 +4,7 @@ class Scene(object):
         self.next_state = None  # holds None or a string with classname of the place to go
 
     def process(self):
-        if self.next_state:
-            return self.next_state
+        return self.next_state
 
     def resume(self, arg):
         """Called form App when being switched to"""

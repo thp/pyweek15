@@ -1,17 +1,18 @@
 import pygame
 
+import os
 
 class App(object):
     def __init__(self, title, resolution, scenes):
-        pygame.display.set_mode(resolution)
-        self.screen = pygame.display.get_surface()
+        pygame.init()
+        self.screen = pygame.display.set_mode(resolution)
         pygame.display.set_caption(title)
 
         self._clock = pygame.time.Clock()
 
         self._scenes = []
-        for asc in scenes:
-            s = asc(self)
+        for scene in scenes:
+            s = scene(self)
             self._scenes.append(s)
         self.scene = self._scenes[0]
 
@@ -19,6 +20,9 @@ class App(object):
         for astate in self._scenes:
             if astate.__class__.__name__ == s:
                 return astate
+
+    def get_filename(self, basename):
+        return os.path.join(os.path.dirname(__file__), '..', '..', 'data', basename)
 
     def run(self):
         running = True
