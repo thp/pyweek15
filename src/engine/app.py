@@ -7,7 +7,7 @@ from audman import AudioManager
 class App(object):
     def __init__(self, title, resolution, scenes, entry):
         pygame.init()
-        self.screen = pygame.display.set_mode(resolution)
+        self.screen = pygame.display.set_mode(resolution, pygame.FULLSCREEN)
         pygame.display.set_caption(title)
 
         self._clock = pygame.time.Clock()

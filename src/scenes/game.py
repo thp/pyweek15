@@ -61,8 +61,30 @@ class Game(Scene):
         return super(Game, self).process()
 
     def process_input(self, event):
+        def go_left():
+            self.direction = -1
+            self.i = 0
+            self.player.dest_x -= 1
+
+        def go_right():
+            self.direction = 1
+            self.i = 0
+            self.player.dest_x += 1
+
         if event.type == QUIT:
             self.next_state = ("GoodBye", None)
+        elif event.type == MOUSEBUTTONDOWN:
+            x, y = event.pos
+
+            if y < self.height / 2:
+                self.player.jump()
+
+            if x < self.width / 3:
+                go_left()
+            elif x > self.width * 2 / 3:
+                go_right()
+        elif event.type == MOUSEBUTTONUP:
+            self.direction = 0
         elif event.type == KEYDOWN:
             if event.key == K_RETURN:
                 pass
@@ -71,13 +93,9 @@ class Game(Scene):
             elif event.key == K_ESCAPE:
                 self.next_state = ("GoodBye", None)
             elif event.key == K_LEFT:
-                self.direction = -1
-                self.i = 0
-                self.player.dest_x -= 1
+                go_left()
             elif event.key == K_RIGHT:
-                self.direction = 1
-                self.i = 0
-                self.player.dest_x += 1
+                go_right()
         elif event.type == KEYUP:
             if event.key == K_LEFT:
                 self.direction = 0
