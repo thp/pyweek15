@@ -1,6 +1,7 @@
 import pygame
 import os
 from resman import ResourceManager
+from audman import AudioManager
 
 
 class App(object):
@@ -13,6 +14,7 @@ class App(object):
         self.fps = 30
 
         self.resman = ResourceManager(self)
+        self.audman = AudioManager(self)
 
         self._scenes = []
         for scene in scenes:

@@ -20,15 +20,18 @@ class Player(Sprite):
         if self.can_jump:
             self.vertical_velocity = 10
             self.can_jump = False
+            self.app.audman.sfx("jump", 1)
 
     def picked_up(self, thingie):
         print 'i picked up a', thingie
         if thingie == 'coin':
             self.coins_collected += 1
+            self.app.audman.sfx("coin")
 
     def crashed(self):
         print 'AARGH!'
         self.health -= 1
+        self.app.audman.sfx("crash")
 
     def step(self):
         self.x = self.x * .5 + self.dest_x * .5
