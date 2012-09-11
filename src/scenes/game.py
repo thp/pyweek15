@@ -33,7 +33,7 @@ class Game(Scene):
         self.font = font.SysFont('dejavu sans', 16)
 
         self.level = Level(app.get_filename('levels/level1.txt'))
-        self.player = Player()
+        self.player = Player(app)
 
         self.width = 0
         self.height = 0
@@ -127,7 +127,8 @@ class Game(Scene):
         x = self.player.x
         y = self.time
         points = self.mkpoints(x, y, self.player.height)
-        draw.polygon(screen, (255, 255, 255), points)
+        self.player.draw(screen, points[3])
+        draw.polygon(screen, (255, 255, 255), points, 1)
 
         text_surf = self.font.render('Coins: %d' % (self.player.coins_collected,), True, (255, 255, 0))
         screen.blit(text_surf, (20, 20))

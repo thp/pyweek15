@@ -1,6 +1,7 @@
 import pygame
-
 import os
+from resman import ResourceManager
+
 
 class App(object):
     def __init__(self, title, resolution, scenes):
@@ -9,6 +10,9 @@ class App(object):
         pygame.display.set_caption(title)
 
         self._clock = pygame.time.Clock()
+        self.fps = 30
+
+        self.resman = ResourceManager(self)
 
         self._scenes = []
         for scene in scenes:
@@ -28,7 +32,7 @@ class App(object):
         running = True
 
         while running:
-            self._clock.tick(30)
+            self._clock.tick(self.fps)
 
             p = self.scene.process()
             if p:
