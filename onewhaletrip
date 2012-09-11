@@ -6,9 +6,16 @@ Options:
     -l, --level <level>  start with level x
     -s, --scene <scene>  start with scene x
 """
-from src.engine.app import App
-from src.scenes.game import Game
-from src.scenes.menu import MainMenu
+
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from engine.app import App
+from scenes.game import Game
+from scenes.menu import MainMenu
 
 from docopt import docopt
 arguments = docopt(__doc__)

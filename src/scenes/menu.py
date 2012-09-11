@@ -1,4 +1,4 @@
-from ..engine.scene import Scene
+from engine.scene import Scene
 from pygame.locals import *
 
 

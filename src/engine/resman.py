@@ -5,11 +5,8 @@ import pygame
 
 
 def resource_path(relative):
-    basedir = os.path.join(os.getcwd())
-    return os.path.join(
-        basedir,
-        relative
-    )
+    basedir = os.path.join(os.path.dirname(__file__), '..', '..')
+    return os.path.join(basedir, relative)
 
 
 class ResourceManager():

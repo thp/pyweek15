@@ -1,4 +1,4 @@
-from ..engine.sprite import Sprite
+from engine.sprite import Sprite
 
 
 class Player(Sprite):

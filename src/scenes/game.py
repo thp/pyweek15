@@ -1,9 +1,9 @@
 
-from ..engine.scene import Scene
-from ..logic.level import Level
-from ..logic.player import Player
+from engine.scene import Scene
+from logic.level import Level
+from logic.player import Player
 
-from ..logic.lamemath import center, center_in, shade_color
+from logic.lamemath import center, center_in, shade_color
 
 from pygame import draw, font
 from pygame.locals import *
