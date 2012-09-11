@@ -1,0 +1,92 @@
+#
+# :enemies:
+# a=stone
+# b=lanternfish
+# c=sixpack
+# d=iceberg
+# e=treasurechest
+# g=tortoise
+#
+# :pickups:
+# f=coin
+# i=fishes
+# j=roses
+# k=oyster0
+# l=oyster1
+# m=oyster2
+# n=oyster3
+#
+# :meta:
+# speed=10
+#
+
+abcde
+
+
+
+a a a
+a
+
+
+f
+f
+f
+
+a f
+  f
+  a f
+    f
+  f a
+  f
+f a
+f
+a
+
+  f
+  f
+ f
+ f
+f
+f
+ f
+ f
+  f
+  f
+   f
+   f
+    f
+    f
+a aaa
+a aaa
+b bbb
+c fcc
+c  cc
+cf cc
+cc cc
+cc cc
+  f
+
+a a a
+ a a
+a a a
+
+ bbb
+
+cc cc
+
+ bb b
+
+cc c
+
+aaaaa
+
+ c cc
+ c  c
+ cc c
+cc  c
+cc cc
+cc cc
+cc  c
+ccc c
+bbc
+bbc

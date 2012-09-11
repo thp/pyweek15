@@ -3,5 +3,5 @@
 from src.engine.app import App
 from src.scenes.game import Game
 
-app = App(title="PyWeek 15", resolution=(800, 480), scenes=[Game])
+app = App(title="One Whale Trip", resolution=(800, 480), scenes=[Game])
 app.run()

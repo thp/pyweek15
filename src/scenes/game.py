@@ -32,7 +32,7 @@ class Game(Scene):
         self.direction = 0
         self.font = font.SysFont('dejavu sans', 16)
 
-        self.level = Level(app.get_filename('level.txt'))
+        self.level = Level(app.get_filename('levels/level1.txt'))
         self.player = Player()
 
         self.width = 0
