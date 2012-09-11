@@ -119,6 +119,7 @@ class Game(Scene):
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
+        screen.blit(self.app.resman.get_sprite('bg'), (0, 0))
         self.width, self.height = screen.get_size()
         for yidx, offset in enumerate(range(self.player.y, self.player.y+self.DEPTH)):
             if offset < len(self.level.rows):
