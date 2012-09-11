@@ -4,7 +4,8 @@ Our repo needs a readme, right?!
 
 Requirements
 ------------
-pygame v?
+pygame
+docopt
 
 TODO
 ====
