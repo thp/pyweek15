@@ -6,6 +6,11 @@ DESTDIR ?=
 all:
 	@echo "nothing to be done."
 
+convert:
+	convert assets/whale_a_1.png -resize 100x100 data/sprites/whale_a_1.png
+	convert assets/whale_a_2.png -resize 100x100 data/sprites/whale_a_2.png
+	convert assets/whale_a_2.png -resize 100x100 data/sprites/whale_a_3.png
+
 install:
 	mkdir -p $(DESTDIR)/opt/$(PACKAGE)/bin
 	install -m755 $(PACKAGE) $(DESTDIR)/opt/$(PACKAGE)/bin/
@@ -18,6 +23,6 @@ install:
 clean:
 	find . -name '*.pyc' -exec rm '{}' +
 
-.PHONY: all install clean
+.PHONY: all convert install clean
 .DEFAULT: all
 

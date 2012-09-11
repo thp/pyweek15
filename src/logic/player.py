@@ -1,5 +1,6 @@
 from engine.sprite import Sprite
 
+from pygame import transform
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
@@ -14,7 +15,7 @@ class Player(Sprite):
         self.health = 100
         self.can_jump = True
         self.app = app
-        self.init({"player1": .2, "player2": .3})
+        self.init('whale_%d', 3)
 
     def jump(self):
         if self.can_jump:
@@ -47,4 +48,21 @@ class Player(Sprite):
         self.process()
 
     def draw(self, screen, coords):
-        screen.blit(self._current_sprite(), coords)
+        sprite_name = self.current_sprite_name()
+
+        # XXX: When the "b", and "c" images of the whale are
+        # here, change the chars= line to something like this:
+        # (note that "b" and "a" get mirrored below when dest_x >= 3)
+        #chars = ['a', 'b', 'c', 'b', 'a']
+        chars = ['a', 'a', 'a', 'a', 'a']
+
+        sprite_name = sprite_name.replace('whale_', 'whale_%s_' % chars[self.dest_x])
+        sprite = self.lookup_sprite(sprite_name)
+
+        if self.dest_x >= 3:
+            sprite = transform.flip(sprite, True, False)
+
+        w, h = sprite.get_size()
+        coords = (coords[0], coords[1] - h/2)
+        screen.blit(sprite, coords)
+

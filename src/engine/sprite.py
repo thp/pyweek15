@@ -1,34 +1,37 @@
+
+def make_sequence(frames):
+    """
+    Make a loopable sequence of frames
+
+    >>> make_sequence(3)
+    [0, 1, 2, 1]
+    """
+    return range(1, frames+1) + range(frames-1, 1, -1)
+
+
 class Sprite(object):
-    def init(self, sprite_dict):
+    def init(self, format_str, frames, duration=.2):
         """
-        Convers seconds from sprite_dict to frames.
-        e.g. {"player1": .2, "player2": .3}
-
-        sprite_dict[key] => value:
-            key ... name of image
-            value ... seconds to hold frame"""
-        self.frame_dict = {}
-        for name in sprite_dict.keys():
-            seconds = sprite_dict[name]
-            frames = int(seconds * self.app.fps)
-            self.frame_dict[name] = frames
-
+        >>> s = Sprite()
+        >>> s.init('whale_a_%d', 3)
+        """
+        self.duration = duration
+        self.sprites = [format_str % x for x in make_sequence(frames)]
+        self.frames_per_sprite = int(duration * self.app.fps)
+        self.current_sprite = 0
         self.current_frame = 0
-        self.n_frames = self.frame_dict.keys().__len__()
-        self.frames_left = self.frame_dict[self.frame_dict.keys()[0]]
 
     def process(self):
         """Gets called every frame.
         Updats current sprite image"""
-        if self.frames_left > 0:
-            self.frames_left -= 1
-        else:
-            if self.current_frame < self.n_frames - 1:
-                self.current_frame += 1
-            else:
-                self.current_frame = 0
-            self.frames_left = self.frame_dict.values()[self.current_frame]
+        self.current_frame += 1
+        if self.current_frame == self.frames_per_sprite:
+            self.current_sprite = (self.current_sprite + 1) % len(self.sprites)
+            self.current_frame = 0
 
-    def _current_sprite(self):
-        name = self.frame_dict.keys()[self.current_frame]
+    def current_sprite_name(self):
+        return self.sprites[self.current_sprite]
+
+    def lookup_sprite(self, name):
         return self.app.resman.get_sprite(name)
+
