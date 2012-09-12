@@ -20,17 +20,39 @@
 # speed=10
 #
 
-abcde
+
+ b  b
+
+
+  bb
+
+
+b ff
 
 
 
-a a a
-a
+ b  b
 
 
-f
-f
-f
+f bb
+
+
+
+
+ f bb
+
+ f
+
+
+bbb f
+
+    f
+
+f  bb
+
+
+
+ ff
 
 a f
   f

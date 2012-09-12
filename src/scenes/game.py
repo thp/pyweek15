@@ -2,6 +2,7 @@
 from engine.scene import Scene
 from logic.level import Level
 from logic.player import Player
+from logic.enemy import Enemy
 from logic.pickupscore import PickupScore
 
 from logic.lamemath import center, center_in, shade_color
@@ -22,6 +23,7 @@ colors = {
 MIN_DEST_X = 0
 MAX_DEST_X = 4
 
+ENEMY_NAMES = ['lanternfish']
 
 class Game(Scene):
     DEPTH = 15
@@ -40,6 +42,11 @@ class Game(Scene):
 
         self.player = Player(app)
         self.pickupscores = []
+
+        self.enemies = {}
+
+        for key in ENEMY_NAMES:
+            self.enemies[key] = Enemy(app, key)
 
         self.width = 0
         self.height = 0
@@ -65,6 +72,8 @@ class Game(Scene):
                 self.player.dest_x += self.direction
 
         self.player.step()
+        for enemy in self.enemies.values():
+            enemy.step()
 
         if self.player.health <= 0:
             print 'YOU ARE DEAD!'
@@ -143,9 +152,11 @@ class Game(Scene):
 
         x = self.player.x
         y = self.time
-        points = self.mkpoints(x, y, self.player.height)
-        self.player.draw(screen, points[3])
-        draw.polygon(screen, (255, 255, 255), points, 1)
+        player_points = self.mkpoints(x, y, self.player.height)
+        #draw.polygon(screen, (255, 255, 255), player_points, 1)
+
+        # draw queue for back-to-front drawing of enemies
+        draw_queue = [(y, self.player, player_points)]
 
         for yidx, offset in enumerate(range(self.player.y, self.player.y+self.DEPTH)):
             if offset < len(self.level.rows):
@@ -165,14 +176,20 @@ class Game(Scene):
                             pass
                         elif c < 0:
                             # picked up a coin
-                            self.pickupscores.append(PickupScore(self.app, points[3], "10"))
+                            self.pickupscores.append(PickupScore(self.app,
+                                center(player_points), "10"))
 
-                    points2 = self.mkpoints(x, y)
+                    points = self.mkpoints(x, y)
                     color = shade_color(color, yidx-self.time, self.DEPTH)
-                    draw.polygon(screen, color, points2)
-                    #text_surf = self.font.render('%d/%d' % (xidx, yidx), True, (255, 0, 255))
-                    #screen.blit(text_surf, center_in(text_surf, center(points)))
+                    if column.name in self.enemies:
+                        enemy = self.enemies[column.name]
+                        draw_queue.append((y, enemy, points))
+                    else:
+                        draw.polygon(screen, color, points)
 
+        # Draw all enemies (+player), back-to-front for proper stacking order
+        for _, sprite, points in sorted(draw_queue, reverse=True):
+            sprite.draw(screen, points)
 
         text_surf = self.font.render('Coins: %d' % (self.player.coins_collected,), True, (255, 255, 0))
         screen.blit(text_surf, (20, 20))

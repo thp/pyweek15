@@ -2,9 +2,11 @@ from engine.sprite import Sprite
 
 from pygame import transform
 
+from logic.lamemath import center, center_in, shade_color
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
+    BLINKING_FRAMES = 20
 
     def __init__(self, app):
         self.x = 2
@@ -16,11 +18,12 @@ class Player(Sprite):
         self.health = 100
         self.can_jump = True
         self.app = app
+        self.blinking = 0
         self.init('whale_%d', 3)
 
     def jump(self):
         if self.can_jump:
-            self.vertical_velocity = 10
+            self.vertical_velocity = 20
             self.can_jump = False
             self.app.audman.sfx("jump", 1)
 
@@ -32,8 +35,10 @@ class Player(Sprite):
 
     def crashed(self):
         print 'AARGH!'
-        self.health -= 1
-        self.app.audman.sfx("crash")
+        if not self.blinking:
+            self.health -= 1
+            self.app.audman.sfx("crash")
+            self.blinking = self.BLINKING_FRAMES
 
     def step(self):
         self.x = self.x * .5 + self.dest_x * .5
@@ -46,9 +51,14 @@ class Player(Sprite):
                 self.vertical_velocity = 0
                 self.height = 0
         self.vertical_velocity -= self.GRAVITY
+        if self.blinking:
+            self.blinking -= 1
         self.process()
 
-    def draw(self, screen, coords):
+    def draw(self, screen, points):
+        if self.blinking and (self.blinking / 3) % 2 == 0:
+            return
+
         sprite_name = self.current_sprite_name()
 
         # XXX: When the "b", and "c" images of the whale are
@@ -64,5 +74,7 @@ class Player(Sprite):
             sprite = transform.flip(sprite, True, False)
 
         w, h = sprite.get_size()
-        coords = (coords[0], coords[1] - h / 2)
+        coords = center(points)
+        coords = (coords[0] - w / 2 + self.blinking % 5, coords[1] - h / 2)
         screen.blit(sprite, coords)
+
