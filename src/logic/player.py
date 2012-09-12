@@ -23,7 +23,7 @@ class Player(Sprite):
 
     def jump(self):
         if self.can_jump:
-            self.vertical_velocity = 20
+            self.vertical_velocity = 15
             self.can_jump = False
             self.app.audman.sfx("jump", 1)
 
@@ -46,7 +46,7 @@ class Player(Sprite):
         if self.height < 0:
             self.can_jump = True
             self.height = 0
-            self.vertical_velocity *= -.6
+            self.vertical_velocity *= -.5
             if abs(self.vertical_velocity) < 2:
                 self.vertical_velocity = 0
                 self.height = 0

@@ -28,6 +28,9 @@ ENEMY_NAMES = ['lanternfish']
 class Game(Scene):
     DEPTH = 15
 
+    MAX_SPEEDUP = 4
+    SPEEDUP_STEP = .1
+
     # keyboard repeat rate (modulo) -> higher value = less repeat
     KEYBOARD_REPEAT_MOD = 7
 
@@ -36,6 +39,8 @@ class Game(Scene):
         self.time = 0.
         self.i = 0
         self.direction = 0
+        self.boost = False
+        self.speedup = 0
         self.font = font.SysFont('dejavu sans', 16)
 
         self.level = Level(app.get_filename('levels/level%s.txt' % self.app.level_nr))
@@ -57,7 +62,20 @@ class Game(Scene):
     def process(self):
         self.i += 1
 
-        self.time += .01 * self.level.speed
+        step = .01 * self.level.speed
+        if self.boost:
+            if self.speedup < self.MAX_SPEEDUP:
+                self.speedup += self.SPEEDUP_STEP
+            if self.speedup > self.MAX_SPEEDUP:
+                self.speedup = self.MAX_SPEEDUP
+        else:
+            if self.speedup > 0:
+                self.speedup -= self.SPEEDUP_STEP * 2
+            if self.speedup < 0:
+                self.speedup = 0
+
+        self.time += step * (1 + self.speedup)
+
         if self.time > 1.:
             self.time -= 1.
             self.player.y += 1
@@ -123,11 +141,15 @@ class Game(Scene):
                 go_left()
             elif event.key == K_RIGHT:
                 go_right()
+            elif event.key == K_UP:
+                self.boost = True
         elif event.type == KEYUP:
             if event.key == K_LEFT:
                 self.direction = 0
             elif event.key == K_RIGHT:
                 self.direction = 0
+            elif event.key == K_UP:
+                self.boost = False
 
     def map_coords(self, x, y, z):
         """
