@@ -5,7 +5,7 @@ from audman import AudioManager
 
 
 class App(object):
-    def __init__(self, title, resolution, scenes, entry):
+    def __init__(self, title, resolution, scenes, entry, level_nr=0):
         pygame.init()
         self.screen = pygame.display.set_mode(resolution, pygame.FULLSCREEN)
         pygame.display.set_caption(title)
@@ -15,6 +15,8 @@ class App(object):
 
         self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
+
+        self.level_nr = level_nr
 
         self._scenes = []
         for scene in scenes:

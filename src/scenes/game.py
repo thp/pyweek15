@@ -21,6 +21,7 @@ colors = {
 MIN_DEST_X = 0
 MAX_DEST_X = 4
 
+
 class Game(Scene):
     DEPTH = 15
 
@@ -34,7 +35,8 @@ class Game(Scene):
         self.direction = 0
         self.font = font.SysFont('dejavu sans', 16)
 
-        self.level = Level(app.get_filename('levels/level1.txt'))
+        self.level = Level(app.get_filename('levels/level%s.txt' % self.app.level_nr))
+
         self.player = Player(app)
 
         self.width = 0

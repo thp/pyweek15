@@ -23,6 +23,7 @@ arguments = docopt(__doc__)
 app = App(title="One Whale Trip",
           resolution=(800, 480),
           scenes=[MainMenu, Game],
-          entry=arguments['--scene'] or "Game"
+          entry=arguments['--scene'] or "Game",
+          level_nr=arguments['--level'] or 0
           )
 app.run()

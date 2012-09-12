@@ -2,13 +2,14 @@ from engine.sprite import Sprite
 
 from pygame import transform
 
+
 class Player(Sprite):
     GRAVITY = 1.2  # .981
 
     def __init__(self, app):
-        self.x = 0
+        self.x = 2
         self.y = 0
-        self.dest_x = 0
+        self.dest_x = 2
         self.height = 0
         self.vertical_velocity = 0
         self.coins_collected = 0
