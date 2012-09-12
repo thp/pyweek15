@@ -48,6 +48,8 @@ class Game(Scene):
         self.player = Player(app)
         self.pickupscores = []
 
+        self.message = None
+
         self.enemies = {}
 
         for key in ENEMY_NAMES:
@@ -60,6 +62,9 @@ class Game(Scene):
         pass
 
     def process(self):
+        if self.message:
+            return
+
         self.i += 1
 
         step = .01 * self.level.speed
@@ -79,6 +84,7 @@ class Game(Scene):
         if self.time > 1.:
             self.time -= 1.
             self.player.y += 1
+            self.message = self.level.get_message(self.player.y)
 
         if self.level.exceeds_row(self.player.y):
             ## TODO: animate level end
@@ -104,6 +110,13 @@ class Game(Scene):
         return super(Game, self).process()
 
     def process_input(self, event):
+        if self.message and event.type == KEYUP and event.key == K_RETURN:
+            rest = self.message.split('\n', 1)
+            if len(rest) == 2:
+                self.message = rest[1]
+            else:
+                self.message = None
+
         def go_left():
             self.direction = -1
             self.i = 0
@@ -223,6 +236,18 @@ class Game(Scene):
 
         for ps in self.pickupscores:
             ps.draw(screen)
+
+
+        if self.message:
+            rest = self.message.split('\n', 1)
+            msg_surf = self.font.render(rest[0], True, (255, 255, 255))
+            w, h = msg_surf.get_size()
+            pos = (self.width / 2 - w / 2, self.height / 2 - h / 2)
+
+            rect = (pos[0] - 10, pos[1] - 10, w + 20, h + 20)
+            draw.rect(screen, (0, 0, 0), rect)
+            screen.blit(msg_surf, pos)
+
 
     def mkpoints(self, x, y, height=0.):
         return [

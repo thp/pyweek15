@@ -21,13 +21,51 @@
 #
 
 
- b  b
 
+
+!Your heart was broken. The submarine was gone.
+
+
+
+!,,A whale and a submarine don't belong together``, they said.
+
+
+
+!And so you swam around, trying to pick up some goodies.
+
+
+  f
+  f
+  f
+
+!(,,goodies are good!`` - you remembered the words of the elder whales)
+
+
+
+
+!But not all was peachy under the sea...
+
+
+
+!...for there were cruelsome creatures you'd better avoid.
+
+
+
+
+
+ b  b
 
   bb
 
 
 b ff
+
+
+
+!You were a handsome whale. You could even jump under the sea!
+
+
+!(..you always jumped with the Space bar in case you forgot..)
 
 
 
@@ -50,6 +88,18 @@ bbb f
 
 f  bb
 
+
+!And sometimes it was useful to pick up lots of coins at once.
+
+
+!Which you did by swimming through the coins quickly.
+
+
+!(..I'm sure you remeber that you did that with the Up button..)
+
+
+
+
  f
  f
  f
@@ -71,6 +121,8 @@ f  bb
    f
    f
    f
+
+!Whoops - avoid that one!
 
 
    b
@@ -144,3 +196,35 @@ cc  c
 ccc c
 bbc
 bbc
+
+
+
+!Wow, that was easy :)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!Nothing to see here, go write some more code.
+
