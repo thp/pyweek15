@@ -2,6 +2,7 @@ from engine.sprite import Sprite
 
 from pygame import transform
 
+
 class Player(Sprite):
     GRAVITY = 1.2  # .981
 
@@ -53,8 +54,8 @@ class Player(Sprite):
         # XXX: When the "b", and "c" images of the whale are
         # here, change the chars= line to something like this:
         # (note that "b" and "a" get mirrored below when dest_x >= 3)
-        #chars = ['a', 'b', 'c', 'b', 'a']
-        chars = ['a', 'a', 'a', 'a', 'a']
+        chars = ['a', 'b', 'c', 'b', 'a']
+        #chars = ['a', 'a', 'a', 'a', 'a']
 
         sprite_name = sprite_name.replace('whale_', 'whale_%s_' % chars[self.dest_x])
         sprite = self.lookup_sprite(sprite_name)
@@ -63,6 +64,5 @@ class Player(Sprite):
             sprite = transform.flip(sprite, True, False)
 
         w, h = sprite.get_size()
-        coords = (coords[0], coords[1] - h/2)
+        coords = (coords[0], coords[1] - h / 2)
         screen.blit(sprite, coords)
-
