@@ -2,6 +2,7 @@
 from engine.scene import Scene
 from logic.level import Level
 from logic.player import Player
+from logic.pickupscore import PickupScore
 
 from logic.lamemath import center, center_in, shade_color
 
@@ -38,6 +39,7 @@ class Game(Scene):
         self.level = Level(app.get_filename('levels/level%s.txt' % self.app.level_nr))
 
         self.player = Player(app)
+        self.pickupscores = []
 
         self.width = 0
         self.height = 0
@@ -67,6 +69,10 @@ class Game(Scene):
         if self.player.health <= 0:
             print 'YOU ARE DEAD!'
             self.next_state = ("GoodBye", None)
+
+        for ps in self.pickupscores:
+            if not ps.process():
+                self.pickupscores.remove(ps)
 
         return super(Game, self).process()
 
@@ -126,13 +132,21 @@ class Game(Scene):
         z = self.DEPTH - z + self.time
         xoffset = (x-2)*100./(.0000001+math.pow(self.DEPTH-z+2, .2))
         yoffset = z*(h/float(self.DEPTH))
-        xoffset *= yoffset/500.
+        xoffset *= yoffset/370.
         return (w/2+xoffset, h/5 + yoffset*2/3 - y)
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
         screen.blit(self.app.resman.get_sprite('bg'), (0, 0))
         self.width, self.height = screen.get_size()
+
+
+        x = self.player.x
+        y = self.time
+        points = self.mkpoints(x, y, self.player.height)
+        self.player.draw(screen, points[3])
+        draw.polygon(screen, (255, 255, 255), points, 1)
+
         for yidx, offset in enumerate(range(self.player.y, self.player.y+self.DEPTH)):
             if offset < len(self.level.rows):
                 for xidx, column in enumerate(self.level.rows[offset].items):
@@ -145,21 +159,20 @@ class Game(Scene):
                     y = yidx
 
                     if yidx == 1 and xidx == self.player.dest_x and self.player.height < 10:
-                        if column.collide(self.player):
+                        c = column.collide(self.player)
+                        if c > 0:
                             # do something when the player collides
                             pass
+                        elif c < 0:
+                            # picked up a coin
+                            self.pickupscores.append(PickupScore(self.app, points[3], "10"))
 
-                    points = self.mkpoints(x, y)
+                    points2 = self.mkpoints(x, y)
                     color = shade_color(color, yidx-self.time, self.DEPTH)
-                    draw.polygon(screen, color, points)
+                    draw.polygon(screen, color, points2)
                     #text_surf = self.font.render('%d/%d' % (xidx, yidx), True, (255, 0, 255))
                     #screen.blit(text_surf, center_in(text_surf, center(points)))
 
-        x = self.player.x
-        y = self.time
-        points = self.mkpoints(x, y, self.player.height)
-        self.player.draw(screen, points[3])
-        draw.polygon(screen, (255, 255, 255), points, 1)
 
         text_surf = self.font.render('Coins: %d' % (self.player.coins_collected,), True, (255, 255, 0))
         screen.blit(text_surf, (20, 20))
@@ -168,6 +181,9 @@ class Game(Scene):
         screen.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
         draw.rect(screen, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
         draw.rect(screen, (0, 90, 0), (self.width - 100 - 20, 20, self.player.health, 15))
+
+        for ps in self.pickupscores:
+            ps.draw(screen)
 
     def mkpoints(self, x, y, height=0.):
         return [

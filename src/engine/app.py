@@ -16,6 +16,9 @@ class App(object):
         self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
 
+        self.resman.load_font("visitor2", 30)
+        self.font = self.resman.get_font("visitor2_30")
+
         self.level_nr = level_nr
 
         self._scenes = []

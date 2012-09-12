@@ -17,6 +17,7 @@ class ResourceManager():
         self.app = app
         self._surfaces = {}
         self._sounds = {}
+        self._fonts = {}
         self._load_all()
 
     def _load_all(self):
@@ -42,3 +43,10 @@ class ResourceManager():
 
     def get_sound(self, name):
         return self._sounds[name]
+
+    def load_font(self, name, size):
+        font = pygame.font.Font(resource_path(os.path.join('data', 'fonts', '%s.ttf' % name)), size)
+        self._fonts["%s_%s" % (name, size)] = font
+
+    def get_font(self, name):
+        return self._fonts[name]

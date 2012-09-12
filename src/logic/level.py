@@ -10,12 +10,13 @@ class Item:
     def collide(self, player):
         if self.is_enemy:
             player.crashed()
-            return True
+            return 1
         elif self.name:
             player.picked_up(self.name)
             self.name = ''
+            return -1
 
-        return False
+        return 0
 
     def __repr__(self):
         return '%s%s' % (self.name, ' (enemy)' if self.is_enemy else '')
