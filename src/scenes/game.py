@@ -18,6 +18,8 @@ colors = {
     'sixpack': (100, 100, 100),
 }
 
+MIN_DEST_X = 0
+MAX_DEST_X = 4
 
 class Game(Scene):
     DEPTH = 15
@@ -50,7 +52,9 @@ class Game(Scene):
             self.player.y += 1
 
         if self.i % self.KEYBOARD_REPEAT_MOD == 0:
-            self.player.dest_x += self.direction
+            next_x = self.player.dest_x + self.direction
+            if next_x >= MIN_DEST_X and next_x <= MAX_DEST_X:
+                self.player.dest_x += self.direction
 
         self.player.step()
 
@@ -64,12 +68,14 @@ class Game(Scene):
         def go_left():
             self.direction = -1
             self.i = 0
-            self.player.dest_x -= 1
+            if self.player.dest_x > MIN_DEST_X:
+                self.player.dest_x -= 1
 
         def go_right():
             self.direction = 1
             self.i = 0
-            self.player.dest_x += 1
+            if self.player.dest_x < MAX_DEST_X:
+                self.player.dest_x += 1
 
         if event.type == QUIT:
             self.next_state = ("GoodBye", None)
