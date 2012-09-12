@@ -21,6 +21,7 @@ colors = {
 MIN_DEST_X = 0
 MAX_DEST_X = 4
 
+
 class Game(Scene):
     DEPTH = 15
 
@@ -34,7 +35,8 @@ class Game(Scene):
         self.direction = 0
         self.font = font.SysFont('dejavu sans', 16)
 
-        self.level = Level(app.get_filename('levels/level1.txt'))
+        self.level = Level(app.get_filename('levels/level%s.txt' % self.app.level_nr))
+
         self.player = Player(app)
 
         self.width = 0
@@ -50,6 +52,10 @@ class Game(Scene):
         if self.time > 1.:
             self.time -= 1.
             self.player.y += 1
+
+        if self.level.exceeds_row(self.player.y):
+            ## TODO: animate level end
+            pass
 
         if self.i % self.KEYBOARD_REPEAT_MOD == 0:
             next_x = self.player.dest_x + self.direction
