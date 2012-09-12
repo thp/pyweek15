@@ -70,6 +70,9 @@ class Level:
 
             self.rows.append(Row(self, line.rstrip('\n')))
 
+    def exceeds_row(self, y):
+        return y > self.rows.__len__()
+
     def add_item(self, char, name, is_enemy):
         assert char not in self.charmap
         self.charmap[char] = (name, is_enemy)

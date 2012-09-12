@@ -53,6 +53,10 @@ class Game(Scene):
             self.time -= 1.
             self.player.y += 1
 
+        if self.level.exceeds_row(self.player.y):
+            ## TODO: animate level end
+            pass
+
         if self.i % self.KEYBOARD_REPEAT_MOD == 0:
             next_x = self.player.dest_x + self.direction
             if next_x >= MIN_DEST_X and next_x <= MAX_DEST_X:
