@@ -23,7 +23,15 @@ colors = {
 MIN_DEST_X = 0
 MAX_DEST_X = 4
 
-ENEMY_NAMES = ['lanternfish']
+# This is not just enemies, but also pick-ups (for whatever reason)
+ENEMY_NAMES = [
+    'lanternfish',
+    'shell',
+    'oyster_0_pearl',
+    'oyster_1_pearl',
+    'oyster_2_pearl',
+    'oyster_3_pearl',
+]
 
 class Game(Scene):
     DEPTH = 15

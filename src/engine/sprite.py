@@ -16,7 +16,10 @@ class Sprite(object):
         >>> s.init('whale_a_%d', 3)
         """
         self.duration = duration
-        self.sprites = [format_str % x for x in make_sequence(frames)]
+        if self.app.resman.get_sprite(format_str) is not None:
+            self.sprites = [format_str]
+        else:
+            self.sprites = [format_str % x for x in make_sequence(frames)]
         self.frames_per_sprite = int(duration * self.app.fps)
         self.current_sprite = 0
         self.current_frame = 0

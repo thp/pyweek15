@@ -1,6 +1,6 @@
 #
 # :enemies:
-# a=stone
+# a=shell
 # b=lanternfish
 # c=sixpack
 # d=iceberg
@@ -11,14 +11,28 @@
 # f=coin
 # i=fishes
 # j=roses
-# k=oyster0
-# l=oyster1
-# m=oyster2
-# n=oyster3
+# k=oyster_0_pearl
+# l=oyster_1_pearl
+# m=oyster_2_pearl
+# n=oyster_3_pearl
 #
 # :meta:
 # speed=10
 #
+
+
+
+
+
+
+
+ klmn
+
+
+
+
+
+
 
 
 
@@ -29,7 +43,7 @@
 
 !,,A whale and a submarine don't belong together``, they said.
 
-
+ a a
 
 !And so you swam around, trying to pick up some goodies.
 
@@ -40,12 +54,12 @@
 
 !(,,goodies are good!`` - you remembered the words of the elder whales)
 
-
-
-
+ k
+  l
+   m
 !But not all was peachy under the sea...
 
-
+n
 
 !...for there were cruelsome creatures you'd better avoid.
 

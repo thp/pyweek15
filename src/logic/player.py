@@ -32,6 +32,12 @@ class Player(Sprite):
         if thingie == 'coin':
             self.coins_collected += 1
             self.app.audman.sfx("coin")
+        elif thingie == 'oyster_1_pearl':
+            self.coins_collected += 10
+        elif thingie == 'oyster_2_pearl':
+            self.coins_collected += 20
+        elif thingie == 'oyster_3_pearl':
+            self.coins_collected += 30
 
     def crashed(self):
         print 'AARGH!'

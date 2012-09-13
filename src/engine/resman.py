@@ -39,7 +39,7 @@ class ResourceManager():
             self._sounds[bn] = sound
 
     def get_sprite(self, name):
-        return self._surfaces[name]
+        return self._surfaces.get(name)
 
     def get_sound(self, name):
         return self._sounds[name]

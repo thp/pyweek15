@@ -8,7 +8,10 @@ from pygame import transform
 class Enemy(Sprite):
     def __init__(self, app, name):
         self.app = app
-        self.init(name + '_%d', 3)
+        if self.app.resman.get_sprite(name) is not None:
+            self.init(name, 1)
+        else:
+            self.init(name + '_%d', 3)
 
     def step(self):
         self.process()
