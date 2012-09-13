@@ -5,9 +5,10 @@ from audman import AudioManager
 
 
 class App(object):
-    def __init__(self, title, resolution, scenes, entry, level_nr=0):
+    def __init__(self, title, resolution, scenes, entry, level_nr=0, fullscreen="0"):
         pygame.init()
-        self.screen = pygame.display.set_mode(resolution, pygame.FULLSCREEN)
+        fsc_flag = pygame.FULLSCREEN if fullscreen == "1" else 0
+        self.screen = pygame.display.set_mode(resolution, fsc_flag)
         pygame.display.set_caption(title)
 
         self._clock = pygame.time.Clock()

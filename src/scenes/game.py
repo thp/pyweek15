@@ -184,7 +184,7 @@ class Game(Scene):
         z = self.DEPTH - z + self.time
         xoffset = (x-2)*100./(.0000001+math.pow(self.DEPTH-z+2, .2))
         yoffset = z*(h/float(self.DEPTH))
-        xoffset *= yoffset/370.
+        xoffset *= yoffset/330.
         return (w/2+xoffset, h/5 + yoffset*2/3 - y)
 
     def draw(self, screen):
