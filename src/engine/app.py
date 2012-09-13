@@ -19,6 +19,8 @@ class App(object):
 
         self.resman.load_font("visitor2", 30)
         self.font = self.resman.get_font("visitor2_30")
+        self.resman.load_font("visitor2", 20)
+        self.font_small = self.resman.get_font("visitor2_20")
 
         self.level_nr = level_nr
 
@@ -58,6 +60,11 @@ class App(object):
                 self.scene.process_input(event)
 
             self.scene.draw(self.screen)
+
+            # write fps
+            fps_surf = self.font_small.render("FPS: %2.2f" % self._clock.get_fps(),
+                False, (255, 255, 255), (0, 0, 0))
+            self.screen.blit(fps_surf, (0, 0))
 
             pygame.display.flip()
 

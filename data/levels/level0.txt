@@ -11,16 +11,32 @@
 # f=coin
 # i=fishes
 # j=roses
-# k=oyster0
-# l=oyster1
-# m=oyster2
-# n=oyster3
+# k=oyster_0_pearl
+# l=oyster_1_pearl
+# m=oyster_2_pearl
+# n=oyster_3_pearl
 #
 # :meta:
 # speed=10
 #
 
 f
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
+kkkkk
 
   jji
   ffk
