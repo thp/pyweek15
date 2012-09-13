@@ -20,7 +20,6 @@ from scenes.menu import MainMenu
 
 from docopt import docopt
 arguments = docopt(__doc__)
-print arguments
 
 app = App(title="One Whale Trip",
           resolution=(800, 480),

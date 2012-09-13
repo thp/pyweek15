@@ -180,15 +180,6 @@ class Game(Scene):
         jump:     not defined yet
         distance: 0..self.DEPTH+1 (number of rows)
         """
-<<<<<<< local
-        w = self.width
-        h = self.height
-        z = self.DEPTH - z + self.time
-        xoffset = (x-2)*100./(.0000001+math.pow(self.DEPTH-z+2, .2))
-        yoffset = z*(h/float(self.DEPTH))
-        xoffset *= yoffset/330.
-        return (w/2+xoffset, h/5 + yoffset*2/3 - y)
-=======
 
         # playfield dimensions (only equals screen with in x direction)
         width = self.width
@@ -210,7 +201,7 @@ class Game(Scene):
         ys = (zeye * (y - yeye)) / (zeye + z)
 
         return (xs+xeye, ys+yeye)
->>>>>>> other
+
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
