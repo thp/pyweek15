@@ -172,20 +172,35 @@ class Game(Scene):
             elif event.key == K_UP:
                 self.boost = False
 
-    def map_coords(self, x, y, z):
+    def map_coords(self, lane, jump, distance):
         """
-        Map 3D coordinates to 2D coordinates
+        Project game world coordinates onto the screen.
 
-        These are not "real" screen coordinates, but imaginary 2D coordinates
-        based on the lanes (x = 0..5, y = ???, z = 0..DEPTH+1)
+        lane:     0..5
+        jump:     not defined yet
+        distance: 0..self.DEPTH+1 (number of rows)
         """
-        w = self.width
-        h = self.height
-        z = self.DEPTH - z + self.time
-        xoffset = (x-2)*100./(.0000001+math.pow(self.DEPTH-z+2, .2))
-        yoffset = z*(h/float(self.DEPTH))
-        xoffset *= yoffset/370.
-        return (w/2+xoffset, h/5 + yoffset*2/3 - y)
+
+        # playfield dimensions (only equals screen with in x direction)
+        width = self.width
+        height = self.height
+        depth = width * 10       # fudge factor... works for self.DEPTH @ 15
+
+        # position of the eye
+        zeye = width * 1.2   # Assumed distance from Screen
+        xeye = width * 0.5   # Middle of the screen
+        yeye = height * 0.33 # High horizon
+
+        # translate from game to world coordinates
+        x = (lane + 0.5) / 5.0 * width
+        y = (500.0 - jump) / 500.0 * height
+        z = depth * (distance+0.5) / self.DEPTH
+
+        # projection
+        xs = (zeye * (x - xeye)) / (zeye + z)
+        ys = (zeye * (y - yeye)) / (zeye + z)
+
+        return (xs+xeye, ys+yeye)
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
@@ -259,9 +274,9 @@ class Game(Scene):
 
     def mkpoints(self, x, y, height=0.):
         return [
-                self.map_coords(x-.45, height, y-.45),
-                self.map_coords(x+.45, height, y-.45),
-                self.map_coords(x+.45, height, y+.45),
-                self.map_coords(x-.45, height, y+.45),
+                self.map_coords(x-.45, height, y-.45 - self.time),
+                self.map_coords(x+.45, height, y-.45 - self.time),
+                self.map_coords(x+.45, height, y+.45 - self.time),
+                self.map_coords(x-.45, height, y+.45 - self.time),
         ]
 
