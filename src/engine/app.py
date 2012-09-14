@@ -14,8 +14,8 @@ class App(object):
         self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
 
-        self.resman.load_font("visitor2", 30)
-        self.font = self.resman.get_font("visitor2_30")
+        self.resman.load_font("visitor2", 48)
+        self.font = self.resman.get_font("visitor2_48")
         self.resman.load_font("visitor2", 20)
         self.font_small = self.resman.get_font("visitor2_20")
 
@@ -35,6 +35,9 @@ class App(object):
     def get_filename(self, basename):
         return os.path.join(os.path.dirname(__file__), '..', '..', 'data', basename)
 
+    def next_level(self):
+        return 0
+
     def run(self):
         running = True
 
@@ -43,6 +46,7 @@ class App(object):
 
             p = self.scene.process()
             if p:
+                print p
                 next_scene, scene_arg = p
                 if next_scene:
                     if next_scene == "GoodBye":

@@ -19,10 +19,14 @@ from engine.app import App
 from engine.screen import Screen
 from scenes.game import Game
 from scenes.menu import MainMenu
+from scenes.intro import Intro
+from scenes.outro import Outro
+from scenes.gameover import GameOver
+from scenes.cutscene import CutScene
+from scenes.victory import Victory
 
 from docopt import docopt
 arguments = docopt(__doc__)
-
 
 TITLE = "One Whale Trip"
 SCREEN_WIDTH = 800
@@ -36,7 +40,7 @@ screen = Screen(title=TITLE,
                 fullscreen=arguments['--fullscreen'])
 
 app = App(screen=screen,
-          scenes=[MainMenu, Game],
+          scenes=[Intro, MainMenu, Game, GameOver, CutScene, Victory, Outro],
           entry=arguments['--scene'] or "Game",
           level_nr=arguments['--level'] or 1
           )

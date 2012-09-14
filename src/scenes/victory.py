@@ -2,15 +2,16 @@ from engine.scene import Scene
 from pygame.locals import *
 
 
-class MainMenu(Scene):
+class Victory(Scene):
 
     def process_input(self, event):
         if event.type == QUIT:
-            self.next_state = ("Outro", None)
+            self.next_state = ("MainMenu", None)
         elif event.type == KEYDOWN:
             if event.key == K_ESCAPE:
-                self.next_state = ("Outro", None)
+                self.next_state = ("MainMenu", None)
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
-        screen.blit(self.app.font.render("MainMenu", False, (255, 255, 255)), (100, 100))
+        screen.blit(self.app.font.render("VICTORY", False, (255, 255, 255)),
+            (100, 100))

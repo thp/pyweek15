@@ -47,16 +47,23 @@ class Game(Scene):
 
     def __init__(self, app):
         super(Game, self).__init__(app)
+        self.font = font.SysFont('dejavu sans', 16)
+
+        self._init(self.app.level_nr)
+
+        self.width = 0
+        self.height = 0
+
+    def _init(self, level_nr):
         self.time = 0.
         self.i = 0
         self.direction = 0
         self.boost = False
         self.speedup = 0
-        self.font = font.SysFont('dejavu sans', 16)
 
-        self.level = Level(app.get_filename('levels/level%s.txt' % self.app.level_nr))
+        self.level = Level(self.app.get_filename('levels/level%s.txt' % level_nr))
 
-        self.player = Player(app)
+        self.player = Player(self.app)
         self.pickupscores = []
 
         self.message = None
@@ -64,13 +71,13 @@ class Game(Scene):
         self.enemies = {}
 
         for key in ENEMY_NAMES:
-            self.enemies[key] = Enemy(app, key)
+            self.enemies[key] = Enemy(self.app, key)
 
-        self.width = 0
-        self.height = 0
 
-    def resume(self, *args):
-        pass
+    def resume(self, arg):
+        super(Game, self).resume(self)
+        if arg and 'next_level' in arg.keys():
+            self._init(arg['next_level'])
 
     def process(self):
         if self.message:
@@ -97,10 +104,9 @@ class Game(Scene):
             self.player.y += 1
             self.message = self.level.get_message(self.player.y)
 
-        print self.player.y
         if self.level.exceeds_row(self.player.y):
-            ## TODO: animate level end
-            self.next_state = ("MainMenu", None)
+            # animate level end
+            self.next_state = ("CutScene", None)
 
         if self.i % self.KEYBOARD_REPEAT_MOD == 0:
             next_x = self.player.dest_x + self.direction
@@ -112,8 +118,8 @@ class Game(Scene):
             enemy.step()
 
         if self.player.health <= 0:
-            print 'YOU ARE DEAD!'
-            self.next_state = ("GoodBye", None)
+            #print 'YOU ARE DEAD!'
+            self.next_state = ("GameOver", None)
 
         for ps in self.pickupscores:
             if not ps.process():

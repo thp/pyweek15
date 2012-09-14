@@ -86,7 +86,6 @@ class Level:
         return self.messages.get(y)
 
     def exceeds_row(self, y):
-        print self.rows.__len__()
         return y >= self.rows.__len__()
 
     def add_item(self, char, name, is_enemy):
