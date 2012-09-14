@@ -80,6 +80,7 @@ class Game(Scene):
             self._init(arg['next_level'], arg['score'], arg['health'])
 
     def process(self):
+        # it's kind of annoying -> commented out
         #if self.message:
         #    return
 
@@ -108,7 +109,8 @@ class Game(Scene):
             # animate level end
             self.next_state = ("CutScene", {
                     "score": self.player.coins_collected,
-                    "health": self.player.health
+                    "health": self.player.health,
+                    "story": self.level.story
                 })
 
         if self.i % self.KEYBOARD_REPEAT_MOD == 0:

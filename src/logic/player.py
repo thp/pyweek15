@@ -2,7 +2,8 @@ from engine.sprite import Sprite
 
 from pygame import transform
 
-from logic.lamemath import center, center_in, shade_color
+from logic.lamemath import center
+
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
@@ -81,4 +82,3 @@ class Player(Sprite):
         coords = center(points)
         coords = (coords[0] - w / 2 + self.blinking % 5, coords[1] - h / 2)
         screen.blit(sprite, coords)
-

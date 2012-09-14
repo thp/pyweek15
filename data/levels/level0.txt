@@ -18,6 +18,12 @@
 #
 # :meta:
 # speed=10
+# 
+# :story:
+# this is the story,
+# as defined in the comments
+# of the level0.txt file
+#
 #
 
 f
