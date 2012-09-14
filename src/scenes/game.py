@@ -6,7 +6,7 @@ from logic.enemy import Enemy
 
 from logic.lamemath import center, center_in, shade_color
 
-from pygame import draw, font
+from pygame import font
 from pygame.locals import *
 
 import math
@@ -246,23 +246,12 @@ class Game(Scene):
         for _, sprite, points in sorted(draw_queue, reverse=True):
             self.app.screen.draw_sprite(sprite, points)
 
-        text_surf = self.font.render('Coins: %d' % (self.player.coins_collected,), True, (255, 255, 0))
-        screen.blit(text_surf, (20, 20))
-
-        text_surf = self.font.render('Health:', True, (0, 255, 0))
-        screen.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
-        draw.rect(screen, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
-        draw.rect(screen, (0, 90, 0), (self.width - 100 - 20, 20, self.player.health, 15))
+        self.app.screen.draw_stats(self.player.coins_collected,
+                                   self.player.health)
 
         if self.message:
-            rest = self.message.split('\n', 1)
-            msg_surf = self.font.render(rest[0], True, (255, 255, 255))
-            w, h = msg_surf.get_size()
-            pos = (self.width / 2 - w / 2, self.height / 2 - h / 2)
-
-            rect = (pos[0] - 10, pos[1] - 10, w + 20, h + 20)
-            draw.rect(screen, (0, 0, 0), rect)
-            screen.blit(msg_surf, pos)
+            message = self.message.split('\n', 1)
+            self.app.screen.draw_message(message)
 
 
     def mkpoints(self, x, y, height=0.):

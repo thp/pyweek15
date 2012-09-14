@@ -51,3 +51,29 @@ class Screen(object):
         Coordinates are given in world coordinates."""
         points = [self.projection(*point) for point in points]
         sprite.draw(self.display, points)
+
+
+    def draw_stats(self, bonus, health):
+        """Draw bonus and health bar."""
+        font = self.app.resman.font("visitor2", 48)
+
+        text_surf = font.render('Coins: %d' % bonus, True, (255, 255, 0))
+        self.display.blit(text_surf, (20, 20))
+
+        text_surf = font.render('Health:', True, (0, 255, 0))
+        self.display.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
+        pygame.draw.rect(self.display, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
+        pygame.draw.rect(self.display, (0, 90, 0), (self.width - 100 - 20, 20, health, 15))
+
+
+    def draw_message(self, message):
+        """Overlay a message to the player."""
+        font = self.app.resman.font("visitor2", 48)
+
+        msg_surf = font.render(message, True, (255, 255, 255))
+        w, h = msg_surf.get_size()
+        pos = (self.width / 2 - w / 2, self.height / 2 - h / 2)
+
+        rect = (pos[0] - 10, pos[1] - 10, w + 20, h + 20)
+        pygame.draw.rect(self.display, (0, 0, 0), rect)
+        self.display.blit(msg_surf, pos)

@@ -17,7 +17,6 @@ class App(object):
         self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
 
-        self.font = self.resman.font("visitor2", 48)
         self.font_small = self.resman.font("visitor2", 20)
 
         self.level_nr = level_nr
