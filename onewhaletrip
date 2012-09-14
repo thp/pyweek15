@@ -42,7 +42,7 @@ screen = Screen(title=TITLE,
 app = App(screen=screen,
           scenes=[Intro, MainMenu, Game, GameOver, CutScene, Victory, Outro],
           entry=arguments['--scene'] or "Game",
-          level_nr=arguments['--level'] or 1
+          level_nr=arguments['--level'] or 0
           )
 
 app.run()

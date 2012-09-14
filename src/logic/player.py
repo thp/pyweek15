@@ -28,7 +28,7 @@ class Player(Sprite):
             self.app.audman.sfx("jump", 1)
 
     def picked_up(self, thingie):
-        print 'i picked up a', thingie
+        #print 'i picked up a', thingie
         if thingie == 'coin':
             self.coins_collected += 1
             self.app.audman.sfx("coin")
@@ -40,9 +40,8 @@ class Player(Sprite):
             self.coins_collected += 30
 
     def crashed(self):
-        print 'AARGH!'
         if not self.blinking:
-            self.health -= 1
+            self.health -= 20
             self.app.audman.sfx("crash")
             self.blinking = self.BLINKING_FRAMES
 
@@ -71,7 +70,6 @@ class Player(Sprite):
         # here, change the chars= line to something like this:
         # (note that "b" and "a" get mirrored below when dest_x >= 3)
         chars = ['a', 'b', 'c', 'b', 'a']
-        #chars = ['a', 'a', 'a', 'a', 'a']
 
         sprite_name = sprite_name.replace('whale_', 'whale_%s_' % chars[self.dest_x])
         sprite = self.lookup_sprite(sprite_name)

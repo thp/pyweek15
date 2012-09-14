@@ -80,8 +80,8 @@ class Game(Scene):
             self._init(arg['next_level'])
 
     def process(self):
-        if self.message:
-            return
+        #if self.message:
+        #    return
 
         self.i += 1
 

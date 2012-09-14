@@ -8,8 +8,8 @@ class GameOver(Scene):
         if event.type == QUIT:
             self.next_state = ("MainMenu", None)
         elif event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
-                self.next_state = ("MainMenu", None)
+            #if event.key == K_ESCAPE:
+            self.next_state = ("MainMenu", None)
 
     def draw(self, screen):
         screen.fill((0, 0, 0))

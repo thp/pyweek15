@@ -2,6 +2,7 @@ import pygame
 import os
 from resman import ResourceManager
 from audman import AudioManager
+from logic.level import last_level
 
 
 class App(object):
@@ -20,6 +21,7 @@ class App(object):
         self.font_small = self.resman.get_font("visitor2_20")
 
         self.level_nr = level_nr
+        self.last_level = last_level()
 
         self._scenes = []
         for scene in scenes:
@@ -36,7 +38,7 @@ class App(object):
         return os.path.join(os.path.dirname(__file__), '..', '..', 'data', basename)
 
     def next_level(self):
-        return 0
+        return None if self.level_nr == self.last_level else int(self.level_nr) + 1
 
     def run(self):
         running = True
@@ -46,7 +48,6 @@ class App(object):
 
             p = self.scene.process()
             if p:
-                print p
                 next_scene, scene_arg = p
                 if next_scene:
                     if next_scene == "GoodBye":
