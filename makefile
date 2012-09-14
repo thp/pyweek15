@@ -33,6 +33,7 @@ convert:
 	convert assets/oyster_3_pearl.png -resize 105x105 data/sprites/oyster_3_pearl.png
 	convert assets/shell.png -resize 100x100 data/sprites/shell.png
 	convert assets/pearl.png -resize 100x100 data/sprites/pearl.png
+	convert assets/pearl.png -resize 80x80 data/sprites/pearl_icon.png
 	convert assets/levelbg_test.png -resize 800x480 data/sprites/bg.png
 
 install:
