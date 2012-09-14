@@ -3,7 +3,6 @@ from engine.scene import Scene
 from logic.level import Level
 from logic.player import Player
 from logic.enemy import Enemy
-from logic.pickupscore import PickupScore
 
 from logic.lamemath import center, center_in, shade_color
 
@@ -64,7 +63,6 @@ class Game(Scene):
         self.level = Level(self.app.get_filename('levels/level%s.txt' % level_nr))
 
         self.player = Player(self.app, health=health, coins_collected=score)
-        self.pickupscores = []
 
         self.message = None
 
@@ -125,10 +123,6 @@ class Game(Scene):
         if self.player.health <= 0:
             #print 'YOU ARE DEAD!'
             self.next_state = ("GameOver", None)
-
-        for ps in self.pickupscores:
-            if not ps.process():
-                self.pickupscores.remove(ps)
 
         return super(Game, self).process()
 
@@ -239,9 +233,6 @@ class Game(Scene):
                             # picked up a coin
                             player_points = [self.app.screen.projection(*point)
                                              for point in player_points]
-                            # we don't want these? maybe later?
-                            #self.pickupscores.append(PickupScore(self.app,
-                            #    center(player_points), "10"))
 
                     points = self.mkpoints(x, y)
                     color = shade_color(color, yidx-self.time, self.DEPTH)
@@ -262,10 +253,6 @@ class Game(Scene):
         screen.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
         draw.rect(screen, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
         draw.rect(screen, (0, 90, 0), (self.width - 100 - 20, 20, self.player.health, 15))
-
-        for ps in self.pickupscores:
-            ps.draw(screen)
-
 
         if self.message:
             rest = self.message.split('\n', 1)
