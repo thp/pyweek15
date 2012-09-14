@@ -12,6 +12,9 @@ from pygame.locals import *
 
 import math
 
+WORLD_DEPTH = 10 # fudge factor... works for self.DEPTH @ 15
+
+
 # XXX: This should be removed once we have proper gfx
 colors = {
     'coin': (255, 255, 0),
@@ -174,33 +177,20 @@ class Game(Scene):
 
     def map_coords(self, lane, jump, distance):
         """
-        Project game world coordinates onto the screen.
+        Translate game coordinates to world coordinates.
 
         lane:     0..5
         jump:     not defined yet
         distance: 0..self.DEPTH+1 (number of rows)
+
+        world coordinates: 1x1xWORLD_DEPTH
         """
 
-        # playfield dimensions (only equals screen with in x direction)
-        width = self.width
-        height = self.height
-        depth = width * 10       # fudge factor... works for self.DEPTH @ 15
+        x = (lane + 0.5) / 5.0
+        y = (500.0 - jump) / 500.0
+        z = WORLD_DEPTH * (distance+0.5) / self.DEPTH
 
-        # position of the eye
-        zeye = width * 1.2   # Assumed distance from Screen
-        xeye = width * 0.5   # Middle of the screen
-        yeye = height * 0.33 # High horizon
-
-        # translate from game to world coordinates
-        x = (lane + 0.5) / 5.0 * width
-        y = (500.0 - jump) / 500.0 * height
-        z = depth * (distance+0.5) / self.DEPTH
-
-        # projection
-        xs = (zeye * (x - xeye)) / (zeye + z)
-        ys = (zeye * (y - yeye)) / (zeye + z)
-
-        return (xs+xeye, ys+yeye)
+        return (x, y, z)
 
 
     def draw(self, screen):
@@ -235,6 +225,8 @@ class Game(Scene):
                             pass
                         elif c < 0:
                             # picked up a coin
+                            player_points = [self.app.screen.projection(*point)
+                                             for point in player_points]
                             self.pickupscores.append(PickupScore(self.app,
                                 center(player_points), "10"))
 
@@ -244,11 +236,11 @@ class Game(Scene):
                         enemy = self.enemies[column.name]
                         draw_queue.append((y, enemy, points))
                     else:
-                        draw.polygon(screen, color, points)
+                        self.app.screen.draw_polygon(color, points)
 
         # Draw all enemies (+player), back-to-front for proper stacking order
         for _, sprite, points in sorted(draw_queue, reverse=True):
-            sprite.draw(screen, points)
+            self.app.screen.draw_sprite(sprite, points)
 
         text_surf = self.font.render('Coins: %d' % (self.player.coins_collected,), True, (255, 255, 0))
         screen.blit(text_surf, (20, 20))

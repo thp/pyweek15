@@ -6,6 +6,9 @@ class Screen(object):
         if fullscreen:
             flags = pygame.FULLSCREEN
 
+        self.width = width
+        self.height = height
+
         self.display = pygame.display.set_mode((width, height), flags)
         pygame.display.set_caption(title)
 
@@ -20,7 +23,12 @@ class Screen(object):
 
 
     def projection(self, x, y, z):
-        """Project 3D coordinates onto the screen."""
+        """Project world coordinates onto the screen.
+        The world's dimensions are 1x1xWORLD_DEPTH"""
+
+        x = x * self.width
+        y = y * self.height
+        z = z * self.width
 
         # projection
         xs = (self.zeye * (x - self.xeye)) / (self.zeye + z) + self.xeye
@@ -28,3 +36,16 @@ class Screen(object):
 
         return (xs, ys)
 
+ 
+    def draw_polygon(self, color, points):
+        """Project a polygon onto the screen.
+        Coordinates are given in world coordinates."""
+        points = [self.projection(*point) for point in points]
+        pygame.draw.polygon(self.display, color, points)
+
+
+    def draw_sprite(self, sprite, points):
+        """Project a sprite onto the screen.
+        Coordinates are given in world coordinates."""
+        points = [self.projection(*point) for point in points]
+        sprite.draw(self.display, points)
