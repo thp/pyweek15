@@ -32,6 +32,7 @@ ENEMY_NAMES = [
     'fishy_rainbow',
     'fishy_red',
     'fishy_deepsea',
+    'diver',
     'seaweed',
     'lanternfish',
     'shell',
@@ -261,14 +262,8 @@ class Game(Scene):
         for _, sprite, points in sorted(draw_queue, reverse=True):
             self.app.screen.draw_sprite(sprite, points)
 
-        # text_surf = self.font.render('Health:', True, (0, 255, 0))
-        # screen.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
-        # draw.rect(screen, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
-        # draw.rect(screen, (0, 90, 0), (self.width - 100 - 20, 20, self.player.health, 15))
-
         for ps in self.pickupscores:
             ps.draw(screen)
-
 
         if self.message:
             rest = self.message.split('\n', 1)

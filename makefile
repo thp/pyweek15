@@ -19,6 +19,9 @@ convert:
 	convert assets/lanternfish_1.png -resize 130x130 data/sprites/lanternfish_1.png
 	convert assets/lanternfish_2.png -resize 130x130 data/sprites/lanternfish_2.png
 	convert assets/lanternfish_3.png -resize 130x130 data/sprites/lanternfish_3.png
+	convert assets/diver_1.png -resize 130x130 data/sprites/diver_1.png
+	convert assets/diver_2.png -resize 130x130 data/sprites/diver_2.png
+	convert assets/diver_3.png -resize 130x130 data/sprites/diver_3.png
 	convert assets/fishy_rainbow_1.png -resize 130x130 data/sprites/fishy_rainbow_1.png
 	convert assets/fishy_rainbow_2.png -resize 130x130 data/sprites/fishy_rainbow_2.png
 	convert assets/fishy_red_1.png -resize 130x130 data/sprites/fishy_red_1.png
