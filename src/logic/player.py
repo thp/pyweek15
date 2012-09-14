@@ -104,7 +104,7 @@ class Player(Sprite):
         score_x_offset = 20
         text_surf = self.app.font.render('%d' % (self.coins_collected,), True, (255, 255, 0))
         screen.blit(text_surf, (score_x_offset, 0))
-        screen.blit(self.app.resman.get_sprite("pearl_icon"), (score_x_offset + text_surf.get_width(), -26))
+        screen.blit(self.app.resman.get_sprite("pearlcount_icon"), (score_x_offset + text_surf.get_width() + 3, 3))
 
         if self.blinking and (self.blinking / 3) % 2 == 0:
             return

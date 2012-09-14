@@ -37,7 +37,7 @@ convert:
 	convert assets/shell.png -resize 100x100 data/sprites/shell.png
 	convert assets/sandboxtoys.png -resize 98x98 data/sprites/sandboxtoys.png
 	convert assets/pearl.png -resize 100x100 data/sprites/pearl.png
-	convert assets/pearl.png -resize 80x80 data/sprites/pearl_icon.png
+	convert assets/pearlcount_icon.png -resize 20x20 data/sprites/pearlcount_icon.png
 	convert assets/levelbg_test.png -resize 800x480 data/sprites/bg.png
 
 install:
