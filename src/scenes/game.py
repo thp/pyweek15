@@ -17,7 +17,7 @@ WORLD_DEPTH = 10 # fudge factor... works for self.DEPTH @ 15
 
 # XXX: This should be removed once we have proper gfx
 colors = {
-    'coin': (255, 255, 0),
+    #'coin': (255, 255, 0),
     'stone': (0, 0, 255),
     'lanternfish': (0, 255, 0),
     'sixpack': (100, 100, 100),
@@ -28,6 +28,7 @@ MAX_DEST_X = 4
 
 # This is not just enemies, but also pick-ups (for whatever reason)
 ENEMY_NAMES = [
+    'pearl',
     'lanternfish',
     'shell',
     'oyster_0_pearl',
@@ -72,7 +73,6 @@ class Game(Scene):
 
         for key in ENEMY_NAMES:
             self.enemies[key] = Enemy(self.app, key)
-
 
     def resume(self, arg):
         super(Game, self).resume(self)

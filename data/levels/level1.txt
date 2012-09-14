@@ -8,7 +8,7 @@
 # g=tortoise
 #
 # :pickups:
-# f=coin
+# f=pearl
 # i=fishes
 # j=roses
 # k=oyster_0_pearl
@@ -108,10 +108,10 @@ bbb f
 f  bb
 
 
-!And sometimes it was useful to pick up lots of coins at once.
+!And sometimes it was useful to pick up lots of pearls at once.
 
 
-!Which you did by swimming through the coins quickly.
+!Which you did by swimming through the pearls quickly.
 
 
 !(..I'm sure you remeber that you did that with the Up button..)
