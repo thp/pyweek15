@@ -1,5 +1,6 @@
 import pygame
 
+
 class Screen(object):
     def __init__(self, app, title, width, height, fullscreen=True):
         self.app = app
@@ -57,14 +58,22 @@ class Screen(object):
         """Draw bonus and health bar."""
         font = self.app.resman.font("visitor2", 48)
 
+        # bonus
         text_surf = font.render('%d' % bonus, True, (255, 255, 0))
         self.display.blit(text_surf, (10, 0))
         self.display.blit(self.app.resman.get_sprite("pearl_icon"), (35, -26))
 
-        #text_surf = font.render('Health:', True, (0, 255, 0))
-        #self.display.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
-        #pygame.draw.rect(self.display, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
-        #pygame.draw.rect(self.display, (0, 90, 0), (self.width - 100 - 20, 20, health, 15))
+        # health
+        icon_width = 30
+        max_icons = 3
+        icon_spacing = 10
+        x_offset = self.width - (max_icons * (icon_width + icon_spacing) + icon_spacing)
+        y_offset = 5
+
+        for i in range(max_icons-1, -1, -1):
+            health, rest = min(health, 3*i), max(health - 3*i, 0)
+            sprite = self.app.resman.get_sprite("whale_ico_%d" % rest)
+            self.display.blit(sprite, (x_offset + i * (icon_width + icon_spacing), y_offset))
 
 
     def draw_message(self, message):
