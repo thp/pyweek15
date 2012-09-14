@@ -43,7 +43,7 @@ class Screen(object):
         """Project a polygon onto the screen.
         Coordinates are given in world coordinates."""
         points = [self.projection(*point) for point in points]
-        pygame.draw.polygon(self.display, color, points)
+        pygame.draw.polygon(self.display, color, points, 1)
 
 
     def draw_sprite(self, sprite, points):
@@ -57,13 +57,14 @@ class Screen(object):
         """Draw bonus and health bar."""
         font = self.app.resman.font("visitor2", 48)
 
-        text_surf = font.render('Coins: %d' % bonus, True, (255, 255, 0))
-        self.display.blit(text_surf, (20, 20))
+        text_surf = font.render('%d' % bonus, True, (255, 255, 0))
+        self.display.blit(text_surf, (10, 0))
+        self.display.blit(self.app.resman.get_sprite("pearl_icon"), (35, -26))
 
-        text_surf = font.render('Health:', True, (0, 255, 0))
-        self.display.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
-        pygame.draw.rect(self.display, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
-        pygame.draw.rect(self.display, (0, 90, 0), (self.width - 100 - 20, 20, health, 15))
+        #text_surf = font.render('Health:', True, (0, 255, 0))
+        #self.display.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
+        #pygame.draw.rect(self.display, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
+        #pygame.draw.rect(self.display, (0, 90, 0), (self.width - 100 - 20, 20, health, 15))
 
 
     def draw_message(self, message):

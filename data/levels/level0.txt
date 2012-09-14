@@ -6,11 +6,14 @@
 # d=iceberg
 # e=treasurechest
 # g=tortoise
+# w=seaweed
+# x=sandboxtoys
 #
 # :pickups:
-# f=coin
-# i=fishes
-# j=roses
+# f=pearl
+# h=fishy_rainbow
+# i=fishy_deepsea
+# j=fishy_red
 # k=oyster_0_pearl
 # l=oyster_1_pearl
 # m=oyster_2_pearl
@@ -27,31 +30,32 @@
 #
 
 f
-kkkkk
-kkkkk
-kkkkk
-kkkkk
-kkkkk
-kkkkk
-kkkkk
-kkkkk
-kkkkk
-kkbkk
-kkbkk
-kkbkk
-kkbkk
-kkbkk
-kkbkk
-kkbkk
-bbkbb
-bbkbb
-bbkbb
-bbkbb
-bbkbb
-bbkbb
-bbkbb
-  jji
-  ffk
 
-  ff
-  f
+kkkkk
+kkkkk
+kkkkk
+w   w
+hijhi
+jhijh
+ijhij
+w   w
+wkkkw
+wkkkw
+wkkkw
+wwwww
+kkbkk
+kkbkk
+kkbkk
+w   w
+
+xxxxx
+
+bbkbb
+bbkbb
+bbkbb
+bbkbb
+w jji
+w ffk
+w
+w ff
+w  f

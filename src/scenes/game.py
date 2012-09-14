@@ -16,7 +16,7 @@ WORLD_DEPTH = 10 # fudge factor... works for self.DEPTH @ 15
 
 # XXX: This should be removed once we have proper gfx
 colors = {
-    'coin': (255, 255, 0),
+    #'coin': (255, 255, 0),
     'stone': (0, 0, 255),
     'lanternfish': (0, 255, 0),
     'sixpack': (100, 100, 100),
@@ -27,8 +27,14 @@ MAX_DEST_X = 4
 
 # This is not just enemies, but also pick-ups (for whatever reason)
 ENEMY_NAMES = [
+    'pearl',
+    'fishy_rainbow',
+    'fishy_red',
+    'fishy_deepsea',
+    'seaweed',
     'lanternfish',
     'shell',
+    'sandboxtoys',
     'oyster_0_pearl',
     'oyster_1_pearl',
     'oyster_2_pearl',
@@ -48,7 +54,8 @@ class Game(Scene):
         super(Game, self).__init__(app)
         self.font = font.SysFont('dejavu sans', 16)
 
-        self._init(self.app.level_nr, 0, 100)
+        # health is 9: 3 lives are grouped per 3.
+        self._init(self.app.level_nr, score=0, health=9)
 
 
     def _init(self, level_nr, score, health):

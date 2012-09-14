@@ -103,7 +103,6 @@ class Level:
     def set_meta(self, key, value):
         if key == 'speed':
             self.speed = int(value)
-            print 'level speed:', self.speed
 
     def lookup(self, char):
         if char == ' ':

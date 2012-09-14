@@ -19,11 +19,22 @@ convert:
 	convert assets/lanternfish_1.png -resize 130x130 data/sprites/lanternfish_1.png
 	convert assets/lanternfish_2.png -resize 130x130 data/sprites/lanternfish_2.png
 	convert assets/lanternfish_3.png -resize 130x130 data/sprites/lanternfish_3.png
+	convert assets/fishy_rainbow_1.png -resize 130x130 data/sprites/fishy_rainbow_1.png
+	convert assets/fishy_rainbow_2.png -resize 130x130 data/sprites/fishy_rainbow_2.png
+	convert assets/fishy_red_1.png -resize 130x130 data/sprites/fishy_red_1.png
+	convert assets/fishy_red_2.png -resize 130x130 data/sprites/fishy_red_2.png
+	convert assets/fishy_deepsea_1.png -resize 130x130 data/sprites/fishy_deepsea_1.png
+	convert assets/fishy_deepsea_2.png -resize 130x130 data/sprites/fishy_deepsea_2.png
+	convert assets/seaweed_1.png -resize 130x130 data/sprites/seaweed_1.png
+	convert assets/seaweed_2.png -resize 130x130 data/sprites/seaweed_2.png
 	convert assets/oyster_0_pearl.png -resize 105x105 data/sprites/oyster_0_pearl.png
 	convert assets/oyster_1_pearl.png -resize 105x105 data/sprites/oyster_1_pearl.png
 	convert assets/oyster_2_pearl.png -resize 105x105 data/sprites/oyster_2_pearl.png
 	convert assets/oyster_3_pearl.png -resize 105x105 data/sprites/oyster_3_pearl.png
 	convert assets/shell.png -resize 100x100 data/sprites/shell.png
+	convert assets/sandboxtoys.png -resize 98x98 data/sprites/sandboxtoys.png
+	convert assets/pearl.png -resize 100x100 data/sprites/pearl.png
+	convert assets/pearl.png -resize 80x80 data/sprites/pearl_icon.png
 	convert assets/levelbg_test.png -resize 800x480 data/sprites/bg.png
 
 install:
