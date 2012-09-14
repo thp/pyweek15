@@ -227,8 +227,9 @@ class Game(Scene):
                             # picked up a coin
                             player_points = [self.app.screen.projection(*point)
                                              for point in player_points]
-                            self.pickupscores.append(PickupScore(self.app,
-                                center(player_points), "10"))
+                            # we don't want these? maybe later?
+                            #self.pickupscores.append(PickupScore(self.app,
+                            #    center(player_points), "10"))
 
                     points = self.mkpoints(x, y)
                     color = shade_color(color, yidx-self.time, self.DEPTH)
