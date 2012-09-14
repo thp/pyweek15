@@ -11,6 +11,7 @@ nr_frames = {
     "fishy_rainbow": 2,
     "fishy_red": 2,
     "fishy_deepsea": 2,
+    "seaweed": 2,
 }
 
 

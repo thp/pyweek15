@@ -25,6 +25,8 @@ convert:
 	convert assets/fishy_red_2.png -resize 130x130 data/sprites/fishy_red_2.png
 	convert assets/fishy_deepsea_1.png -resize 130x130 data/sprites/fishy_deepsea_1.png
 	convert assets/fishy_deepsea_2.png -resize 130x130 data/sprites/fishy_deepsea_2.png
+	convert assets/seaweed_1.png -resize 130x130 data/sprites/seaweed_1.png
+	convert assets/seaweed_2.png -resize 130x130 data/sprites/seaweed_2.png
 	convert assets/oyster_0_pearl.png -resize 105x105 data/sprites/oyster_0_pearl.png
 	convert assets/oyster_1_pearl.png -resize 105x105 data/sprites/oyster_1_pearl.png
 	convert assets/oyster_2_pearl.png -resize 105x105 data/sprites/oyster_2_pearl.png

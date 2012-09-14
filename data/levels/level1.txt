@@ -6,6 +6,7 @@
 # d=iceberg
 # e=treasurechest
 # g=tortoise
+# w=seaweed
 #
 # :pickups:
 # f=pearl
@@ -31,12 +32,12 @@
 
 
 
-k
-k
-k
-k
-k
-k
+k w
+k w
+k w
+k w
+k w
+k w
 
 
 
