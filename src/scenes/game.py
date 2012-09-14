@@ -97,9 +97,10 @@ class Game(Scene):
             self.player.y += 1
             self.message = self.level.get_message(self.player.y)
 
+        print self.player.y
         if self.level.exceeds_row(self.player.y):
             ## TODO: animate level end
-            pass
+            self.next_state = ("MainMenu", None)
 
         if self.i % self.KEYBOARD_REPEAT_MOD == 0:
             next_x = self.player.dest_x + self.direction
