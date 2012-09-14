@@ -98,6 +98,12 @@ class Player(Sprite):
     def draw(self, screen, points):
         self._draw_health(screen)
 
+        # draw score
+        score_x_offset = 20
+        text_surf = self.app.font.render('%d' % (self.coins_collected,), True, (255, 255, 0))
+        screen.blit(text_surf, (score_x_offset, 0))
+        screen.blit(self.app.resman.get_sprite("pearl_icon"), (score_x_offset + text_surf.get_width(), -26))
+
         if self.blinking and (self.blinking / 3) % 2 == 0:
             return
 

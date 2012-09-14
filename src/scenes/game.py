@@ -261,10 +261,6 @@ class Game(Scene):
         for _, sprite, points in sorted(draw_queue, reverse=True):
             self.app.screen.draw_sprite(sprite, points)
 
-        text_surf = self.app.font.render('%d' % (self.player.coins_collected,), True, (255, 255, 0))
-        screen.blit(text_surf, (10, 0))
-        screen.blit(self.app.resman.get_sprite("pearl_icon"), (35, -26))
-
         # text_surf = self.font.render('Health:', True, (0, 255, 0))
         # screen.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
         # draw.rect(screen, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
