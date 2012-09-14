@@ -1,7 +1,9 @@
 import pygame
 
 class Screen(object):
-    def __init__(self, title, width, height, fullscreen=True):
+    def __init__(self, app, title, width, height, fullscreen=True):
+        self.app = app
+
         flags = 0
         if fullscreen:
             flags = pygame.FULLSCREEN

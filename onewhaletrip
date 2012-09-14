@@ -16,7 +16,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from engine.app import App
-from engine.screen import Screen
 from scenes.game import Game
 from scenes.menu import MainMenu
 from scenes.intro import Intro
@@ -34,12 +33,7 @@ SCREEN_HEIGHT = 480
 
 pygame.init()
 
-screen = Screen(title=TITLE,
-                width=SCREEN_WIDTH,
-                height=SCREEN_HEIGHT,
-                fullscreen=arguments['--fullscreen'])
-
-app = App(screen=screen,
+app = App(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, arguments['--fullscreen'],
           scenes=[Intro, MainMenu, Game, GameOver, CutScene, Victory, Outro],
           entry=arguments['--scene'] or "Game",
           level_nr=arguments['--level'] or 0

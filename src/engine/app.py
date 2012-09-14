@@ -2,14 +2,17 @@ import pygame
 import os
 from resman import ResourceManager
 from audman import AudioManager
+from screen import Screen
 
 
 class App(object):
-    def __init__(self, screen, scenes, entry, level_nr=0):
-        self.screen = screen
+    def __init__(self, title, width, height, fullscreen,
+                 scenes, entry, level_nr=0):
 
         self._clock = pygame.time.Clock()
         self.fps = 30
+
+        self.screen = Screen(self, title, width, height, fullscreen)
 
         self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
