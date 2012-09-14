@@ -50,8 +50,6 @@ class Game(Scene):
 
         self._init(self.app.level_nr, 0, 100)
 
-        self.width = 0
-        self.height = 0
 
     def _init(self, level_nr, score, health):
         self.time = 0.
@@ -151,12 +149,12 @@ class Game(Scene):
         elif event.type == MOUSEBUTTONDOWN:
             x, y = event.pos
 
-            if y < self.height / 2:
+            if y < self.app.screen.height / 2:
                 self.player.jump()
 
-            if x < self.width / 3:
+            if x < self.app.screen.width / 3:
                 go_left()
-            elif x > self.width * 2 / 3:
+            elif x > self.app.screen.width * 2 / 3:
                 go_right()
         elif event.type == MOUSEBUTTONUP:
             self.direction = 0
@@ -202,8 +200,6 @@ class Game(Scene):
     def draw(self, screen):
         screen.fill((0, 0, 0))
         screen.blit(self.app.resman.get_sprite('bg'), (0, 0))
-        self.width, self.height = screen.get_size()
-
 
         x = self.player.x
         y = self.time
