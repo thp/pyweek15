@@ -9,8 +9,9 @@
 #
 # :pickups:
 # f=pearl
-# i=fishes
-# j=roses
+# h=fishy_rainbow
+# i=fishy_deepsea
+# j=fishy_red
 # k=oyster_0_pearl
 # l=oyster_1_pearl
 # m=oyster_2_pearl
@@ -30,7 +31,9 @@ f
 kkkkk
 kkkkk
 kkkkk
-kkkkk
+hijhi
+jhijh
+ijhij
 kkkkk
 kkkkk
 kkkkk

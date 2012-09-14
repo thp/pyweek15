@@ -29,6 +29,9 @@ MAX_DEST_X = 4
 # This is not just enemies, but also pick-ups (for whatever reason)
 ENEMY_NAMES = [
     'pearl',
+    'fishy_rainbow',
+    'fishy_red',
+    'fishy_deepsea',
     'lanternfish',
     'shell',
     'oyster_0_pearl',

@@ -1,9 +1,18 @@
 
 from engine.sprite import Sprite
 
-from logic.lamemath import center, center_in, shade_color
+from logic.lamemath import center
 
 from pygame import transform
+
+# some objects have 2 or 3 frames
+nr_frames = {
+    "lanternfish": 3,
+    "fishy_rainbow": 2,
+    "fishy_red": 2,
+    "fishy_deepsea": 2,
+}
+
 
 class Enemy(Sprite):
     def __init__(self, app, name):
@@ -11,7 +20,7 @@ class Enemy(Sprite):
         if self.app.resman.get_sprite(name) is not None:
             self.init(name, 1)
         else:
-            self.init(name + '_%d', 3)
+            self.init(name + '_%d', nr_frames[name])
 
     def step(self):
         self.process()
@@ -35,4 +44,3 @@ class Enemy(Sprite):
         # polygon aligned with the bottom of the enemy
 
         screen.blit(sprite, (x, y))
-
