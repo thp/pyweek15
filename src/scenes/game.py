@@ -35,6 +35,7 @@ ENEMY_NAMES = [
     'seaweed',
     'lanternfish',
     'shell',
+    'sandboxtoys',
     'oyster_0_pearl',
     'oyster_1_pearl',
     'oyster_2_pearl',
