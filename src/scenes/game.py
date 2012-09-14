@@ -49,12 +49,12 @@ class Game(Scene):
         super(Game, self).__init__(app)
         self.font = font.SysFont('dejavu sans', 16)
 
-        self._init(self.app.level_nr)
+        self._init(self.app.level_nr, 0, 100)
 
         self.width = 0
         self.height = 0
 
-    def _init(self, level_nr):
+    def _init(self, level_nr, score, health):
         self.time = 0.
         self.i = 0
         self.direction = 0
@@ -63,7 +63,7 @@ class Game(Scene):
 
         self.level = Level(self.app.get_filename('levels/level%s.txt' % level_nr))
 
-        self.player = Player(self.app)
+        self.player = Player(self.app, health=health, coins_collected=score)
         self.pickupscores = []
 
         self.message = None
@@ -77,7 +77,7 @@ class Game(Scene):
     def resume(self, arg):
         super(Game, self).resume(self)
         if arg and 'next_level' in arg.keys():
-            self._init(arg['next_level'])
+            self._init(arg['next_level'], arg['score'], arg['health'])
 
     def process(self):
         #if self.message:
@@ -106,7 +106,10 @@ class Game(Scene):
 
         if self.level.exceeds_row(self.player.y):
             # animate level end
-            self.next_state = ("CutScene", None)
+            self.next_state = ("CutScene", {
+                    "score": self.player.coins_collected,
+                    "health": self.player.health
+                })
 
         if self.i % self.KEYBOARD_REPEAT_MOD == 0:
             next_x = self.player.dest_x + self.direction

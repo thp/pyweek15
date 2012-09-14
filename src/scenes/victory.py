@@ -8,7 +8,7 @@ class Victory(Scene):
         if event.type == QUIT:
             self.next_state = ("MainMenu", None)
         elif event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
+            if event.key in [K_ESCAPE, K_RETURN, K_SPACE]:
                 self.next_state = ("MainMenu", None)
 
     def draw(self, screen):

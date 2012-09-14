@@ -8,14 +8,14 @@ class Player(Sprite):
     GRAVITY = 1.2  # .981
     BLINKING_FRAMES = 20
 
-    def __init__(self, app):
+    def __init__(self, app, health=100, coins_collected=0):
         self.x = 2
         self.y = 0
         self.dest_x = 2
         self.height = 0
         self.vertical_velocity = 0
-        self.coins_collected = 0
-        self.health = 100
+        self.coins_collected = coins_collected
+        self.health = health
         self.can_jump = True
         self.app = app
         self.blinking = 0

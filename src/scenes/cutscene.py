@@ -13,6 +13,7 @@ class CutScene(Scene):
     def resume(self, args):
         super(CutScene, self).resume(self)
         self.score = args['score'] if args and 'score' in args.keys() else None
+        self.health = args['health'] if args and 'health' in args.keys() else None
 
     def _advance(self):
         # TODO:
@@ -21,7 +22,10 @@ class CutScene(Scene):
         next_level = self.app.next_level()
         if next_level != None:
             self.app.level_nr = int(self.app.level_nr) + 1
-            self.next_state = ("Game", {"next_level": next_level})
+            self.next_state = ("Game", {"next_level": next_level,
+             'health': self.health,
+             'score': self.score,
+             })
         else:
             self.next_state = ("Victory", {"score": self.score})
         #    continue to next Game
