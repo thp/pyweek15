@@ -18,6 +18,7 @@ class ResourceManager():
         self._surfaces = {}
         self._sounds = {}
         self._fonts = {}
+        self._levels = {}
         self._load_all()
 
     def _load_all(self):
@@ -37,6 +38,14 @@ class ResourceManager():
             bn = os.path.basename(fn).replace(ext, "")
             sound = mixer.Sound(fn)
             self._sounds[bn] = sound
+
+        ## load levels
+        ext = ".txt"
+        for fn in glob.glob(resource_path("data/levels") + "/*%s" % ext):
+            bn = os.path.basename(fn).replace(ext, "")
+            level = None
+            self._levels[bn] = level
+
 
     def get_sprite(self, name):
         return self._surfaces.get(name)

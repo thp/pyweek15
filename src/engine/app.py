@@ -2,7 +2,6 @@ import pygame
 import os
 from resman import ResourceManager
 from audman import AudioManager
-from logic.level import last_level
 
 
 class App(object):
@@ -21,7 +20,7 @@ class App(object):
         self.font_small = self.resman.get_font("visitor2_20")
 
         self.level_nr = level_nr
-        self.last_level = last_level()
+        self.last_level = len(self.resman._levels) + 1
 
         self._scenes = []
         for scene in scenes:

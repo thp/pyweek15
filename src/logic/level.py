@@ -1,17 +1,5 @@
 
 import re
-from glob import glob
-from engine.resman import resource_path
-import os
-
-
-def last_level():
-    """ Called once when App starts.
-    looks into "data/levels" and returns 27 if the largest level is "level27.txt"
-    """
-    s = resource_path("data/levels") + "/*.txt"
-    files = glob(s)
-    return max(map(lambda x: int(re.search("level(\d+).txt", os.path.basename(x)).group(1)), files))
 
 
 class Item:
