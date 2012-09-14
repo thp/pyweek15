@@ -5,9 +5,10 @@ Usage: main [ ( -l <level> | -s <scene> ) ] [ -f <fullscreen> ]
 Options:
     -l, --level <level>  start with level x
     -s, --scene <scene>  start with scene x
-    -f, --fullscreen <fullscreen>  1 or 0
+    -f, --fullscreen
 """
 
+import pygame
 import sys
 import os
 
@@ -15,17 +16,30 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from engine.app import App
+from engine.screen import Screen
 from scenes.game import Game
 from scenes.menu import MainMenu
 
 from docopt import docopt
 arguments = docopt(__doc__)
 
-app = App(title="One Whale Trip",
-          resolution=(800, 480),
-          fullscreen=arguments['--fullscreen'] or "1",
+
+TITLE = "One Whale Trip"
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 480
+
+pygame.init()
+
+screen = Screen(title=TITLE,
+                width=SCREEN_WIDTH,
+                height=SCREEN_HEIGHT,
+                fullscreen=arguments['--fullscreen'])
+
+app = App(screen=screen,
           scenes=[MainMenu, Game],
           entry=arguments['--scene'] or "Game",
           level_nr=arguments['--level'] or 1
           )
+
 app.run()
+pygame.quit()

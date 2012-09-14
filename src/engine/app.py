@@ -5,11 +5,8 @@ from audman import AudioManager
 
 
 class App(object):
-    def __init__(self, title, resolution, scenes, entry, level_nr=0, fullscreen="0"):
-        pygame.init()
-        fsc_flag = pygame.FULLSCREEN if fullscreen == "1" else 0
-        self.screen = pygame.display.set_mode(resolution, fsc_flag)
-        pygame.display.set_caption(title)
+    def __init__(self, screen, scenes, entry, level_nr=0):
+        self.screen = screen
 
         self._clock = pygame.time.Clock()
         self.fps = 30
@@ -59,13 +56,12 @@ class App(object):
             for event in events:
                 self.scene.process_input(event)
 
-            self.scene.draw(self.screen)
+            self.scene.draw(self.screen.display)
 
             # write fps
             fps_surf = self.font_small.render("FPS: %2.2f" % self._clock.get_fps(),
                 False, (255, 255, 255), (0, 0, 0))
-            self.screen.blit(fps_surf, (0, 0))
+            self.screen.display.blit(fps_surf, (0, 0))
 
-            pygame.display.flip()
+            self.screen.update()
 
-        pygame.quit()
