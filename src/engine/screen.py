@@ -41,7 +41,7 @@ class Screen(object):
         """Project a polygon onto the screen.
         Coordinates are given in world coordinates."""
         points = [self.projection(*point) for point in points]
-        pygame.draw.polygon(self.display, color, points)
+        pygame.draw.polygon(self.display, color, points, 1)
 
 
     def draw_sprite(self, sprite, points):

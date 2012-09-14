@@ -55,7 +55,8 @@ class Game(Scene):
         super(Game, self).__init__(app)
         self.font = font.SysFont('dejavu sans', 16)
 
-        self._init(self.app.level_nr, 0, 100)
+        # health is 9: 3 lives are grouped per 3.
+        self._init(self.app.level_nr, score=0, health=9)
 
         self.width = 0
         self.height = 0
@@ -264,10 +265,10 @@ class Game(Scene):
         screen.blit(text_surf, (10, 0))
         screen.blit(self.app.resman.get_sprite("pearl_icon"), (35, -26))
 
-        text_surf = self.font.render('Health:', True, (0, 255, 0))
-        screen.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
-        draw.rect(screen, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
-        draw.rect(screen, (0, 90, 0), (self.width - 100 - 20, 20, self.player.health, 15))
+        # text_surf = self.font.render('Health:', True, (0, 255, 0))
+        # screen.blit(text_surf, (self.width - 100 - 20 - 10 - text_surf.get_size()[0], 20 + 15./2 - text_surf.get_size()[1]/2.))
+        # draw.rect(screen, (90, 0, 0), (self.width - 100 - 20, 20, 100, 15))
+        # draw.rect(screen, (0, 90, 0), (self.width - 100 - 20, 20, self.player.health, 15))
 
         for ps in self.pickupscores:
             ps.draw(screen)

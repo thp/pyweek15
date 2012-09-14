@@ -4,6 +4,20 @@ from pygame import transform
 
 from logic.lamemath import center
 
+# 0: no hits, 1: light damage, 2: severe damage, -1: no icon
+life_icon = {
+    "9": [0, 0, 0],
+    "8": [0, 0, 1],
+    "7": [0, 0, 2],
+    "6": [0, 0, -1],
+    "5": [0, 1, -1],
+    "4": [0, 2, -1],
+    "3": [0, -1, -1],
+    "2": [1, -1, -1],
+    "1": [2, -1, -1],
+    "0": [-1, -1, -1],
+}
+
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
@@ -16,6 +30,7 @@ class Player(Sprite):
         self.height = 0
         self.vertical_velocity = 0
         self.coins_collected = coins_collected
+        self.max_health = health
         self.health = health
         self.can_jump = True
         self.app = app
@@ -29,20 +44,25 @@ class Player(Sprite):
             self.app.audman.sfx("jump", 1)
 
     def picked_up(self, thingie):
-        #print 'i picked up a', thingie
-        if thingie == 'coin':
+        if thingie == 'pearl':
             self.coins_collected += 1
-            self.app.audman.sfx("coin")
+            self.app.audman.sfx("pearl")
         elif thingie == 'oyster_1_pearl':
-            self.coins_collected += 10
+            self.coins_collected += 1
+            self.app.audman.sfx("pearl")
         elif thingie == 'oyster_2_pearl':
-            self.coins_collected += 20
+            self.coins_collected += 2
+            self.app.audman.sfx("pearl")
         elif thingie == 'oyster_3_pearl':
-            self.coins_collected += 30
+            self.coins_collected += 3
+            self.app.audman.sfx("pearl")
+        elif thingie.startswith("fishy"):
+            if self.health < self.max_health:
+                self.health += 1
 
     def crashed(self):
         if not self.blinking:
-            self.health -= 20
+            self.health -= 1
             self.app.audman.sfx("crash")
             self.blinking = self.BLINKING_FRAMES
 
@@ -61,7 +81,23 @@ class Player(Sprite):
             self.blinking -= 1
         self.process()
 
+    def _draw_health(self, screen):
+        icon_width = 30
+        max_icons = 3
+        icon_spacing = 10
+        x_offset = screen.get_width() - (max_icons * (icon_width + icon_spacing) + icon_spacing)
+        y_offset = 5
+
+        hits = life_icon[str(self.health)]
+        for i in xrange(max_icons):
+            h = hits[i]
+            if h >= 0:
+                sprite = self.app.resman.get_sprite("whale_ico_%d" % h)
+                screen.blit(sprite, (x_offset + i * (icon_width + icon_spacing), y_offset))
+
     def draw(self, screen, points):
+        self._draw_health(screen)
+
         if self.blinking and (self.blinking / 3) % 2 == 0:
             return
 
