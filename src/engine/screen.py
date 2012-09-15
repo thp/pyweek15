@@ -71,24 +71,26 @@ class Screen(object):
     def draw_stats(self, bonus, health):
         """Draw bonus and health bar."""
         font = self.app.resman.font("visitor2", 38)
+        offset = 10
 
         # bonus
-        text_surf = font.render('%d' % bonus, True, (255, 255, 0))
-        self.display.blit(text_surf, (10, 0))
+        pos_x, pos_y = offset, offset
         icon = self.app.resman.get_sprite("pearlcount_icon")
-        self.display.blit(icon, (text_surf.get_width() + icon.get_width(), 3))
+        self.display.blit(icon, (offset, offset))
+
+        pos_x += icon.get_width() + offset
+        text_surf = font.render('%d' % bonus, True, (255, 255, 0))
+        self.display.blit(text_surf, (pos_x, pos_y-3))
 
         # health
-        icon_width = 30
-        max_icons = 3
-        icon_spacing = 10
-        x_offset = self.width - (max_icons * (icon_width + icon_spacing) + icon_spacing)
-        y_offset = 5
+        pos_x, pos_y = self.width, offset
 
-        for i in range(max_icons-1, -1, -1):
-            health, rest = min(health, 3*i), max(health - 3*i, 0)
+        while health > 0:
+            health, rest = health - 3, min(health, 3)
             sprite = self.app.resman.get_sprite("whale_ico_%d" % rest)
-            self.display.blit(sprite, (x_offset + i * (icon_width + icon_spacing), y_offset))
+            icon_width = sprite.get_width()
+            pos_x -= icon_width + offset
+            self.display.blit(sprite, (pos_x, pos_y))
 
 
     def draw_message(self, message):
