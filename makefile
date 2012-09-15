@@ -37,6 +37,10 @@ convert:
 	convert assets/shell.png -resize 100x100 data/sprites/shell.png
 	convert assets/sandboxtoys.png -resize 98x98 data/sprites/sandboxtoys.png
 	convert assets/pearl.png -resize 100x100 data/sprites/pearl.png
+	cp assets/whale_ico_0.png data/sprites/whale_ico_0.png
+	convert assets/whale_icon_1.png -resize 41x41 data/sprites/whale_ico_3.png
+	convert assets/whale_icon_2.png -resize 41x41 data/sprites/whale_ico_2.png
+	convert assets/whale_icon_3.png -resize 41x41 data/sprites/whale_ico_1.png
 	convert assets/pearlcount_icon.png -resize 20x20 data/sprites/pearlcount_icon.png
 	convert assets/levelbg_test.png -resize 800x480 data/sprites/bg.png
 
