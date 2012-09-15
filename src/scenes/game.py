@@ -207,6 +207,9 @@ class Game(Scene):
 
     def draw(self):
         self.app.screen.clear()
+        pos = int(self.time + self.player.y)
+        sprite_name = self.level.backgrounds[pos % len(self.level.backgrounds)]
+        self.app.screen.display.blit(self.app.resman.get_sprite(sprite_name), (0, 0))
 
         x = self.player.x
         y = self.time

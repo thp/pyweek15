@@ -23,9 +23,8 @@ class ResourceManager():
 
     def _load_all(self):
         ## load sprites
-        ext = ".png"
-        for fn in glob.glob(self._path('sprites') + "/*%s" % ext):
-            bn = os.path.basename(fn).replace(ext, "")
+        for fn in glob.glob(os.path.join(self._path('sprites'), '*')):
+            bn, _ = os.path.splitext(os.path.basename(fn))
             surf = pygame.image.load(fn)
             surf = surf.convert_alpha()
             self._surfaces[bn] = surf

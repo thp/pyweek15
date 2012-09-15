@@ -21,6 +21,7 @@
 #
 # :meta:
 # speed=10
+# backgrounds=bg_surreal_1,bg_surreal_2,bg_surreal_3
 # 
 # :story:
 # this is the story,
