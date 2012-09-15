@@ -36,9 +36,12 @@ class ResourceManager():
         ## load backgrounds
         for fn in sorted(glob.glob(self._path('backgrounds', "*.jpg"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
-            print bn
+            key, frame = bn.split('-')
             surf = pygame.image.load(fn)
-            self._backgrounds[bn] = surf
+            if key in self._backgrounds:
+                self._backgrounds[key].append(surf)
+            else:
+                self._backgrounds[key] = [surf]
 
         import pygame.mixer as mixer
 

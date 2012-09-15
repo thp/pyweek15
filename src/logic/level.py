@@ -49,7 +49,7 @@ class Level:
         self.rows = []
         self.story = []  # shown during the CutScene following the level
         self.speed = self.DEFAULT_SPEED
-        self.backgrounds = ['bg']
+        self.background = 'test'
 
         self.messages = {}
 
@@ -104,8 +104,8 @@ class Level:
     def set_meta(self, key, value):
         if key == 'speed':
             self.speed = int(value)
-        elif key == 'backgrounds':
-            self.backgrounds = [x.strip() for x in value.strip().split(',')]
+        elif key == 'background':
+            self.background = value.strip()
 
     def lookup(self, char):
         if char == ' ':

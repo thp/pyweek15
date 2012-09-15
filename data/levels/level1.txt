@@ -21,7 +21,7 @@
 #
 # :meta:
 # speed=10
-# backgrounds=beach-1
+# background=beach
 #
 
 
