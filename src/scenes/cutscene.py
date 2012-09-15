@@ -1,6 +1,5 @@
 from engine.scene import Scene
 from pygame.locals import *
-from pygame import Color
 
 DELAY = 30  # frames
 
@@ -56,10 +55,9 @@ class CutScene(Scene):
                 self.next_state = ("Victory", {"score": self.score})
 
     def draw(self):
-        self.app.screen.draw_card('Cut Scene')
-        if self.i_subtitle < self.story.__len__():
-            font = self.app.resman.font("visitor2", 38)
-            sub_ren = font.render(self.story[self.i_subtitle], False, Color('white'))
-            screen = self.app.screen.display
-            pos = (screen.get_width() / 2 - sub_ren.get_width() / 2, screen.get_height() - 40)
-            screen.blit(sub_ren, pos)
+        if self.i_subtitle < len(self.story):
+            story = self.story[self.i_subtitle]
+        else:
+            story = None
+
+        self.app.screen.draw_card('Cut Scene', story)
