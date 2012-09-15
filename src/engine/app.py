@@ -60,6 +60,5 @@ class App(object):
             for event in events:
                 self.scene.process_input(event)
 
-            self.scene.draw(self.screen.display)
-
+            self.scene.draw()
             self.screen.update()

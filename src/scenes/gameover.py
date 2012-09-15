@@ -11,5 +11,5 @@ class GameOver(Scene):
             if event.key in [K_ESCAPE, K_RETURN, K_SPACE]:
                 self.next_state = ("MainMenu", None)
 
-    def draw(self, screen):
+    def draw(self):
         self.app.screen.draw_card("Game Over")

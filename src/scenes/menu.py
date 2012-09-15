@@ -11,5 +11,5 @@ class MainMenu(Scene):
             if event.key == K_ESCAPE:
                 self.next_state = ("Outro", None)
 
-    def draw(self, screen):
+    def draw(self):
         self.app.screen.draw_card("Main Menu")

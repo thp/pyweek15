@@ -204,9 +204,8 @@ class Game(Scene):
         return (x, y, z)
 
 
-    def draw(self, screen):
-        screen.fill((0, 0, 0))
-        screen.blit(self.app.resman.get_sprite('bg'), (0, 0))
+    def draw(self):
+        self.app.screen.clear()
 
         x = self.player.x
         y = self.time

@@ -11,7 +11,5 @@ class Victory(Scene):
             if event.key in [K_ESCAPE, K_RETURN, K_SPACE]:
                 self.next_state = ("MainMenu", None)
 
-    def draw(self, screen):
-        screen.fill((0, 0, 0))
-        screen.blit(self.app.font.render("VICTORY", False, (255, 255, 255)),
-            (100, 100))
+    def draw(self):
+        self.app.screen.draw_card("VICTORY!")

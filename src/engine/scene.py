@@ -13,5 +13,5 @@ class Scene(object):
     def process_input(self, event):
         pass
 
-    def draw(self, screen):
+    def draw(self):
         pass

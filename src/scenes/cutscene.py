@@ -37,12 +37,11 @@ class CutScene(Scene):
                 # or if all levels are complete, show Victory
                 self.next_state = ("Victory", {"score": self.score})
 
-    def draw(self, screen):
-        white = (255, 255, 255)
-        screen.fill((0, 0, 0))
-        screen.blit(self.app.font.render("CutScene", False, white),
-            (100, 100))
+    def draw(self):
+        self.app.screen.draw_card('Cut Scene')
         if self.i_subtitle <= self.story.__len__():
-            sub_ren = self.app.font.render(self.story[self.i_subtitle], False, white)
-            screen.blit(sub_ren, (screen.get_width() / 2 - sub_ren.get_width() / 2,
-                screen.get_height() - 40))
+            font = self.app.resman.font("visitor2", 48)
+            sub_ren = font.render(self.story[self.i_subtitle], False, pygame.Color('white'))
+            screen = self.app.screen.display
+            pos = (screen.get_width() / 2 - sub_ren.get_width() / 2, screen.get_height() - 40)
+            self.app.screen.blit(sub_ren, pos)

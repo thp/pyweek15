@@ -9,8 +9,5 @@ class Outro(Scene):
         if event.type == KEYDOWN:
             self.next_state = ("GoodBye", None)
 
-    def draw(self, screen):
-        return # skip me
-        screen.fill((0, 0, 0))
-        screen.blit(self.app.font.render("Outro", False, (255, 255, 255)),
-            (100, 100))
+    def draw(self):
+        self.app.screen.draw_card("Outro")
