@@ -46,6 +46,7 @@ convert:
 	convert assets/bg_surreal_1.jpg -resize 800x480 data/backgrounds/surreal-1.jpg
 	convert assets/bg_surreal_2.jpg -resize 800x480 data/backgrounds/surreal-2.jpg
 	convert assets/bg_surreal_3.jpg -resize 800x480 data/backgrounds/surreal-3.jpg
+	convert assets/bg_beach.jpg -resize 800x480 data/backgrounds/beach-1.jpg
 
 install:
 	mkdir -p $(DESTDIR)/opt/$(PACKAGE)/bin
