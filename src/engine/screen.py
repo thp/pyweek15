@@ -106,22 +106,32 @@ class Screen(object):
         self.display.blit(msg_surf, pos)
 
 
-    def draw_card(self, message, additional=None):
-        self.display.fill(pygame.Color('black'))
+    def draw_card(self, message, story=None, background=None, creatures=None):
+        if background:
+            self.display.blit(background, (0, 0))
+        else:
+            self.display.fill(pygame.Color('black'))
+
         font = self.app.resman.font(FONT_STD)
         color = pygame.Color('white')
 
-        offset = self.height/6 if additional else 0
-
         # main message
+        pos_x = self.width/6
         card = font.render(message, False, color)
-        center = ((self.width - card.get_width())/2,
-                  (self.height - card.get_height())/2 - offset)
-        self.display.blit(card, center)
+        self.display.blit(card, (pos_x, self.height/2 + 50))
 
         # additional message
-        if additional:
-            card = font.render(additional, False, color)
-            center = ((self.width - card.get_width())/2,
-                      (self.height - card.get_height())/2 + offset)
-            self.display.blit(card, center)
+        if story:
+            card = font.render(story, False, color)
+            self.display.blit(card, (pos_x, self.height/2 + 100))
+
+        if creatures:
+            width = sum(creature.get_width() for creature in creatures)
+            width += 20 * len(creatures)
+
+            pos_x = 3*self.width/4 - width/2
+            pos_x = min(pos_x, self.width - width)
+            for creature in creatures:
+                pos_y = self.height/3 - creature.get_height()/2
+                self.display.blit(creature, (pos_x, pos_y))
+                pos_x += creature.get_width() + 20

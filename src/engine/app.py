@@ -43,6 +43,10 @@ class App(object):
         while running:
             self._clock.tick(self.fps)
 
+            events = pygame.event.get()
+            for event in events:
+                self.scene.process_input(event)
+
             p = self.scene.process()
             if p:
                 next_scene, scene_arg = p
@@ -53,10 +57,6 @@ class App(object):
                         # scene wants to change!
                         self.scene = self._get_scene(next_scene)
                         self.scene.resume(scene_arg)
-
-            events = pygame.event.get()
-            for event in events:
-                self.scene.process_input(event)
 
             self.scene.draw()
             self.screen.update()
