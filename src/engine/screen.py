@@ -1,7 +1,5 @@
 import pygame
-
-FONT_STD = ("visitor2", 38)
-FONT_SMALL = ("visitor2", 20)
+from resman import FONT_STD, FONT_SMALL
 
 
 class Screen(object):

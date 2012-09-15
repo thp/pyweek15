@@ -3,6 +3,9 @@ import os
 import glob
 import pygame
 
+FONT_STD = ("visitor2", 38)
+FONT_SMALL = ("visitor2", 20)
+
 
 class ResourceManager():
     def __init__(self, app):
@@ -45,6 +48,15 @@ class ResourceManager():
             sound = mixer.Sound(fn)
             self._sounds[bn] = sound
 
+        ## load fonts
+        name, size = FONT_STD
+        font = pygame.font.Font(self._path('fonts', '%s.ttf' % name), size)
+        self._fonts[FONT_STD] = font
+
+        name, size = FONT_SMALL
+        font = pygame.font.Font(self._path('fonts', '%s.ttf' % name), size)
+        self._fonts[FONT_SMALL] = font
+
         ## load levels
         for fn in glob.glob(self._path("levels", "*.txt")):
             bn, _ = os.path.splitext(os.path.basename(fn))
@@ -63,8 +75,4 @@ class ResourceManager():
 
 
     def font(self, font_spec):
-        (name, size) = font_spec
-        if not (name, size) in self._fonts:
-            font = pygame.font.Font(self._path('fonts', '%s.ttf' % name), size)
-            self._fonts[(name, size)] = font
-        return self._fonts[(name, size)]
+        return self._fonts[font_spec]
