@@ -27,6 +27,9 @@ class CutScene(Scene):
         self.score = args['score'] if args and 'score' in args.keys() else None
         self.health = args['health'] if args and 'health' in args.keys() else None
         self.story = args['story'] if args and 'story' in args.keys() else None
+        self.restart = args['restart'] if args and 'restart' in args.keys() else False
+        self.i_subtitle = 0
+        self.delay = DELAY
 
     def _advance(self):
         if self.delay:
@@ -39,8 +42,11 @@ class CutScene(Scene):
             # when all text have been shown
             #    continue to next Game
             next_level = self.app.next_level()
-            if next_level != None:
-                self.app.level_nr = int(self.app.level_nr) + 1
+            if next_level != None or self.restart:
+                if not self.restart:
+                    self.app.level_nr = int(self.app.level_nr) + 1
+                else:
+                    next_level = self.app.level_nr
                 self.next_state = ("Game", {"next_level": next_level,
                  'health': self.health,
                  'score': self.score,

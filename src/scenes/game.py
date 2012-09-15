@@ -231,7 +231,14 @@ class Game(Scene):
                         c = column.collide(self.player)
                         if c > 0:
                             # do something when the player collides
-                            pass
+                            if self.player.health % 3 == 0:
+                                # lost a full life
+                                self.next_state = ("CutScene", {
+                                    "score": self.player.coins_collected,
+                                    "health": self.player.health,
+                                    "story": ['you lost a life', 'be careful next time'],
+                                    "restart": True,
+                                })
                         elif c < 0:
                             # picked up a coin
                             player_points = [self.app.screen.projection(*point)
