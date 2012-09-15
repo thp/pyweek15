@@ -66,7 +66,7 @@ class Game(Scene):
 
         self.player = Player(self.app, health=health, coins_collected=score)
 
-        self.message = None
+        #self.message = None
 
         self.enemies = {}
 
@@ -103,7 +103,7 @@ class Game(Scene):
         if self.time > 1.:
             self.time -= 1.
             self.player.y += 1
-            self.message = self.level.get_message(self.player.y)
+            #self.message = self.level.get_message(self.player.y)
 
         if self.level.exceeds_row(self.player.y):
             # animate level end
@@ -129,12 +129,12 @@ class Game(Scene):
         return super(Game, self).process()
 
     def process_input(self, event):
-        if self.message and event.type == KEYUP and event.key == K_RETURN:
-            rest = self.message.split('\n', 1)
-            if len(rest) == 2:
-                self.message = rest[1]
-            else:
-                self.message = None
+        #if self.message and event.type == KEYUP and event.key == K_RETURN:
+        #    rest = self.message.split('\n', 1)
+        #    if len(rest) == 2:
+        #        self.message = rest[1]
+        #    else:
+        #        self.message = None
 
         def go_left():
             self.direction = -1
@@ -258,9 +258,9 @@ class Game(Scene):
         self.app.screen.draw_stats(self.player.coins_collected,
                                    self.player.health)
 
-        if self.message:
-            message = self.message.split('\n', 1)[0]
-            self.app.screen.draw_message(message)
+        #if self.message:
+        #    message = self.message.split('\n', 1)[0]
+        #    self.app.screen.draw_message(message)
 
 
     def mkpoints(self, x, y, height=0.):

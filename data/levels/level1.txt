@@ -21,7 +21,7 @@
 #
 # :meta:
 # speed=10
-# background=beach
+# background=cliff
 #
 
 
