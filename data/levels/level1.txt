@@ -21,7 +21,7 @@
 #
 # :meta:
 # speed=10
-# backgrounds=bg_beach
+# backgrounds=bg_cliff_1,bg_cliff_2,bg_cliff_3,bg_cliff_3
 #
 
 
