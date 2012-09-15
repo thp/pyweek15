@@ -1,5 +1,6 @@
 from engine.scene import Scene
 from pygame.locals import *
+from pygame import Color
 
 
 class CutScene(Scene):
@@ -39,9 +40,9 @@ class CutScene(Scene):
 
     def draw(self):
         self.app.screen.draw_card('Cut Scene')
-        if self.i_subtitle <= self.story.__len__():
+        if self.i_subtitle < self.story.__len__():
             font = self.app.resman.font("visitor2", 48)
-            sub_ren = font.render(self.story[self.i_subtitle], False, pygame.Color('white'))
+            sub_ren = font.render(self.story[self.i_subtitle], False, Color('white'))
             screen = self.app.screen.display
             pos = (screen.get_width() / 2 - sub_ren.get_width() / 2, screen.get_height() - 40)
-            self.app.screen.blit(sub_ren, pos)
+            screen.blit(sub_ren, pos)

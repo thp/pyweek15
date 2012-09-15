@@ -20,7 +20,7 @@ class App(object):
         self.font_small = self.resman.font("visitor2", 20)
 
         self.level_nr = level_nr
-        self.last_level = len(self.resman._levels) + 1
+        self.last_level = len(self.resman._levels) - 1
 
         self._scenes = []
         for scene in scenes:
