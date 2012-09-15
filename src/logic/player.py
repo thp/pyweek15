@@ -79,16 +79,9 @@ class Player(Sprite):
 
         sprite_name = self.current_sprite_name()
 
-        # XXX: When the "b", and "c" images of the whale are
-        # here, change the chars= line to something like this:
-        # (note that "b" and "a" get mirrored below when dest_x >= 3)
-        chars = ['a', 'b', 'c', 'b', 'a']
-
-        sprite_name = sprite_name.replace('whale_', 'whale_%s-' % chars[self.dest_x])
+        sprite_name = sprite_name.replace('whale_', 'whale_%s-' % self.dest_x)
+        print sprite_name
         sprite = self.lookup_sprite(sprite_name)
-
-        if self.dest_x >= 3:
-            sprite = transform.flip(sprite, True, False)
 
         w, h = sprite.get_size()
         coords = center(points)
