@@ -62,9 +62,4 @@ class App(object):
 
             self.scene.draw(self.screen.display)
 
-            # write fps
-            fps_surf = self.font_small.render("FPS: %2.2f" % self._clock.get_fps(),
-                False, (255, 255, 255), (0, 0, 0))
-            self.screen.display.blit(fps_surf, (self.screen.width - fps_surf.get_width(), self.screen.height - fps_surf.get_height()))
-
             self.screen.update()

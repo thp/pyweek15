@@ -22,6 +22,7 @@ class Screen(object):
 
 
     def update(self):
+        self.draw_debug()
         pygame.display.update()
 
 
@@ -40,6 +41,15 @@ class Screen(object):
         return (xs, ys)
 
  
+    def draw_debug(self):
+            # display fps
+            font = self.app.resman.font("visitor2", 20)
+            surface = font.render("FPS: %2.2f" % self.app._clock.get_fps(), False,
+                                  pygame.Color('white'), pygame.Color('black'))
+            pos = (self.width-surface.get_width(), self.height-surface.get_height())
+            self.display.blit(surface, pos)
+
+
     def draw_polygon(self, color, points):
         """Project a polygon onto the screen.
         Coordinates are given in world coordinates."""
