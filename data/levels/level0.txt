@@ -3,7 +3,7 @@
 # a=stone
 # b=lanternfish
 # c=sixpack
-# d=iceberg
+# d=diver
 # e=treasurechest
 # g=tortoise
 # w=seaweed
@@ -49,6 +49,8 @@ kkbkk
 w   w
 
 xxxxx
+
+ddddd
 
 bbkbb
 bbkbb

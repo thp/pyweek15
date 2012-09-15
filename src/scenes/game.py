@@ -31,6 +31,7 @@ ENEMY_NAMES = [
     'fishy_rainbow',
     'fishy_red',
     'fishy_deepsea',
+    'diver',
     'seaweed',
     'lanternfish',
     'shell',

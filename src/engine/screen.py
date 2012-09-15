@@ -70,12 +70,13 @@ class Screen(object):
 
     def draw_stats(self, bonus, health):
         """Draw bonus and health bar."""
-        font = self.app.resman.font("visitor2", 48)
+        font = self.app.resman.font("visitor2", 38)
 
         # bonus
         text_surf = font.render('%d' % bonus, True, (255, 255, 0))
-        self.display.blit(text_surf, (10, 0))
-        self.display.blit(self.app.resman.get_sprite("pearl_icon"), (35, -26))
+        self.display.blit(text_surf, (20, 0))
+        icon = self.app.resman.get_sprite("pearlcount_icon")
+        self.display.blit(icon, (23+icon.get_width(), 3))
 
         # health
         icon_width = 30
@@ -105,7 +106,7 @@ class Screen(object):
 
     def draw_card(self, message):
         self.display.fill(pygame.Color('black'))
-        font = self.app.resman.font("visitor2", 48)
+        font = self.app.resman.font("visitor2", 38)
         card = font.render(message, False, pygame.Color('white'))
         center = ((self.width - card.get_width())/2,
                   (self.height - card.get_height())/2)
