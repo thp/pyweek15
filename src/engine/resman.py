@@ -23,9 +23,8 @@ class ResourceManager():
 
     def _load_all(self):
         ## load sprites
-        ext = ".png"
-        for fn in glob.glob(self._path('sprites') + "/*%s" % ext):
-            bn = os.path.basename(fn).replace(ext, "")
+        for fn in sorted(glob.glob(self._path('sprites', "*.png"))):
+            bn, _ = os.path.splitext(os.path.basename(fn))
             surf = pygame.image.load(fn)
             surf = surf.convert_alpha()
             self._surfaces[bn] = surf
@@ -33,16 +32,14 @@ class ResourceManager():
         import pygame.mixer as mixer
 
         ## load sfx
-        ext = ".wav"
-        for fn in glob.glob(self._path('sounds') + "/*%s" % ext):
-            bn = os.path.basename(fn).replace(ext, "")
+        for fn in glob.glob(self._path('sounds', "*.wav")):
+            bn, _ = os.path.splitext(os.path.basename(fn))
             sound = mixer.Sound(fn)
             self._sounds[bn] = sound
 
         ## load levels
-        ext = ".txt"
-        for fn in glob.glob(self._path("levels") + "/*%s" % ext):
-            bn = os.path.basename(fn).replace(ext, "")
+        for fn in glob.glob(self._path("levels", "*.txt")):
+            bn, _ = os.path.splitext(os.path.basename(fn))
             level = None
             self._levels[bn] = level
 
