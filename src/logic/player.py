@@ -1,9 +1,5 @@
 from engine.sprite import Sprite
 
-from pygame import transform
-
-from logic.lamemath import center
-
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
@@ -80,7 +76,6 @@ class Player(Sprite):
         sprite_name = self.current_sprite_name()
 
         sprite_name = sprite_name.replace('whale_', 'whale_%s-' % self.dest_x)
-        print sprite_name
         sprite = self.lookup_sprite(sprite_name)
 
         w, h = sprite.get_size()
