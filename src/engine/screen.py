@@ -88,7 +88,7 @@ class Screen(object):
 
     def draw_message(self, message):
         """Overlay a message to the player."""
-        font = self.app.resman.font("visitor2", 48)
+        font = self.app.resman.font("visitor2", 20)
 
         msg_surf = font.render(message, True, (255, 255, 255))
         w, h = msg_surf.get_size()

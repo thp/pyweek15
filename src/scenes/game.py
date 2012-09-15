@@ -253,7 +253,7 @@ class Game(Scene):
                                    self.player.health)
 
         if self.message:
-            message = self.message.split('\n', 1)
+            message = self.message.split('\n', 1)[0]
             self.app.screen.draw_message(message)
 
 
