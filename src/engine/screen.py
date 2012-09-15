@@ -26,7 +26,7 @@ class Screen(object):
 
     def clear(self):
         self.display.fill(pygame.Color('black'))
-        self.display.blit(self.app.resman.get_sprite('bg'), (0, 0))
+        self.display.blit(self.app.resman.get_background('test-1'), (0, 0))
 
     def update(self):
         self.draw_debug()

@@ -8,6 +8,7 @@ class ResourceManager():
     def __init__(self, app):
         self.app = app
         self._surfaces = {}
+        self._backgrounds = {}
         self._sounds = {}
         self._fonts = {}
         self._levels = {}
@@ -29,6 +30,13 @@ class ResourceManager():
             surf = surf.convert_alpha()
             self._surfaces[bn] = surf
 
+        ## load backgrounds
+        for fn in sorted(glob.glob(self._path('backgrounds', "*.jpg"))):
+            bn, _ = os.path.splitext(os.path.basename(fn))
+            print bn
+            surf = pygame.image.load(fn)
+            self._backgrounds[bn] = surf
+
         import pygame.mixer as mixer
 
         ## load sfx
@@ -46,6 +54,9 @@ class ResourceManager():
 
     def get_sprite(self, name):
         return self._surfaces.get(name)
+
+    def get_background(self, name):
+        return self._backgrounds.get(name)
 
     def get_sound(self, name):
         return self._sounds[name]

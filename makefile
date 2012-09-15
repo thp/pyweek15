@@ -42,7 +42,10 @@ convert:
 	convert assets/whale_icon_2.png -resize 41x41 data/sprites/whale_ico_2.png
 	convert assets/whale_icon_3.png -resize 41x41 data/sprites/whale_ico_1.png
 	convert assets/pearlcount_icon.png -resize 20x20 data/sprites/pearlcount_icon.png
-	convert assets/levelbg_test.png -resize 800x480 data/sprites/bg.png
+	convert assets/levelbg_test.png -resize 800x480 data/backgrounds/test-1.jpg
+	convert assets/bg_surreal_1.jpg -resize 800x480 data/backgrounds/surreal-1.jpg
+	convert assets/bg_surreal_2.jpg -resize 800x480 data/backgrounds/surreal-2.jpg
+	convert assets/bg_surreal_3.jpg -resize 800x480 data/backgrounds/surreal-3.jpg
 
 install:
 	mkdir -p $(DESTDIR)/opt/$(PACKAGE)/bin
