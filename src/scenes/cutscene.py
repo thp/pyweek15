@@ -52,7 +52,7 @@ class CutScene(Scene):
     def draw(self):
         self.app.screen.draw_card('Cut Scene')
         if self.i_subtitle < self.story.__len__():
-            font = self.app.resman.font("visitor2", 48)
+            font = self.app.resman.font("visitor2", 38)
             sub_ren = font.render(self.story[self.i_subtitle], False, Color('white'))
             screen = self.app.screen.display
             pos = (screen.get_width() / 2 - sub_ren.get_width() / 2, screen.get_height() - 40)

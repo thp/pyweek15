@@ -45,8 +45,11 @@ class Player(Sprite):
         elif thingie.startswith("fishy"):
             # [11:47pm] lobbbe_: what about that: you get your health back to full if you eat a fishy,
             # and if your health is already full - and only then - you get an extra life?
-            if self.health < self.max_health:
-                self.health += 1
+            self.app.audman.sfx("fishy")
+            if self.health <= self.max_health - 3:
+                self.health += 3
+            else:
+                self.health = self.max_health
 
     def crashed(self):
         if not self.blinking:
