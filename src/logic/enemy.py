@@ -13,6 +13,13 @@ nr_frames = {
     "fishy_deepsea": 2,
     "seaweed": 2,
     "diver": 3,
+    "pearl": 1,
+    "shell": 1,
+    "sandboxtoys": 1,
+    "oyster_0_pearl": 1,
+    "oyster_1_pearl": 1,
+    "oyster_2_pearl": 1,
+    "oyster_3_pearl": 1,
 }
 
 
@@ -22,7 +29,7 @@ class Enemy(Sprite):
         if self.app.resman.get_sprite(name) is not None:
             self.init(name, 1)
         else:
-            self.init(name + '_%d', nr_frames[name])
+            self.init(name + '-%d', nr_frames[name])
 
     def step(self):
         self.process()

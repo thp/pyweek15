@@ -84,7 +84,7 @@ class Player(Sprite):
         # (note that "b" and "a" get mirrored below when dest_x >= 3)
         chars = ['a', 'b', 'c', 'b', 'a']
 
-        sprite_name = sprite_name.replace('whale_', 'whale_%s_' % chars[self.dest_x])
+        sprite_name = sprite_name.replace('whale_', 'whale_%s-' % chars[self.dest_x])
         sprite = self.lookup_sprite(sprite_name)
 
         if self.dest_x >= 3:

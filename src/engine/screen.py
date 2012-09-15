@@ -75,7 +75,7 @@ class Screen(object):
 
         # bonus
         pos_x, pos_y = offset, offset
-        icon = self.app.resman.get_sprite("pearlcount_icon")
+        icon = self.app.resman.get_sprite("pearlcount_icon-1")
         self.display.blit(icon, (offset, offset))
 
         pos_x += icon.get_width() + offset
@@ -87,7 +87,7 @@ class Screen(object):
 
         while health > 0:
             health, rest = health - 3, min(health, 3)
-            sprite = self.app.resman.get_sprite("whale_ico_%d" % rest)
+            sprite = self.app.resman.get_sprite("whale_ico-%d" % rest)
             icon_width = sprite.get_width()
             pos_x -= icon_width + offset
             self.display.blit(sprite, (pos_x, pos_y))
