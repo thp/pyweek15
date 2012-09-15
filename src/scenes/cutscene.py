@@ -13,7 +13,7 @@ class CutScene(Scene):
     def process_input(self, event):
         if event.type == QUIT:
             self._advance()
-        elif event.type == KEYDOWN:
+        elif event.type == KEYDOWN or event.type == MOUSEBUTTONDOWN:
             self._advance()
 
     def process(self):
