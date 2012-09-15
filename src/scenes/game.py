@@ -154,6 +154,9 @@ class Game(Scene):
             x, y = event.pos
 
             if y < self.app.screen.height / 2:
+                self.boost = True
+
+            if y > self.app.screen.height * 3 / 4:
                 self.player.jump()
 
             if x < self.app.screen.width / 3:
@@ -162,6 +165,7 @@ class Game(Scene):
                 go_right()
         elif event.type == MOUSEBUTTONUP:
             self.direction = 0
+            self.boost = False
         elif event.type == KEYDOWN:
             if event.key == K_RETURN:
                 pass

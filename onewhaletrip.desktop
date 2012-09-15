@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=One Whale Trip
+Name=1 Whale Trip
 Exec=invoker --single-instance --type=e /opt/onewhaletrip/bin/onewhaletrip
 Icon=/opt/onewhaletrip/onewhaletrip.png
 Terminal=false
