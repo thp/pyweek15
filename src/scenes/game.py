@@ -252,7 +252,8 @@ class Game(Scene):
                     if column.name in self.enemies:
                         enemy = self.enemies[column.name]
                         draw_queue.append((y, enemy, points))
-                    else:
+                    elif column.name:
+                        print '[WARNING] Missing graphic:', column.name
                         self.app.screen.draw_polygon(color, points)
 
         # Draw all enemies (+player), back-to-front for proper stacking order
