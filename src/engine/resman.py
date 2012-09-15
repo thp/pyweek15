@@ -54,7 +54,8 @@ class ResourceManager():
         return self._sounds[name]
 
 
-    def font(self, name, size):
+    def font(self, font_spec):
+        (name, size) = font_spec
         if not (name, size) in self._fonts:
             font = pygame.font.Font(self._path('fonts', '%s.ttf' % name), size)
             self._fonts[(name, size)] = font

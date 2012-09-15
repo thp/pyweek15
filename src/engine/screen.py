@@ -1,5 +1,8 @@
 import pygame
 
+FONT_STD = ("visitor2", 38)
+FONT_SMALL = ("visitor2", 20)
+
 
 class Screen(object):
     def __init__(self, app, title, width, height, fullscreen=True):
@@ -47,7 +50,7 @@ class Screen(object):
  
     def draw_debug(self):
             # display fps
-            font = self.app.resman.font("visitor2", 20)
+            font = self.app.resman.font(FONT_SMALL)
             surface = font.render("FPS: %2.2f" % self.app._clock.get_fps(), False,
                                   pygame.Color('white'), pygame.Color('black'))
             pos = (self.width-surface.get_width(), self.height-surface.get_height())
@@ -70,7 +73,7 @@ class Screen(object):
 
     def draw_stats(self, bonus, health):
         """Draw bonus and health bar."""
-        font = self.app.resman.font("visitor2", 38)
+        font = self.app.resman.font(FONT_STD)
         offset = 10
 
         # bonus
@@ -95,7 +98,7 @@ class Screen(object):
 
     def draw_message(self, message):
         """Overlay a message to the player."""
-        font = self.app.resman.font("visitor2", 20)
+        font = self.app.resman.font(FONT_SMALL)
 
         msg_surf = font.render(message, True, (255, 255, 255))
         w, h = msg_surf.get_size()
@@ -108,7 +111,7 @@ class Screen(object):
 
     def draw_card(self, message, additional=None):
         self.display.fill(pygame.Color('black'))
-        font = self.app.resman.font("visitor2", 38)
+        font = self.app.resman.font(FONT_STD)
         color = pygame.Color('white')
 
         offset = self.height/6 if additional else 0
