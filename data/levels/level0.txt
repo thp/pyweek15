@@ -1,27 +1,21 @@
 #
 # :enemies:
-# a=stone
-# b=lanternfish
-# c=sixpack
-# d=diver
-# e=treasurechest
-# g=tortoise
+# a=rock_l
+# b=rock_m
+# c=rock_s
 # w=seaweed
-# x=sandboxtoys
 #
 # :pickups:
-# f=pearl
-# h=fishy_rainbow
-# i=fishy_deepsea
-# j=fishy_red
-# k=oyster_0_pearl
-# l=oyster_1_pearl
-# m=oyster_2_pearl
-# n=oyster_3_pearl
+# p=pearl
+# f=fishy_red
+# 0=oyster_0_pearl
+# 1=oyster_1_pearl
+# 2=oyster_2_pearl
+# 3=oyster_3_pearl
 #
 # :meta:
 # speed=10
-# background=beach
+# background=test
 #
 # :story:
 # you swam along the ocean.
@@ -33,72 +27,140 @@
 
 
 
- d d
+ a w
+
+
+w
 
 
 
+  bc
+p
+p
+ p
+  p
+   p
+ ba p
+    p
+   p
+  p w
+ p
+p wc
+p
+ p
+ p
+    w
+  p
+   p
+w   p
+w  p
+  p
+ p
+   p
+ w p
 
+ p
+ p b
 
+   p
+ w  p
+ a p
 
-  bb
-f
-f
- f
-  f
-   f
- kk f
-    f
-   f
-  f d
- f
-f bb
-f
+   wb
+w
+  p
+  p c
+  p
+b p
 
-
-  i
-
-  f
-  f k
-  f
-d f
-
-
+   ww
 
 bbb
 
+a w
+
+ waba
 
 
- wddd
-
-
-dwww
-
-   i
-
-
-f
-
-
-  d
-   k
-    f
    f
-  f
 
-  k
- d
-f
-  f
+cwww
+
+   b
+
+    w
+w
+
+    w
+  a
+   w
+    p
+   p
+  p
+
+  a
+ w
+p
+  p
 
 
 wwww
-    f
-   f
-    f
-   f
-  f
- f
-  f
- f
+    p
+   p
+    p
+   p
+  p
+ p
+  p
+ p
+  p
+
+
+
   f
 
+w w w
+
+p
+ w w
+    b
+
+    p
+w w w
+
+a
+  p
+ w w
+
+    c
+
+  w
+
+  c
+p
+p   w
+
+    p
+    p
+a   p
+
+p
+p  w
+p   w
+p
+
+  b p
+w   p
+    p
+ w  p
+    p
+
+p
+ pc
+  p
+   p
+  p
+ p
+p
+ ppp
+    p

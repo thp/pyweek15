@@ -1,0 +1,254 @@
+#
+# :enemies:
+# a=shell
+# b=lanternfish
+# c=sixpack
+# d=diver
+# e=treasurechest
+# g=tortoise
+# w=seaweed
+# x=sandboxtoys
+#
+# :pickups:
+# f=pearl
+# h=fishy_rainbow
+# i=fishy_deepsea
+# j=fishy_red
+# k=oyster_0_pearl
+# l=oyster_1_pearl
+# m=oyster_2_pearl
+# n=oyster_3_pearl
+#
+# :meta:
+# speed=10
+# background=cliff
+#
+
+
+
+
+
+
+
+ klmn
+
+d
+
+k w x
+k w x
+k w x
+k w x
+k w x
+k w x
+
+  d
+
+
+
+
+!Your heart was broken. The submarine was gone.
+
+
+
+!,,A whale and a submarine don't belong together``, they said.
+
+ a a
+
+!And so you swam around, trying to pick up some goodies.
+
+
+  f
+  f
+  f
+  d
+  
+!(,,goodies are good!`` - you remembered the words of the elder whales)
+
+ k
+  l
+   m
+!But not all was peachy under the sea...
+
+n
+
+!...for there were cruelsome creatures you'd better avoid.
+
+
+
+
+
+ b  b
+
+  bb
+
+
+b ff
+
+
+
+!You were a handsome whale. You could even jump under the sea!
+
+
+!(..you always jumped with the Space bar in case you forgot..)
+
+
+
+ b  b
+
+
+f bb
+
+
+
+
+ f bb
+
+ f
+
+
+bbb f
+
+    f
+
+f  bb
+
+
+!And sometimes it was useful to pick up lots of pearls at once.
+
+
+!Which you did by swimming through the pearls quickly.
+
+
+!(..I'm sure you remeber that you did that with the Up button..)
+
+
+
+
+ f
+ f
+ f
+ f
+ f
+ f
+ f
+ f
+ f
+ f
+ f
+ f
+ f
+
+   f
+   f
+   f
+   f
+   f
+   f
+   f
+
+!Whoops - avoid that one!
+
+
+   b
+
+
+   f
+   f
+   f
+   f
+   f
+   f
+   f
+
+ ff
+
+a f
+  f
+  a f
+    f
+  f a
+  f
+f a
+f
+a
+
+  f
+  f
+ f
+ f
+f
+f
+ f
+ f
+  f
+  f
+   f
+   f
+    f
+    f
+a aaa
+a aaa
+b bbb
+c fcc
+c  cc
+cf cc
+cc cc
+cc cc
+  f
+
+a a a
+ a a
+a a a
+
+ bbb
+
+cc cc
+
+ bb b
+
+cc c
+
+aaaaa
+
+ c cc
+ c  c
+ cc c
+cc  c
+cc cc
+cc cc
+cc  c
+ccc c
+bbc
+bbc
+
+
+
+!Wow, that was easy :)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!Nothing to see here, go write some more code.
+

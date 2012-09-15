@@ -20,6 +20,13 @@ nr_frames = {
     "oyster_1_pearl": 1,
     "oyster_2_pearl": 1,
     "oyster_3_pearl": 1,
+    'rock_m': 1,
+    'rock_l': 1,
+    'rock_s': 1,
+    'jellyfish_a': 2,
+    'jellyfish_b': 1,
+    'starfish': 1,
+    'shoe': 2,
 }
 
 

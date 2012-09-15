@@ -43,6 +43,8 @@ class ResourceManager():
             else:
                 self._backgrounds[key] = [surf]
 
+        print self._backgrounds.keys()
+
         import pygame.mixer as mixer
 
         ## load sfx

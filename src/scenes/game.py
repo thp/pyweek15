@@ -37,6 +37,13 @@ ENEMY_NAMES = [
     'oyster_1_pearl',
     'oyster_2_pearl',
     'oyster_3_pearl',
+    'rock_m',
+    'rock_l',
+    'rock_s',
+    'jellyfish_a',
+    'jellyfish_b',
+    'starfish',
+    'shoe',
 ]
 
 class Game(Scene):
