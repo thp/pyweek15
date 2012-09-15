@@ -12,6 +12,4 @@ class GameOver(Scene):
                 self.next_state = ("MainMenu", None)
 
     def draw(self, screen):
-        screen.fill((0, 0, 0))
-        screen.blit(self.app.font.render("Game Over", False, (255, 255, 255)),
-            (100, 100))
+        self.app.screen.draw_card("Game Over")

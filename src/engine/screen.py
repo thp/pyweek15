@@ -87,3 +87,12 @@ class Screen(object):
         rect = (pos[0] - 10, pos[1] - 10, w + 20, h + 20)
         pygame.draw.rect(self.display, (0, 0, 0), rect)
         self.display.blit(msg_surf, pos)
+
+
+    def draw_card(self, message):
+        self.display.fill(pygame.Color('black'))
+        font = self.app.resman.font("visitor2", 48)
+        card = font.render(message, False, pygame.Color('white'))
+        center = ((self.width - card.get_width())/2,
+                  (self.height - card.get_height())/2)
+        self.display.blit(card, center)

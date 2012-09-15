@@ -12,5 +12,4 @@ class MainMenu(Scene):
                 self.next_state = ("Outro", None)
 
     def draw(self, screen):
-        screen.fill((0, 0, 0))
-        screen.blit(self.app.font.render("MainMenu", False, (255, 255, 255)), (100, 100))
+        self.app.screen.draw_card("Main Menu")
