@@ -74,9 +74,9 @@ class Screen(object):
 
         # bonus
         text_surf = font.render('%d' % bonus, True, (255, 255, 0))
-        self.display.blit(text_surf, (20, 0))
+        self.display.blit(text_surf, (10, 0))
         icon = self.app.resman.get_sprite("pearlcount_icon")
-        self.display.blit(icon, (23+icon.get_width(), 3))
+        self.display.blit(icon, (text_surf.get_width() + icon.get_width(), 3))
 
         # health
         icon_width = 30
