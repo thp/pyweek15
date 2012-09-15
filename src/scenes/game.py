@@ -4,12 +4,9 @@ from logic.level import Level
 from logic.player import Player
 from logic.enemy import Enemy
 
-from logic.lamemath import center, center_in, shade_color
+from logic.lamemath import shade_color
 
-from pygame import font
 from pygame.locals import *
-
-import math
 
 WORLD_DEPTH = 10 # fudge factor... works for self.DEPTH @ 15
 
@@ -53,7 +50,6 @@ class Game(Scene):
 
     def __init__(self, app):
         super(Game, self).__init__(app)
-        self.font = font.SysFont('dejavu sans', 16)
 
         # health is 9: 3 lives are grouped per 3.
         self._init(self.app.level_nr, score=0, health=9)
