@@ -21,44 +21,84 @@
 #
 # :meta:
 # speed=10
-# background=surreal
-# 
+# background=beach
+#
 # :story:
-# this is the story,
-# as defined in the comments
-# of the level0.txt file
+# you swam along the ocean.
+# looking for the one and only.
+# and you were in for a promotion!
+# because it was you who was lonely.
 #
-#
+
+
+
+
+ d d
+
+
+
+
+
+
+  bb
+f
+f
+ f
+  f
+   f
+ kk f
+    f
+   f
+  f d
+ f
+f bb
+f
+
+
+  i
+
+  f
+  f k
+  f
+d f
+
+
+
+bbb
+
+
+
+ wddd
+
+
+dwww
+
+   i
+
 
 f
 
-kkkkk
-kkkkk
-kkkkk
-w   w
-hijhi
-jhijh
-ijhij
-w   w
-wkkkw
-wkkkw
-wkkkw
-wwwww
-kkbkk
-kkbkk
-kkbkk
-w   w
 
-xxxxx
+  d
+   k
+    f
+   f
+  f
 
-ddddd
+  k
+ d
+f
+  f
 
-bbkbb
-bbkbb
-bbkbb
-bbkbb
-w jji
-w ffk
-w
-w ff
-w  f
+
+wwww
+    f
+   f
+    f
+   f
+  f
+ f
+  f
+ f
+  f
+

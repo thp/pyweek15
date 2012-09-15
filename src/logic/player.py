@@ -32,7 +32,7 @@ class Player(Sprite):
     def picked_up(self, thingie):
         if thingie == 'pearl':
             self.coins_collected += 1
-            self.app.audman.sfx("pearl")
+            self.app.audman.sfx("pearl" + str(int(self.dest_x+1)))
         elif thingie == 'oyster_1_pearl':
             self.coins_collected += 1
             self.app.audman.sfx("pearl")
