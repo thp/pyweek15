@@ -14,7 +14,9 @@ class Scene(object):
         self.next_state = None
 
     def process_input(self, event):
-        pass
+        if ((event.type == KEYDOWN and event.key == K_ESCAPE)
+                or event.type == QUIT):
+            self.next_state = ("GoodBye", None)
 
     def draw(self):
         pass
@@ -57,6 +59,7 @@ class Intermission(Scene):
                 self.update()
             except StopIteration:
                 self.next_state = self.next_scene
+        super(Intermission, self).process_input(event)
 
 
     def draw(self):

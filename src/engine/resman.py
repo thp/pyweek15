@@ -52,8 +52,6 @@ class ResourceManager():
             self._creatures[bn] = surf
 
 
-        print self._backgrounds.keys()
-
         import pygame.mixer as mixer
 
         ## load sfx

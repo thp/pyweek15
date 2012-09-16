@@ -155,9 +155,7 @@ class Game(Scene):
             if self.player.dest_x < MAX_DEST_X:
                 self.player.dest_x += 1
 
-        if event.type == QUIT:
-            self.next_state = ("GoodBye", None)
-        elif event.type == MOUSEBUTTONDOWN:
+        if event.type == MOUSEBUTTONDOWN:
             x, y = event.pos
 
             if y < self.app.screen.height / 2:
@@ -178,8 +176,6 @@ class Game(Scene):
                 pass
             elif event.key == K_SPACE:
                 self.player.jump()
-            elif event.key == K_ESCAPE:
-                self.next_state = ("GoodBye", None)
             elif event.key == K_LEFT:
                 go_left()
             elif event.key == K_RIGHT:
@@ -193,6 +189,8 @@ class Game(Scene):
                 self.direction = 0
             elif event.key == K_UP:
                 self.boost = False
+        super(Game, self).process_input(event)
+
 
     def map_coords(self, lane, jump, distance):
         """
