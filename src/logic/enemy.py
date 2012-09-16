@@ -24,9 +24,13 @@ nr_frames = {
     'rock_l': 1,
     'rock_s': 1,
     'jellyfish_a': 2,
-    'jellyfish_b': 1,
+    'jellyfish_b': 2,
     'starfish': 1,
     'shoe': 2,
+    "coral_a": 2,
+    "coral_b": 1,
+    "coral_c": 2,
+    "coral_d": 1,
 }
 
 

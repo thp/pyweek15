@@ -5,6 +5,7 @@ from engine.scene import Scene
 from logic.level import Level
 from logic.enemy import Enemy
 
+import pygame
 from pygame.locals import *
 
 DEPTH = 15
@@ -21,6 +22,10 @@ MAX_DEST_X = 4
 
 # This is not just enemies, but also pick-ups (for whatever reason)
 ENEMY_NAMES = [
+    'coral_a',
+    'coral_b',
+    'coral_c',
+    'coral_d',
     'pearl',
     'fishy_rainbow',
     'fishy_red',
