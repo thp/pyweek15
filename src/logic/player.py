@@ -1,6 +1,7 @@
 from engine.sprite import Sprite
 from logic.lamemath import center
 
+import math
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
@@ -71,10 +72,13 @@ class Player(Sprite):
 
 
     def draw(self, screen, points, opacity):
-        if self.blinking and (self.blinking / 3) % 2 == 0:
-            opacity = .5
-        else:
-            opacity = 1.
+        xoffset, yoffset, opacity = 0., 0., 1.
+        tint = 1., 1., 1.
+
+        if self.blinking:
+            value = 1. - abs(math.sin(self.blinking*.2))
+            tint = 1, value, value
+            yoffset = math.sin(self.blinking*.5) * 5.
 
         sprite_name = self.current_sprite_name()
 
@@ -83,6 +87,6 @@ class Player(Sprite):
 
         w, h = sprite.get_size()
         coords = center(points)
-        coords = (coords[0] - w / 2 + self.blinking % 5, coords[1] - h / 2)
-        self.app.renderer.draw(sprite, coords, 1., opacity)
+        coords = (coords[0] - w / 2 + xoffset, coords[1] - h / 2 + yoffset)
+        self.app.renderer.draw(sprite, coords, 1., opacity, tint)
 

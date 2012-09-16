@@ -71,7 +71,7 @@ class Renderer:
     def begin(self):
         glClear(GL_COLOR_BUFFER_BIT)
 
-    def draw(self, sprite, pos, scale=1., opacity=1.):
+    def draw(self, sprite, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
         if not hasattr(sprite, '_sprite'):
             # Upload dynamically-created sprite to texture memory
             if self.tmp_sprite is None:
@@ -83,7 +83,8 @@ class Renderer:
         w, h = map(float, sprite.get_size())
         x, y = map(float, pos)
 
-        glColor(1, 1, 1, opacity)
+        r, g, b = tint
+        glColor(r, g, b, opacity)
         vertices = array.array('f', [
             x, y, 0.,
             x, y+h*scale, 0.,
