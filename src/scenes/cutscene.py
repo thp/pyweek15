@@ -1,14 +1,11 @@
 from engine.scene import Scene
 from pygame.locals import *
 
-DELAY = 30  # frames
-
 
 class CutScene(Scene):
     def __init__(self, app):
         super(CutScene, self).__init__(app)
         self.i_subtitle = 0
-        self.delay = DELAY  # one second delay to prevent the user from accidentally skipping through
 
     def process_input(self, event):
         if event.type == QUIT:
@@ -17,8 +14,6 @@ class CutScene(Scene):
             self._advance()
 
     def process(self):
-        if self.delay:
-            self.delay -= 1
         return super(CutScene, self).process()
 
     def resume(self, args):
@@ -28,15 +23,11 @@ class CutScene(Scene):
         self.story = args['story'] if args and 'story' in args.keys() else None
         self.restart = args['restart'] if args and 'restart' in args.keys() else False
         self.i_subtitle = 0
-        self.delay = DELAY
 
     def _advance(self):
-        if self.delay:
-            return
         # show the next text (loop through texts)
         if self.i_subtitle < self.story.__len__() - 1:
             self.i_subtitle += 1
-            self.delay = DELAY
         else:
             # when all text have been shown
             #    continue to next Game
