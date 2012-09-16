@@ -1,7 +1,9 @@
 import pygame
 import os
+
 from resman import ResourceManager
 from audman import AudioManager
+from logic.player import Player
 from screen import Screen
 
 
@@ -18,6 +20,8 @@ class App(object):
 
         self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
+
+        self.player = Player(self)
 
         self.level_nr = level_nr
         self.last_level = len(self.resman._levels) - 1

@@ -1,24 +1,33 @@
 from engine.sprite import Sprite
 from logic.lamemath import center
 
+INITIAL_HEALTH = 9
+MAX_HEALTH = 30
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
     BLINKING_FRAMES = 20
 
-    def __init__(self, app, health=100, coins_collected=0):
+    def __init__(self, app):
+        self.app = app
+
+        self.init('whale_%d', 3)
+        self.reset()
+
+    
+    def reset(self, hard=False):
         self.x = 2
         self.y = 0
         self.dest_x = 2
         self.height = 0
         self.vertical_velocity = 0
-        self.coins_collected = coins_collected
-        self.max_health = health
-        self.health = health
         self.can_jump = True
-        self.app = app
         self.blinking = 0
-        self.init('whale_%d', 3)
+
+        if hard:
+            self.coins_collected = 0
+            self.health = INITIAL_HEALTH
+            self.max_health = MAX_HEALTH
 
     def jump(self):
         if self.can_jump:
@@ -44,6 +53,7 @@ class Player(Sprite):
             # and if your health is already full - and only then - you get an extra life?
             self.app.audman.sfx("fishy")
             if self.health <= self.max_health - 3:
+                # XXX fix this logic
                 self.health += 3
             else:
                 self.health = self.max_health
