@@ -232,7 +232,8 @@ class Game(Scene):
                                 self.next_state = ("CutScene", {
                                     "score": self.player.coins_collected,
                                     "health": self.player.health,
-                                    "story": ['you lost a life', 'be careful next time'],
+                                    "title": "YOU LOST A LIFE",
+                                    "story": ['be careful next time! only %i left' % int(self.player.health/3)],
                                     "restart": True,
                                 })
                         elif c < 0:

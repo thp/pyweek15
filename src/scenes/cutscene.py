@@ -18,10 +18,11 @@ class CutScene(Scene):
 
     def resume(self, args):
         super(CutScene, self).resume(self)
-        self.score = args['score'] if args and 'score' in args.keys() else None
-        self.health = args['health'] if args and 'health' in args.keys() else None
-        self.story = args['story'] if args and 'story' in args.keys() else None
-        self.restart = args['restart'] if args and 'restart' in args.keys() else False
+        self.score = args.get('score')
+        self.health = args.get('health')
+        self.title = args.get('title')
+        self.story = args.get('story')
+        self.restart = args.get('restart', False)
         self.i_subtitle = 0
 
     def _advance(self):
@@ -51,4 +52,11 @@ class CutScene(Scene):
         else:
             story = None
 
-        self.app.screen.draw_card('Cut Scene', story)
+        background = self.app.resman.get_background("i_deepsea")[0]
+
+        if self.title == "YOU LOST A LIFE":
+            creatures = [self.app.resman.get_creature("lost_life_whale")]
+        else:
+            creatures = None
+
+        self.app.screen.draw_card(self.title, story, background, creatures)
