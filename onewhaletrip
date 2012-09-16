@@ -20,7 +20,6 @@ from engine.app import App
 from scenes.game import Game
 from scenes.intermissions import (Start, Intro, NextLevelGroup, LostLife,
                                   GameOver, Outro, Victory)
-from scenes.cutscene import CutScene
 
 from docopt import docopt
 arguments = docopt(__doc__)
@@ -36,7 +35,6 @@ SCENES = [
     NextLevelGroup,
     LostLife,
     GameOver,
-    CutScene,
     Victory,
     Outro,
 ]
