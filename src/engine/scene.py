@@ -54,7 +54,7 @@ class Intermission(Scene):
             self.line = next(self.story)
 
     def process_input(self, event):
-        if event.type == KEYDOWN:
+        if event.type == KEYDOWN or event.type == MOUSEBUTTONDOWN:
             try:
                 self.update()
             except StopIteration:

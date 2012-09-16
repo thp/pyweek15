@@ -5,19 +5,30 @@ from pygame import transform
 import random
 import array
 
-from OpenGL.GL import *
-
-texcoords = array.array('f', [
-    0, 1,
-    0, 0,
-    1, 1,
-    1, 0,
-])
+try:
+    from OpenGL.GL import *
+    is_gles = False
+except ImportError:
+    print "Warning: Cannot import OpenGL - trying fallback on GLES v1"
+    # on MeeGo Harmattan
+    from gles1 import *
+    from ctypes import *
+    sdl = CDLL('libSDL-1.2.so.0')
+    is_gles = True
 
 class SpriteProxy:
     def __init__(self, sprite):
         self._sprite = sprite
-        self._texture_id = glGenTextures(1)
+        self._texcoords = None
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glActiveTexture(GL_TEXTURE0)
+        if is_gles:
+            texture_id = GLint(0)
+            glGenTextures(1, byref(texture_id))
+            texture_id = texture_id.value
+        else:
+            texture_id = glGenTextures(1)
+        self._texture_id = texture_id
         glBindTexture(GL_TEXTURE_2D, self._texture_id)
         glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
@@ -27,11 +38,49 @@ class SpriteProxy:
         # Make sure to cleanup GL state to not leak textures
         glDeleteTextures(self._texture_id)
 
+    def _make_powerof2(self, surface):
+        if not is_gles:
+            # On the Desktop, non-power-of-2 texture usually work, too
+            return surface
+
+        # Converts a surface so that it becomes a power-of-2 surface
+        # (both width and height are a power of 2)
+
+        w, h = surface.get_size()
+        def next_power_of2(i):
+            x = 2
+            while x < i:
+                x *= 2
+            return x
+
+        result = pygame.Surface((next_power_of2(w), next_power_of2(h)),
+            0, 32).convert_alpha()
+        result.fill((0, 0, 0, 0))
+        result.blit(surface, (0, 0))
+        return result
+
     def _load_from(self, sprite):
-        glBindTexture(GL_TEXTURE_2D, self._texture_id)
+        w0, h0 = sprite.get_size()
         self._sprite = sprite
-        w, h = self._sprite.get_size()
+
+        # Make power-of-2 textures for GLES v1 devices
+        sprite = self._make_powerof2(sprite)
+        w, h = sprite.get_size()
+
+        wf = float(w0)/float(w)
+        hf = float(h0)/float(h)
+
+        # Account for the different texture size by making
+        # the texture coordinates use only part of the image
+        self._texcoords = array.array('f', [
+            0, 1,
+            0, 1.-hf,
+            wf, 1,
+            wf, 1.-hf,
+        ])
+
         data = pygame.image.tostring(sprite, 'RGBA', 1)
+        glBindTexture(GL_TEXTURE_2D, self._texture_id)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h,
                 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
 
@@ -41,8 +90,12 @@ class SpriteProxy:
 
 class Renderer:
     IS_OPENGL = True
+    IS_OPENGL_ES = is_gles
 
     def __init__(self, app):
+        if is_gles:
+            sdl.SDL_GL_SetAttribute(17, 1) #SDL_GL_CONTEXT_MAJOR_VERSION
+
         self.app = app
         self.tmp_sprite = None
         self.global_offset_x = 0
@@ -56,12 +109,12 @@ class Renderer:
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
         glOrtho(0, width, height, 0, 0, 1)
 
-        glTexCoordPointer(2, GL_FLOAT, 0, texcoords.tostring())
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         glEnable(GL_TEXTURE_2D)
-
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         glEnableClientState(GL_VERTEX_ARRAY)
 
         glEnable(GL_BLEND)
@@ -100,8 +153,12 @@ class Renderer:
 
         glBindTexture(GL_TEXTURE_2D, sprite._texture_id)
         glVertexPointer(3, GL_FLOAT, 0, vertices.tostring())
+        glTexCoordPointer(2, GL_FLOAT, 0, sprite._texcoords.tostring())
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
     def finish(self):
-        pygame.display.flip()
+        if is_gles:
+            sdl.SDL_GL_SwapBuffers()
+        else:
+            pygame.display.flip()
 

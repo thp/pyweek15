@@ -9,6 +9,7 @@ class App(object):
     def __init__(self, title, width, height, fullscreen,
                  scenes, entry, level_nr=0, debug=False,
                  opengl=False):
+        pygame.init()
 
         self.debug = debug
 
