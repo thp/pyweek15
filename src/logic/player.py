@@ -70,9 +70,11 @@ class Player(Sprite):
         self.process()
 
 
-    def draw(self, screen, points):
+    def draw(self, screen, points, opacity):
         if self.blinking and (self.blinking / 3) % 2 == 0:
-            return
+            opacity = .5
+        else:
+            opacity = 1.
 
         sprite_name = self.current_sprite_name()
 
@@ -82,4 +84,5 @@ class Player(Sprite):
         w, h = sprite.get_size()
         coords = center(points)
         coords = (coords[0] - w / 2 + self.blinking % 5, coords[1] - h / 2)
-        screen.blit(sprite, coords)
+        self.app.renderer.draw(sprite, coords, 1., opacity)
+

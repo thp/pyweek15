@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 """
-Usage: main [(-l <level> | -s <scene>)] [-f] [-d]
+Usage: main [(-l <level> | -s <scene>)] [-f] [-g] [-d]
 
 Options:
     -l, --level <level>  start with level x
     -s, --scene <scene>  start with scene x
     -f, --fullscreen
+    -g, --opengl
     -d, --debug
 """
 
@@ -47,6 +48,7 @@ app = App(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, arguments['--fullscreen'],
           entry=arguments['--scene'] or "Start",
           level_nr=arguments['--level'] or 0,
           debug=arguments['--debug'],
+          opengl=arguments['--opengl'],
           )
 
 app.run()

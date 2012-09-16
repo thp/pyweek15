@@ -30,15 +30,15 @@ class ResourceManager():
         ## load sprites
         for fn in sorted(glob.glob(self._path('sprites', "*.png"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
-            surf = pygame.image.load(fn)
-            surf = surf.convert_alpha()
+            surf = pygame.image.load(fn).convert_alpha()
+            surf = self.app.renderer.register_sprite(bn, surf)
             self._surfaces[bn] = surf
 
         ## load backgrounds
         for fn in sorted(glob.glob(self._path('backgrounds', "*.jpg"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
             key, frame = bn.split('-')
-            surf = pygame.image.load(fn)
+            surf = self.app.renderer.register_sprite(bn, pygame.image.load(fn))
             if key in self._backgrounds:
                 self._backgrounds[key].append(surf)
             else:

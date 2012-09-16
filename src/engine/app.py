@@ -7,14 +7,22 @@ from screen import Screen
 
 class App(object):
     def __init__(self, title, width, height, fullscreen,
-                 scenes, entry, level_nr=0, debug=False):
+                 scenes, entry, level_nr=0, debug=False,
+                 opengl=False):
 
         self.debug = debug
 
         self._clock = pygame.time.Clock()
         self.fps = 30
 
+        if opengl:
+            from renderer_opengl import Renderer
+        else:
+            from renderer_blit import Renderer
+
+        self.renderer = Renderer(self)
         self.screen = Screen(self, title, width, height, fullscreen)
+        self.renderer.setup(self.screen.display.get_size())
 
         self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
@@ -58,5 +66,9 @@ class App(object):
                         self.scene = self._get_scene(next_scene)
                         self.scene.resume(scene_arg)
 
+            self.renderer.begin()
             self.scene.draw()
-            self.screen.update()
+            if self.debug:
+                self.screen.draw_debug()
+            self.renderer.finish()
+

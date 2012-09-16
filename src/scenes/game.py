@@ -201,10 +201,9 @@ class Game(Scene):
 
 
     def draw(self):
-        self.app.screen.clear()
         backgrounds = self.app.resman.get_background(self.level.background)
         pos = int(self.time + self.player.y) % len(backgrounds)
-        self.app.screen.display.blit(backgrounds[pos], (0, 0))
+        self.app.renderer.draw(backgrounds[pos], (0, 0))
 
         x = self.player.x
         y = self.time
@@ -250,8 +249,8 @@ class Game(Scene):
                         self.app.screen.draw_polygon(pygame.Color('red'), points)
 
         # Draw all enemies (+player), back-to-front for proper stacking order
-        for _, sprite, points in sorted(draw_queue, reverse=True):
-            self.app.screen.draw_sprite(sprite, points)
+        for y, sprite, points in sorted(draw_queue, reverse=True):
+            self.app.screen.draw_sprite(y-self.time, sprite, points)
 
         self.app.screen.draw_stats(self.player.coins_collected,
                                    self.player.health)

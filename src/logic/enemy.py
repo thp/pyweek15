@@ -3,8 +3,6 @@ from engine.sprite import Sprite
 
 from logic.lamemath import center
 
-from pygame import transform
-
 # some objects have 2 or 3 frames
 nr_frames = {
     "lanternfish": 3,
@@ -41,7 +39,7 @@ class Enemy(Sprite):
     def step(self):
         self.process()
 
-    def draw(self, screen, points):
+    def draw(self, screen, points, opacity):
         sprite_name = self.current_sprite_name()
         sprite = self.lookup_sprite(sprite_name)
 
@@ -50,7 +48,7 @@ class Enemy(Sprite):
         right = max(point[0] for point in points)
         bottom = max(point[1] for point in points)
         factor = min(1., float(right-left) / float(w))
-        sprite = transform.scale(sprite, (int(w*factor), int(h*factor)))
+
         x, _ = center(points)
         x = left + (right-left)/2 - (w*factor)/2
         y = bottom - h*factor
@@ -58,5 +56,5 @@ class Enemy(Sprite):
         # align the enemy in the center of the polygon
         # and with the bottom (frontmost) edge of the
         # polygon aligned with the bottom of the enemy
+        self.app.renderer.draw(sprite, (x, y), factor, opacity)
 
-        screen.blit(sprite, (x, y))

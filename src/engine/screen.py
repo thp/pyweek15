@@ -8,7 +8,10 @@ class Screen(object):
 
         flags = 0
         if fullscreen:
-            flags = pygame.FULLSCREEN
+            flags |= pygame.FULLSCREEN
+
+        if self.app.renderer.IS_OPENGL:
+            flags |= pygame.OPENGL
 
         self.width = width
         self.height = height
@@ -20,15 +23,6 @@ class Screen(object):
         self.zeye = width * 1.2   # Assumed distance from Screen
         self.xeye = width * 0.5   # Middle of the screen
         self.yeye = height * 0.33 # High horizon
-
-
-    def clear(self):
-        self.display.fill(pygame.Color('black'))
-
-    def update(self):
-        if self.app.debug:
-            self.draw_debug()
-        pygame.display.update()
 
 
     def projection(self, x, y, z):
@@ -52,7 +46,7 @@ class Screen(object):
             surface = font.render("FPS: %2.2f" % self.app._clock.get_fps(), False,
                                   pygame.Color('white'), pygame.Color('black'))
             pos = (self.width-surface.get_width(), self.height-surface.get_height())
-            self.display.blit(surface, pos)
+            self.app.renderer.draw(surface, pos)
 
 
     def draw_polygon(self, color, points):
@@ -62,11 +56,18 @@ class Screen(object):
         pygame.draw.polygon(self.display, color, points, 1)
 
 
-    def draw_sprite(self, sprite, points):
+    def draw_sprite(self, y, sprite, points):
         """Project a sprite onto the screen.
         Coordinates are given in world coordinates."""
         points = [self.projection(*point) for point in points]
-        sprite.draw(self.display, points)
+
+        # Fade in enemy sprites coming from the back
+        if y > 10:
+            opacity = 1. - (y-10)/5.
+        else:
+            opacity = 1.
+
+        sprite.draw(self.display, points, opacity)
 
 
     def draw_stats(self, bonus, health):
@@ -77,11 +78,11 @@ class Screen(object):
         # bonus
         pos_x, pos_y = offset, offset
         icon = self.app.resman.get_sprite("pearlcount_icon-1")
-        self.display.blit(icon, (offset, offset))
+        self.app.renderer.draw(icon, (offset, offset))
 
         pos_x += icon.get_width() + offset
         text_surf = font.render('%d' % bonus, True, (255, 255, 0))
-        self.display.blit(text_surf, (pos_x, pos_y-3))
+        self.app.renderer.draw(text_surf, (pos_x, pos_y-3))
 
         # health
         pos_x, pos_y = self.width, offset
@@ -91,7 +92,7 @@ class Screen(object):
             sprite = self.app.resman.get_sprite("whale_ico-%d" % rest)
             icon_width = sprite.get_width()
             pos_x -= icon_width + offset
-            self.display.blit(sprite, (pos_x, pos_y))
+            self.app.renderer.draw(sprite, (pos_x, pos_y))
 
 
     def draw_message(self, message):
@@ -104,12 +105,12 @@ class Screen(object):
 
         rect = (pos[0] - 10, pos[1] - 10, w + 20, h + 20)
         pygame.draw.rect(self.display, (0, 0, 0), rect)
-        self.display.blit(msg_surf, pos)
+        self.app.renderer.draw(msg_surf, pos)
 
 
     def draw_card(self, message, story=None, background=None, creatures=None):
         if background:
-            self.display.blit(background, (0, 0))
+            self.app.renderer.draw(background, (0, 0))
         else:
             self.display.fill(pygame.Color('black'))
 
@@ -119,12 +120,12 @@ class Screen(object):
         # main message
         pos_x = self.width/12
         card = font.render(message, False, color)
-        self.display.blit(card, (pos_x, self.height/2 + 50))
+        self.app.renderer.draw(card, (pos_x, self.height/2 + 50))
 
         # additional message
         if story:
             card = font.render(story, False, color)
-            self.display.blit(card, (pos_x, self.height/2 + 100))
+            self.app.renderer.draw(card, (pos_x, self.height/2 + 100))
 
         if creatures:
             width = sum(creature.get_width() for creature in creatures)
@@ -134,7 +135,7 @@ class Screen(object):
             pos_x = min(pos_x, self.width - width)
             for creature in creatures:
                 pos_y = self.height/3 - creature.get_height()/2
-                self.display.blit(creature, (pos_x, pos_y))
+                self.app.renderer.draw(creature, (pos_x, pos_y))
                 pos_x += creature.get_width() + 20
 
 
@@ -143,4 +144,5 @@ class Screen(object):
         text = font.render("[S] ... SKIP INTRO", False, pygame.Color('white'))
         pos = (self.width - text.get_width() - 10,
                self.height - text.get_height() - 10)
-        self.display.blit(text, pos)
+        self.app.renderer.draw(text, pos)
+
