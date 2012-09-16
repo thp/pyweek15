@@ -3,8 +3,8 @@ import os
 import glob
 import pygame
 
-FONT_STD = ("visitor2", 35)
-FONT_SMALL = ("visitor2", 20)
+FONT_STD = ("visitor2", 38)
+FONT_SMALL = ("visitor2", 25)
 
 
 class ResourceManager():
