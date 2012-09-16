@@ -82,8 +82,16 @@ class Game(Scene):
                     yield level
                 # XXX ugly, ugly side effect
                 self.next_state = ("NextLevelGroup", None)
+        
+        levels = self.app.resman.levels
+        try:
+            # honor the command line swith for starting level
+            idx = levels.index(self.app.start_level)
+            levels = levels[idx:]
+        except ValueError:
+            pass
 
-        itr = groupby(self.app.resman.levels, itemgetter(0))
+        itr = groupby(levels, itemgetter(0))
         return advance()
 
 

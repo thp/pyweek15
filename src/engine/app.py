@@ -25,8 +25,7 @@ class App(object):
 
         group, number = level_nr.split('-')
         group, number = int(group), int(number)
-        self.level_nr = (group, number)
-        self.last_level = len(self.resman.levels) - 1
+        self.start_level = (group, number)
 
         self._scenes = []
         for scene in scenes:
@@ -41,9 +40,6 @@ class App(object):
 
     def get_filename(self, basename):
         return os.path.join(os.path.dirname(__file__), '..', '..', 'data', basename)
-
-    def next_level(self):
-        return None if self.level_nr == self.last_level else int(self.level_nr) + 1
 
     def run(self):
         while True:

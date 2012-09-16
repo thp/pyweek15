@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 """
-Usage: main [(-l <level> | -s <scene>)] [-f] [-d]
+Usage: main [-l <level>] [-s <scene>] [-f] [-d] [-h]
 
 Options:
     -l, --level <level>  start with level x
     -s, --scene <scene>  start with scene x
     -f, --fullscreen
     -d, --debug
+    -h, --help           show this message
 """
 
 import pygame
