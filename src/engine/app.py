@@ -40,9 +40,7 @@ class App(object):
         return None if self.level_nr == self.last_level else int(self.level_nr) + 1
 
     def run(self):
-        running = True
-
-        while running:
+        while True:
             self._clock.tick(self.fps)
 
             events = pygame.event.get()
@@ -54,7 +52,7 @@ class App(object):
                 next_scene, scene_arg = p
                 if next_scene:
                     if next_scene == "GoodBye":
-                        running = False
+                        break
                     else:
                         # scene wants to change!
                         self.scene = self._get_scene(next_scene)
