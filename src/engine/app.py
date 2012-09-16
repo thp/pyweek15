@@ -45,7 +45,7 @@ class App(object):
                 return astate
 
     def get_filename(self, basename):
-        return os.path.join(os.path.dirname(__file__), '..', '..', 'data', basename)
+        return self.resman._path(basename)
 
     def next_level(self):
         return None if self.level_nr == self.last_level else int(self.level_nr) + 1

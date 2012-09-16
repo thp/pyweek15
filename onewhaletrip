@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Usage: main [(-l <level> | -s <scene>)] [-f] [-g] [-d]
+Usage: main [(-l <level> | -s <scene>)] [-f] [-g] [-d] [-p <psu>]
 
 Options:
     -l, --level <level>  start with level x
@@ -8,6 +8,7 @@ Options:
     -f, --fullscreen
     -g, --opengl
     -d, --debug
+    -p <psu>             make it run as mac app
 """
 
 import pygame

@@ -2,6 +2,7 @@
 import os
 import glob
 import pygame
+import sys
 
 FONT_STD = ("visitor2", 38)
 FONT_SMALL = ("visitor2", 25)
@@ -19,12 +20,13 @@ class ResourceManager():
 
         current_dir = os.path.abspath(os.path.dirname(__file__))
         self.rsrc_dir = os.path.join(current_dir, '..', '..', 'data')
+        if getattr(sys, 'frozen', None):
+            self.rsrc_dir = os.path.join(sys._MEIPASS, 'data')  # pyInstaller production environment
 
         self._load_all()
 
     def _path(self, *relative):
         return os.path.join(self.rsrc_dir, *relative)
-
 
     def _load_all(self):
         ## load sprites
