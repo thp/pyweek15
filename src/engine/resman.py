@@ -3,8 +3,6 @@ import os
 import glob
 import pygame
 
-from logic.level import Level
-
 FONT_STD = ("visitor2", 35)
 FONT_SMALL = ("visitor2", 20)
 
@@ -17,8 +15,6 @@ class ResourceManager():
         self._creatures = {}
         self._sounds = {}
         self._fonts = {}
-
-        self.levels = {}
 
         current_dir = os.path.abspath(os.path.dirname(__file__))
         self.rsrc_dir = os.path.join(current_dir, '..', '..', 'data')
@@ -73,12 +69,16 @@ class ResourceManager():
         self._fonts[FONT_SMALL] = font
 
         ## load levels
+        self.levels = []
+
         for fn in sorted(glob.glob(self._path("levels", "*.txt"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
-            _, group, number = bn.split('-')
-            group, number = int(group), int(number)
-            level = Level(self.app.get_filename(fn))
-            self.levels[(group, number)] = level
+            try:
+                _, group, number = bn.split('-')
+            except ValueError:
+                # ignore broken filenames
+                continue
+            self.levels.append((int(group), int(number)))
 
 
     def get_sprite(self, name):

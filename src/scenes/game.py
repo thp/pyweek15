@@ -2,6 +2,7 @@ from itertools import groupby
 from operator import itemgetter
 
 from engine.scene import Scene
+from logic.level import Level
 from logic.enemy import Enemy
 
 from pygame.locals import *
@@ -46,7 +47,6 @@ class Game(Scene):
     def __init__(self, app):
         super(Game, self).__init__(app)
 
-        self.level = None
         self.enemies = {}
 
         for key in ENEMY_NAMES:
@@ -65,9 +65,10 @@ class Game(Scene):
 
         if hard:
             self.levels = self.level_progression()
-            self.level = next(self.levels)
-        
-        self.level.reset()
+            self.level_nr = next(self.levels)
+        filename = "levels/level-%i-%i.txt" % self.level_nr
+        self.level = Level(self.app.get_filename(filename))
+
         self.app.player.reset(hard)
 
 
@@ -76,12 +77,13 @@ class Game(Scene):
             for key, group in itr:
                 for level in group:
                     print "next level:", level
-                    yield levels[level]
+                    # XXX move this into resource manager (levels need a
+                    # reset button first)
+                    yield level
                 # XXX ugly, ugly side effect
                 self.next_state = ("NextLevelGroup", None)
 
-        levels = self.app.resman.levels
-        itr = groupby(sorted(levels.keys()), itemgetter(0))
+        itr = groupby(self.app.resman.levels, itemgetter(0))
         return advance()
 
 
@@ -109,7 +111,7 @@ class Game(Scene):
         if self.level.exceeds_row(self.app.player.y):
             try:
                 # advance a level and reset
-                self.level = next(self.levels)
+                self.level_nr = next(self.levels)
                 self.reset()
             except StopIteration:
                 self.next_state = ("Victory", None)
