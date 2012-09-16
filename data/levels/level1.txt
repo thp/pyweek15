@@ -19,12 +19,6 @@
 # speed=10
 # background=beach
 #
-# :story:
-# you looked for your honey.
-# the lovely submarine.
-# the weather was sometimes sunny.
-# and the seaweed mostly green.
-#
 
 
 

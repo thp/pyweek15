@@ -117,7 +117,7 @@ class Game(Scene):
             self.next_state = ("CutScene", {
                     "score": self.player.coins_collected,
                     "health": self.player.health,
-                    "story": self.level.story
+                    "story": ["next level"]
                 })
 
         if self.i % self.KEYBOARD_REPEAT_MOD == 0:

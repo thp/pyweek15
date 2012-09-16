@@ -17,12 +17,6 @@
 # speed=10
 # background=test
 #
-# :story:
-# you swam along the ocean.
-# looking for the one and only.
-# and you were in for a promotion!
-# because it was you who was lonely.
-#
 
 
 

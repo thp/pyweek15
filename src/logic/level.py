@@ -42,12 +42,11 @@ class Row:
 class Level:
     DEFAULT_SPEED = 10
 
-    ENEMIES, PICKUP, META, STORY = range(4)
+    ENEMIES, PICKUP, META = range(3)
 
     def __init__(self, filename):
         self.charmap = {}
         self.rows = []
-        self.story = []  # shown during the CutScene following the level
         self.speed = self.DEFAULT_SPEED
         self.background = 'test'
 
@@ -61,8 +60,6 @@ class Level:
                 section = self.PICKUP
             elif ':meta:' in line:
                 section = self.META
-            elif ':story:' in line:
-                section = self.STORY
 
             definition = re.match(r'^# ([^=]+)=(.*)$', line.strip())
             if definition:
@@ -71,11 +68,6 @@ class Level:
                     self.add_item(key, value, section == self.ENEMIES)
                 elif section == self.META:
                     self.set_meta(key, value)
-
-            if section == self.STORY:
-                subtitle = re.match(r'^#\s+(.*)$', line.strip())
-                if subtitle and not subtitle.group(1) == ":story:":
-                    self.story.append(subtitle.group(1))
 
             if line.startswith('#'):
                 continue
