@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 """
-Usage: main [ ( -l <level> | -s <scene> ) ] [ -f <fullscreen> ]
+Usage: main [(-l <level> | -s <scene>)] [-f] [-d]
 
 Options:
     -l, --level <level>  start with level x
     -s, --scene <scene>  start with scene x
     -f, --fullscreen
+    -d, --debug
 """
 
 import pygame
@@ -42,8 +43,9 @@ pygame.init()
 
 app = App(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, arguments['--fullscreen'],
           scenes=SCENES,
-          entry=arguments['--scene'] or "Game",
-          level_nr=arguments['--level'] or 0
+          entry=arguments['--scene'] or "Start",
+          level_nr=arguments['--level'] or 0,
+          debug=arguments['--debug'],
           )
 
 app.run()

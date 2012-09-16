@@ -7,7 +7,9 @@ from screen import Screen
 
 class App(object):
     def __init__(self, title, width, height, fullscreen,
-                 scenes, entry, level_nr=0):
+                 scenes, entry, level_nr=0, debug=False):
+
+        self.debug = debug
 
         self._clock = pygame.time.Clock()
         self.fps = 30

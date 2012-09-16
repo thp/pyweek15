@@ -26,7 +26,8 @@ class Screen(object):
         self.display.fill(pygame.Color('black'))
 
     def update(self):
-        self.draw_debug()
+        if self.app.debug:
+            self.draw_debug()
         pygame.display.update()
 
 
