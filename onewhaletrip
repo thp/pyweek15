@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from engine.app import App
 from scenes.game import Game
-from scenes.intermissions import (Start, Intro, NextLevelGroup, LostLife,
-                                  GameOver, Outro, Victory)
+from scenes.intermissions import (Start, Intro, LostLife, GameOver, Outro, Victory,
+        NextLevelGroup_1_3, NextLevelGroup_2_3, NextLevelGroup_3_1, NextLevelGroup_4_1, NextLevelGroup_5_1)
 
 from docopt import docopt
 arguments = docopt(__doc__)
@@ -33,7 +33,11 @@ SCENES = [
     Start,
     Intro,
     Game,
-    NextLevelGroup,
+    NextLevelGroup_1_3,
+    NextLevelGroup_2_3,
+    NextLevelGroup_3_1,
+    NextLevelGroup_4_1,
+    NextLevelGroup_5_1,
     LostLife,
     GameOver,
     Victory,

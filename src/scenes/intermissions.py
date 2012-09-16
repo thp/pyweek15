@@ -83,18 +83,65 @@ class GameOver(Intermission):
         self.creatures = [self.app.resman.get_creature("game_over_whale")]
 
 
-class NextLevelGroup(Intermission):
+class NextLevelGroup_1_3(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_beach")[0]
+
+        self.title = "NEXT LEVEL"
+        self.story = iter(["press [enter] to begin"])
+
+        self.creatures = [self.app.resman.get_creature("jellyfish_a"),
+                          self.app.resman.get_creature("jellyfish_b")]
+
+
+class NextLevelGroup_2_3(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_coralreef")[0]
+
+        self.title = "NEXT LEVEL"
+        self.story = iter(["press [enter] to begin"])
+
+        self.creatures = [self.app.resman.get_creature("diver")]
+
+
+class NextLevelGroup_3_1(Intermission):
     def _setup(self):
         self.next_scene = ("Game", None)
 
         self.background = self.app.resman.get_background("i_deepsea")[0]
 
-        # TODO this is really for between level groups
-        # add background and one creature from next level group
-        # advance the story
         self.title = "NEXT LEVEL"
-        self.story = ["press [enter] to begin"]
-        self.creatures = [self.app.resman.get_creature("jellyfish_a")]
+        self.story = iter(["press [enter] to begin"])
+
+        self.creatures = [self.app.resman.get_creature("lanternfish")]
+
+
+class NextLevelGroup_4_1(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_cliff")[0]
+
+        self.title = "NEXT LEVEL"
+        self.story = iter(["press [enter] to begin"])
+
+        self.creatures = [self.app.resman.get_creature("rock_l")]
+
+
+class NextLevelGroup_5_1(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_surreal")[0]
+
+        self.title = "NEXT LEVEL"
+        self.story = iter(["press [enter] to begin"])
+
+        self.creatures = [self.app.resman.get_creature("submarine")]
 
 
 class Victory(Intermission):

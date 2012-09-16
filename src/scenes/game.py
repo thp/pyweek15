@@ -72,6 +72,8 @@ class Game(Scene):
             self.levels = self.level_progression()
             self.level_nr = next(self.levels)
         filename = "levels/level-%i-%i.txt" % self.level_nr
+        # XXX move this into resource manager (levels need a
+        # reset button first)
         self.level = Level(self.app.get_filename(filename))
 
         self.app.player.reset(hard)
@@ -82,15 +84,13 @@ class Game(Scene):
             for key, group in itr:
                 for level in group:
                     print "next level:", level
-                    # XXX move this into resource manager (levels need a
-                    # reset button first)
                     yield level
                 # XXX ugly, ugly side effect
-                self.next_state = ("NextLevelGroup", None)
-        
+                self.next_state = ("NextLevelGroup_%i_%i" % level, None)
+
         levels = self.app.resman.levels
         try:
-            # honor the command line swith for starting level
+            # honor the command line switch for starting level
             idx = levels.index(self.app.start_level)
             levels = levels[idx:]
         except ValueError:
