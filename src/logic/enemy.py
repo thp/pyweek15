@@ -39,7 +39,7 @@ class Enemy(Sprite):
     def step(self):
         self.process()
 
-    def draw(self, screen, points, opacity):
+    def draw(self, screen, points, opacity, tint):
         sprite_name = self.current_sprite_name()
         sprite = self.lookup_sprite(sprite_name)
 
@@ -56,5 +56,5 @@ class Enemy(Sprite):
         # align the enemy in the center of the polygon
         # and with the bottom (frontmost) edge of the
         # polygon aligned with the bottom of the enemy
-        self.app.renderer.draw(sprite, (x, y), factor, opacity)
+        self.app.renderer.draw(sprite, (x, y), factor, opacity, tint)
 

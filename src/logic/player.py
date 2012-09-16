@@ -71,7 +71,7 @@ class Player(Sprite):
         self.process()
 
 
-    def draw(self, screen, points, opacity):
+    def draw(self, screen, points, opacity, tint):
         xoffset, yoffset, opacity = 0., 0., 1.
         tint = 1., 1., 1.
 

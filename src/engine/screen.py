@@ -56,7 +56,7 @@ class Screen(object):
         pygame.draw.polygon(self.display, color, points, 1)
 
 
-    def draw_sprite(self, y, sprite, points):
+    def draw_sprite(self, y, sprite, points, tint):
         """Project a sprite onto the screen.
         Coordinates are given in world coordinates."""
         points = [self.projection(*point) for point in points]
@@ -64,10 +64,11 @@ class Screen(object):
         # Fade in enemy sprites coming from the back
         if y > 10:
             opacity = 1. - (y-10)/5.
+            tint = map(lambda x: x*opacity, tint)
         else:
             opacity = 1.
 
-        sprite.draw(self.display, points, opacity)
+        sprite.draw(self.display, points, opacity, tint)
 
 
     def draw_stats(self, bonus, health):

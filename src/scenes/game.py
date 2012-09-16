@@ -6,6 +6,10 @@ from logic.enemy import Enemy
 
 from pygame.locals import *
 
+import pygame
+
+import math
+
 WORLD_DEPTH = 10 # fudge factor... works for self.DEPTH @ 15
 
 
@@ -250,7 +254,17 @@ class Game(Scene):
 
         # Draw all enemies (+player), back-to-front for proper stacking order
         for y, sprite, points in sorted(draw_queue, reverse=True):
-            self.app.screen.draw_sprite(y-self.time, sprite, points)
+            if self.level.background == 'surreal':
+                # Special FX for the Surreal level - tint like crazy!
+                tint = [
+                    .5+.5*math.sin(self.i*.009),
+                    .5+.5*math.sin(.9+self.i*.004),
+                    .5+.5*math.sin(4.5+self.i*.2),
+                ]
+            else:
+                tint = 1., 1., 1.
+
+            self.app.screen.draw_sprite(y-self.time, sprite, points, tint)
 
         self.app.screen.draw_stats(self.player.coins_collected,
                                    self.player.health)
