@@ -52,11 +52,8 @@ class Player(Sprite):
             # [11:47pm] lobbbe_: what about that: you get your health back to full if you eat a fishy,
             # and if your health is already full - and only then - you get an extra life?
             self.app.audman.sfx("fishy")
-            if self.health <= self.max_health - 3:
-                # XXX fix this logic
-                self.health += 3
-            else:
-                self.health = self.max_health
+            lives = int(self.health/3) + 1
+            self.health = min(lives*3, MAX_HEALTH)
 
     def crashed(self):
         if not self.blinking:
