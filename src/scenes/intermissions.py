@@ -105,7 +105,7 @@ class NextLevelGroup_2_3(Intermission):
         self.background = self.app.resman.get_background("i_coralreef")[0]
 
         self.title = "THE CORAL REEF"
-        self.story = iter(["everything is so colorful down hear",
+        self.story = iter(["everything is so colorful down here",
                            "you wish you could share it with someone"])
 
         self.creatures = [self.app.resman.get_creature("diver")]
