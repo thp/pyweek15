@@ -5,7 +5,7 @@ from pygame.locals import *
 class Intro(Scene):
     def process_input(self, event):
         if event.type == KEYDOWN:
-            self.next_state = ("MainMenu", None)
+            self.next_state = ("Game", None)
 
     def draw(self):
         self.app.screen.draw_card("Intro")

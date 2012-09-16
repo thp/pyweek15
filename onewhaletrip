@@ -18,7 +18,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 from engine.app import App
 from scenes.game import Game
 from scenes.intermissions import Start
-from scenes.menu import MainMenu
 from scenes.intro import Intro
 from scenes.outro import Outro
 from scenes.gameover import GameOver
@@ -35,7 +34,6 @@ SCREEN_HEIGHT = 480
 SCENES = [
     Start,
     Intro,
-    MainMenu,
     Game,
     GameOver,
     CutScene,
