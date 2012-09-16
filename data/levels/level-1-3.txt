@@ -32,104 +32,6 @@
 
 
 
-   p 
-  p  
-   p 
-  p  
-
-
-  p  
- p   
-  p  
- p   
-
-
-   a 
-  b  
-   a 
-  1  
-
-
-  a  
- b   
-  a  
-   1 
-
-
-    a
-   ab
-p ca 
-p  ba
-p   c
-   a 
-    b
-
-
-c    
- ab  
-ca   
- ba p
-  c p
- a  p
-  b  
-
-
-    a
-   ab
-1 ca 
-1  ba
-1   c
-   a 
-    b
-
-
-   a 
-  ab 
- ca  
-p ba 
-p  c 
-p a  
-   b 
-   f 
-
-
-  c  
-  abp
- ca p
-  bap
-   cp
-  a p
-   b 
-
-
-  p  
- p   
-p    
- p   
-  p  
-   p 
-    p
-   p 
-  p  
-
-
-   a 
-  ab 
- caxz
-  ba 
-2  c 
-1 ay 
-   b 
-
-
- c   
- ab  
-caxz 
- ba 1
-  c 2
- ay 1
-  b  
-
 
   p  
  p   
@@ -140,6 +42,120 @@ p x
   y p
    p 
   p  
+
+
+   a 
+  b  
+   a 
+
+
+  a  
+ b   
+  a  
+
+
+   a 
+  b  
+   a 
+  3  
+
+  a  
+ b   
+  a  
+ 3   
+
+   a 
+  b  
+   a 
+  x  
+   y 
+
+
+  a  
+ b   
+  a  
+ z   
+  y  
+
+
+    a
+   ab
+p ca 
+p  ba
+p   c
+   a 
+    b
+c    
+ ab  
+ca   
+ ba p
+  c p
+ a  p
+  b  
+
+    a
+   ab
+1 ca 
+1  ba
+1   c
+   a 
+    b
+   f 
+   a 
+  ab 
+ ca f
+
+
+
+p ba 
+p  c 
+p a  
+   b 
+  c  
+
+
+ xabp
+yca p
+ zbap
+ zycp
+  a p
+   b 
+
+
+  p  
+ p   
+p a  
+ p   
+a p  
+ p   
+p b  
+ p   
+
+
+  1  
+   2 
+    3
+   v 
+  2  
+ 1   
+
+    p
+   p 
+  p a
+   p 
+  a p
+   p 
+  p b
+   p 
+  c p
+   p 
+  p b
+ p c 
+  p  
+   p 
+  w p
+   p 
+  p
 
 
 
