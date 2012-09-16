@@ -6,8 +6,14 @@ from logic.enemy import Enemy
 
 from pygame.locals import *
 
-WORLD_DEPTH = 10 # fudge factor... works for self.DEPTH @ 15
+DEPTH = 15
+WORLD_DEPTH = 10 # fudge factor... works for DEPTH @ 15
 
+MAX_SPEEDUP = 4
+SPEEDUP_STEP = .1
+
+# keyboard repeat rate (modulo) -> higher value = less repeat
+KEYBOARD_REPEAT_MOD = 7
 
 MIN_DEST_X = 0
 MAX_DEST_X = 4
@@ -37,14 +43,6 @@ ENEMY_NAMES = [
 ]
 
 class Game(Scene):
-    DEPTH = 15
-
-    MAX_SPEEDUP = 4
-    SPEEDUP_STEP = .1
-
-    # keyboard repeat rate (modulo) -> higher value = less repeat
-    KEYBOARD_REPEAT_MOD = 7
-
     def __init__(self, app):
         super(Game, self).__init__(app)
 
@@ -63,8 +61,6 @@ class Game(Scene):
 
         self.player = Player(self.app, health=health, coins_collected=score)
 
-        #self.message = None
-
         self.enemies = {}
 
         for key in ENEMY_NAMES:
@@ -77,21 +73,17 @@ class Game(Scene):
             self._init(arg['next_level'], arg['score'], arg['health'])
 
     def process(self):
-        # it's kind of annoying -> commented out
-        #if self.message:
-        #    return
-
         self.i += 1
 
         step = .01 * self.level.speed
         if self.boost:
-            if self.speedup < self.MAX_SPEEDUP:
-                self.speedup += self.SPEEDUP_STEP
-            if self.speedup > self.MAX_SPEEDUP:
-                self.speedup = self.MAX_SPEEDUP
+            if self.speedup < MAX_SPEEDUP:
+                self.speedup += SPEEDUP_STEP
+            if self.speedup > MAX_SPEEDUP:
+                self.speedup =MAX_SPEEDUP
         else:
             if self.speedup > 0:
-                self.speedup -= self.SPEEDUP_STEP * 2
+                self.speedup -= SPEEDUP_STEP * 2
             if self.speedup < 0:
                 self.speedup = 0
 
@@ -100,17 +92,16 @@ class Game(Scene):
         if self.time > 1.:
             self.time -= 1.
             self.player.y += 1
-            #self.message = self.level.get_message(self.player.y)
 
         if self.level.exceeds_row(self.player.y):
-            # animate level end
+            # TODO animate level end
             self.next_state = ("CutScene", {
                     "score": self.player.coins_collected,
                     "health": self.player.health,
                     "story": ["next level"]
                 })
 
-        if self.i % self.KEYBOARD_REPEAT_MOD == 0:
+        if self.i % KEYBOARD_REPEAT_MOD == 0:
             next_x = self.player.dest_x + self.direction
             if next_x >= MIN_DEST_X and next_x <= MAX_DEST_X:
                 self.player.dest_x += self.direction
@@ -120,19 +111,11 @@ class Game(Scene):
             enemy.step()
 
         if self.player.health <= 0:
-            #print 'YOU ARE DEAD!'
             self.next_state = ("GameOver", None)
 
         return super(Game, self).process()
 
     def process_input(self, event):
-        #if self.message and event.type == KEYUP and event.key == K_RETURN:
-        #    rest = self.message.split('\n', 1)
-        #    if len(rest) == 2:
-        #        self.message = rest[1]
-        #    else:
-        #        self.message = None
-
         def go_left():
             self.direction = -1
             self.i = 0
@@ -188,14 +171,14 @@ class Game(Scene):
 
         lane:     0..5
         jump:     not defined yet
-        distance: 0..self.DEPTH+1 (number of rows)
+        distance: 0..DEPTH+1 (number of rows)
 
         world coordinates: 1x1xWORLD_DEPTH
         """
 
         x = (lane + 0.5) / 5.0
         y = (500.0 - jump) / 500.0
-        z = WORLD_DEPTH * (distance+0.5) / self.DEPTH
+        z = WORLD_DEPTH * (distance+0.5) / DEPTH
 
         return (x, y, z)
 
@@ -209,12 +192,11 @@ class Game(Scene):
         x = self.player.x
         y = self.time
         player_points = self.mkpoints(x, y, self.player.height)
-        #draw.polygon(screen, (255, 255, 255), player_points, 1)
 
         # draw queue for back-to-front drawing of enemies
         draw_queue = [(y, self.player, player_points)]
 
-        for yidx, offset in enumerate(range(self.player.y, self.player.y+self.DEPTH)):
+        for yidx, offset in enumerate(range(self.player.y, self.player.y+DEPTH)):
             if offset < len(self.level.rows):
                 for xidx, column in enumerate(self.level.rows[offset].items):
                     if column is None:
@@ -255,10 +237,6 @@ class Game(Scene):
 
         self.app.screen.draw_stats(self.player.coins_collected,
                                    self.player.health)
-
-        #if self.message:
-        #    message = self.message.split('\n', 1)[0]
-        #    self.app.screen.draw_message(message)
 
 
     def mkpoints(self, x, y, height=0.):
