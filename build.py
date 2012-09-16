@@ -11,7 +11,7 @@ name = "OneWhaleTrip"
 # build
 path2build = {}
 path2build["darwin"] = "~/bin/pyinstaller/utils/"
-path2build["win32"] = "T:\\bin\\pyinstaller\\utils\\"
+path2build["win32"] = "Y:\\bin\\pyinstaller\\utils\\"
 
 command = "python %sBuild.py --noconfirm %s.spec" % (path2build[pfm], pfm)
 
