@@ -39,6 +39,9 @@ class SpriteProxy:
         glDeleteTextures(self._texture_id)
 
     def _make_powerof2(self, surface):
+        if not is_gles:
+            return surface
+
         # Converts a surface so that it becomes a power-of-2 surface
         # (both width and height are a power of 2)
 
@@ -105,9 +108,9 @@ class Renderer:
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
+        glOrtho(0, width, height, 0, 0, 1)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        glOrtho(0, width, height, 0, 0, 1)
 
         glEnable(GL_TEXTURE_2D)
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
