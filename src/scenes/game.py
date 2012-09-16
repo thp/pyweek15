@@ -4,20 +4,10 @@ from logic.level import Level
 from logic.player import Player
 from logic.enemy import Enemy
 
-from logic.lamemath import shade_color
-
 from pygame.locals import *
 
 WORLD_DEPTH = 10 # fudge factor... works for self.DEPTH @ 15
 
-
-# XXX: This should be removed once we have proper gfx
-colors = {
-    #'coin': (255, 255, 0),
-    'stone': (0, 0, 255),
-    'lanternfish': (0, 255, 0),
-    'sixpack': (100, 100, 100),
-}
 
 MIN_DEST_X = 0
 MAX_DEST_X = 4
@@ -230,8 +220,6 @@ class Game(Scene):
                     if column is None:
                         continue
 
-                    color = colors.get(column.name, (0, 0, 0))
-
                     x = xidx
                     y = yidx
 
@@ -253,13 +241,12 @@ class Game(Scene):
                                              for point in player_points]
 
                     points = self.mkpoints(x, y)
-                    color = shade_color(color, yidx-self.time, self.DEPTH)
                     if column.name in self.enemies:
                         enemy = self.enemies[column.name]
                         draw_queue.append((y, enemy, points))
                     elif column.name:
                         print '[WARNING] Missing graphic:', column.name
-                        self.app.screen.draw_polygon(color, points)
+                        self.app.screen.draw_polygon(pygame.Color('red'), points)
 
         # Draw all enemies (+player), back-to-front for proper stacking order
         for _, sprite, points in sorted(draw_queue, reverse=True):
