@@ -83,7 +83,7 @@ class Game(Scene):
         def advance():
             for key, group in itr:
                 for level in group:
-                    print "next level:", level
+                    #print "next level:", level
                     yield level
                 # XXX ugly, ugly side effect
                 self.next_state = ("NextLevelGroup_%i_%i" % level, None)

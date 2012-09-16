@@ -37,7 +37,7 @@ class Intro(Intermission):
             "across the ocean you would follow!",
 
             [self.app.resman.get_creature("oyster_1_pearl")],
-            "maybe a string of pearls would open doors?",
+            "maybe a string of pearls would help?",
 
             [self.app.resman.get_creature("fishy_rainbow")],
             "the journey is long and hard",

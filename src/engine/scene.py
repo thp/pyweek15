@@ -44,6 +44,9 @@ class Intermission(Scene):
             "a-way ove-lay ory-stay",
         ]
 
+    def resume(self, arg):
+        super(Intermission, self).resume(arg)
+        self.__init__(self.app)
 
     def update(self):
         item = next(self.story)
