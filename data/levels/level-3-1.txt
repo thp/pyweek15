@@ -1,0 +1,188 @@
+#
+# :enemies:
+# a=coral_a
+# b=coral_b
+# c=coral_c
+# d=coral_d
+#
+# v=shell
+# w=jellyfish_b
+# x=jellyfish_a
+# y=diver
+# z=starfish
+#
+# :pickups:
+# f=fishy_rainbow
+#
+# p=pearl
+#
+# 0=oyster_0_pearl
+# 1=oyster_1_pearl
+# 2=oyster_2_pearl
+# 3=oyster_3_pearl
+#
+# :meta:
+# speed=10
+# background=coralreef
+#
+
+
+
+
+
+
+
+
+
+z y  
+   yz
+x p  
+  y z
+zy   
+  p x
+z y  
+   yz
+x p  
+  y z
+zy   
+    x
+
+
+    p
+   p 
+  p a
+   p 
+  b p
+   p 
+y pc 
+   p 
+   dp
+   p 
+  pa 
+ pa y
+  pc 
+   p 
+   bp
+   p 
+  pd 
+ pa  
+  p  
+
+
+    p
+   p 
+  p a
+   bb
+  ccd
+da   
+f    
+  p  
+   p 
+c   p
+db   
+aac  
+
+   cc
+    a 
+    p
+   p 
+  p a
+   bb
+  ccd
+
+da   
+x    
+  p  
+   p 
+c   p
+db  y
+aac  
+
+   cc
+    a 
+
+
+a    
+bac  
+ dbca
+ abc 
+aad  
+c    
+    d
+  abb
+aacd 
+ adb 
+  ccd
+    b
+  p  
+a    
+bac  
+ dbca
+ abc 
+aad  
+c    
+  py 
+    d
+  abb
+aacd 
+ adb 
+  ccd
+    b
+ yp  
+a    
+bac  
+ dbca
+ abc 
+aad  
+c    
+ypy  
+    d
+  abb
+aacd 
+ adb 
+  ccd
+    b
+
+ z z 
+  y  
+
+ w ww
+xxx p
+ z z 
+  p  
+
+acb p
+ d ac
+
+ z z 
+  y  
+ w ww
+xxx p
+
+ z z 
+  p  
+
+acb p
+ d ac
+ zyz 
+
+  p  
+ w ww
+xxx p
+
+ z z 
+  p  
+acb p
+ d ac
+
+ z z 
+  y  
+ w ww
+xxx p
+ z z 
+  p  
+acb p
+ d ac
+
+
+
