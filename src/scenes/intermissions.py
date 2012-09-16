@@ -1,4 +1,5 @@
 from engine.scene import Intermission
+from pygame.locals import *
 
 
 class Start(Intermission):
@@ -46,6 +47,16 @@ class Intro(Intermission):
             "watch out!",
             "there are many dangers to be avoided",
         ]
+
+
+    def process_input(self, event):
+        if event.type == KEYDOWN and event.key == K_s:
+            self.next_state = self.next_scene
+        super(Intro, self).process_input(event)
+
+    def draw(self):
+        super(Intro, self).draw()
+        self.app.screen.draw_skip()
 
 
 class GameOver(Intermission):

@@ -135,3 +135,11 @@ class Screen(object):
                 pos_y = self.height/3 - creature.get_height()/2
                 self.display.blit(creature, (pos_x, pos_y))
                 pos_x += creature.get_width() + 20
+
+
+    def draw_skip(self):
+        font = self.app.resman.font(FONT_SMALL)
+        text = font.render("[S] ... SKIP INTRO", False, pygame.Color('white'))
+        pos = (self.width - text.get_width() - 10,
+               self.height - text.get_height() - 10)
+        self.display.blit(text, pos)
