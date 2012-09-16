@@ -59,6 +59,17 @@ class Intro(Intermission):
         self.app.screen.draw_skip()
 
 
+class LostLife(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_deepsea")[0]
+
+        self.title = "YOU LOST A LIFE"
+        self.story = ["be careful!"]
+        self.creatures = [self.app.resman.get_creature("lost_life_whale")]
+
+
 class GameOver(Intermission):
     def _setup(self):
         self.next_scene = ("Start", None)
