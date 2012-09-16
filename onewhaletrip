@@ -18,7 +18,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from engine.app import App
 from scenes.game import Game
-from scenes.intermissions import Start, Intro, LostLife, GameOver, Outro, Victory
+from scenes.intermissions import (Start, Intro, NextLevelGroup, LostLife,
+                                  GameOver, Outro, Victory)
 from scenes.cutscene import CutScene
 
 from docopt import docopt
@@ -32,6 +33,7 @@ SCENES = [
     Start,
     Intro,
     Game,
+    NextLevelGroup,
     LostLife,
     GameOver,
     CutScene,

@@ -65,8 +65,10 @@ class LostLife(Intermission):
 
         self.background = self.app.resman.get_background("i_deepsea")[0]
 
+        lives = int(self.app.player.health/3)
+
         self.title = "YOU LOST A LIFE"
-        self.story = ["be careful!"]
+        self.story = ["be careful! you have only %i left" % lives]
         self.creatures = [self.app.resman.get_creature("lost_life_whale")]
 
 
@@ -79,6 +81,20 @@ class GameOver(Intermission):
         self.title = "GAME OVER"
         self.story = ["it wasn't meant to be"]
         self.creatures = [self.app.resman.get_creature("game_over_whale")]
+
+
+class NextLevelGroup(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_deepsea")[0]
+
+        # TODO this is really for between level groups
+        # add background and one creature from next level group
+        # advance the story
+        self.title = "NEXT LEVEL"
+        self.story = ["press [enter] to begin"]
+        self.creatures = [self.app.resman.get_creature("jellyfish_a")]
 
 
 class Victory(Intermission):

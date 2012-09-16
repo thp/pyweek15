@@ -95,11 +95,7 @@ class Game(Scene):
             self.reset()
 
             # TODO animate level end
-            self.next_state = ("CutScene", {
-                    "score": self.app.player.coins_collected,
-                    "health": self.app.player.health,
-                    "story": ["next level"]
-                })
+            self.next_state = ("NextLevelGroup", None)
 
         if self.i % KEYBOARD_REPEAT_MOD == 0:
             next_x = self.app.player.dest_x + self.direction
@@ -213,17 +209,10 @@ class Game(Scene):
                         if c > 0:
                             # do something when the player collides
                             if self.app.player.health % 3 == 0:
-                                # reset to beginning of this level
+                                # lost a life
+                                # reset to beginning of current level
                                 self.reset()
-
-                                # lost a full life
-                                self.next_state = ("CutScene", {
-                                    "score": self.app.player.coins_collected,
-                                    "health": self.app.player.health,
-                                    "title": "YOU LOST A LIFE",
-                                    "story": ['be careful next time! only %i left' % int(self.app.player.health/3)],
-                                    "restart": True,
-                                })
+                                self.next_state = ("LostLife", None)
                         elif c < 0:
                             # picked up a coin
                             player_points = [self.app.screen.projection(*point)
