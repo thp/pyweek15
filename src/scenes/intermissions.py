@@ -61,23 +61,36 @@ class Intro(Intermission):
 
 class GameOver(Intermission):
     def _setup(self):
-        super(GameOver, self)._setup()
-
         self.next_scene = ("Start", None)
+
+        self.background = self.app.resman.get_background("i_deepsea")[0]
+
         self.title = "GAME OVER"
+        self.story = ["it wasn't meant to be"]
+        self.creatures = [self.app.resman.get_creature("game_over_whale")]
 
 
 class Victory(Intermission):
     def _setup(self):
-        super(Victory, self)._setup()
-
         self.next_scene = ("Outro", None)
+
+        self.background = self.app.resman.get_background("i_surreal")[0]
+
         self.title = "VICTORY"
+        self.story = ["a happy ending"]
+        self.creatures = [
+            self.app.resman.get_creature("whale_story_heart_mirror"),
+            self.app.resman.get_creature("victory_submarine"),
+         ]
 
 
 class Outro(Intermission):
     def _setup(self):
-        super(Outro, self)._setup()
-
         self.next_scene = ("GoodBye", None)
-        self.title = "OUTRO"
+
+        self.background = self.app.resman.get_background("i_outro")[0]
+        self.title = "GOOD BYE!"
+        self.story = ["the team:",
+                      "gfx: lobbbe",
+                      "code: thp, styts, hop",
+                      "sfx: thp",]
