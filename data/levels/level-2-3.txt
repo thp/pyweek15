@@ -102,13 +102,13 @@ x   3
 
 z y  
    yz
-x    
+x p  
   y z
 zy   
-    x
+  p x
 z y  
    yz
-x    
+x p  
   y z
 zy   
     x
