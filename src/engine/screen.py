@@ -116,7 +116,7 @@ class Screen(object):
         color = pygame.Color('white')
 
         # main message
-        pos_x = self.width/6
+        pos_x = self.width/12
         card = font.render(message, False, color)
         self.display.blit(card, (pos_x, self.height/2 + 50))
 

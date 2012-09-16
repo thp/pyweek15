@@ -3,7 +3,7 @@ import os
 import glob
 import pygame
 
-FONT_STD = ("visitor2", 38)
+FONT_STD = ("visitor2", 35)
 FONT_SMALL = ("visitor2", 20)
 
 
@@ -12,6 +12,7 @@ class ResourceManager():
         self.app = app
         self._surfaces = {}
         self._backgrounds = {}
+        self._creatures = {}
         self._sounds = {}
         self._fonts = {}
         self._levels = {}
@@ -42,6 +43,14 @@ class ResourceManager():
                 self._backgrounds[key].append(surf)
             else:
                 self._backgrounds[key] = [surf]
+
+        ## load intermission assets
+        for fn in glob.glob(self._path('creatures', "*.png")):
+            bn, _ = os.path.splitext(os.path.basename(fn))
+            surf = pygame.image.load(fn)
+            surf = surf.convert_alpha()
+            self._creatures[bn] = surf
+
 
         print self._backgrounds.keys()
 
@@ -74,6 +83,9 @@ class ResourceManager():
 
     def get_background(self, name):
         return self._backgrounds.get(name)
+
+    def get_creature(self, name):
+        return self._creatures.get(name)
 
     def get_sound(self, name):
         return self._sounds[name]
