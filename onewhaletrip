@@ -45,7 +45,7 @@ pygame.init()
 app = App(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, arguments['--fullscreen'],
           scenes=SCENES,
           entry=arguments['--scene'] or "Start",
-          level_nr=arguments['--level'] or 0,
+          level_nr=arguments['--level'] or "1-1",
           debug=arguments['--debug'],
           )
 

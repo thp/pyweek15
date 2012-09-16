@@ -9,7 +9,7 @@ from screen import Screen
 
 class App(object):
     def __init__(self, title, width, height, fullscreen,
-                 scenes, entry, level_nr=0, debug=False):
+                 scenes, entry, level_nr="1-1", debug=False):
 
         self.debug = debug
 
@@ -23,8 +23,10 @@ class App(object):
 
         self.player = Player(self)
 
-        self.level_nr = level_nr
-        self.last_level = len(self.resman._levels) - 1
+        group, number = level_nr.split('-')
+        group, number = int(group), int(number)
+        self.level_nr = (group, number)
+        self.last_level = len(self.resman.levels) - 1
 
         self._scenes = []
         for scene in scenes:

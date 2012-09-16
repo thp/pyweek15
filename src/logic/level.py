@@ -83,6 +83,9 @@ class Level:
 
             self.rows.append(Row(self, line.rstrip('\n')))
 
+    def reset(self):
+        pass
+
     def get_message(self, y):
         return self.messages.get(y)
 

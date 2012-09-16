@@ -1,6 +1,7 @@
+from itertools import groupby
+from operator import itemgetter
 
 from engine.scene import Scene
-from logic.level import Level
 from logic.enemy import Enemy
 
 from pygame.locals import *
@@ -45,6 +46,7 @@ class Game(Scene):
     def __init__(self, app):
         super(Game, self).__init__(app)
 
+        self.level = None
         self.enemies = {}
 
         for key in ENEMY_NAMES:
@@ -62,10 +64,25 @@ class Game(Scene):
         self.speedup = 0
 
         if hard:
-            self.level_nr = 0
-        self.level = Level(self.app.get_filename('levels/level%s.txt' % self.level_nr))
-
+            self.levels = self.level_progression()
+            self.level = next(self.levels)
+        
+        self.level.reset()
         self.app.player.reset(hard)
+
+
+    def level_progression(self):
+        def advance():
+            for key, group in itr:
+                for level in group:
+                    print "next level:", level
+                    yield levels[level]
+                # XXX ugly, ugly side effect
+                self.next_state = ("NextLevelGroup", None)
+
+        levels = self.app.resman.levels
+        itr = groupby(sorted(levels.keys()), itemgetter(0))
+        return advance()
 
 
     def process(self):
@@ -90,12 +107,14 @@ class Game(Scene):
             self.app.player.y += 1
 
         if self.level.exceeds_row(self.app.player.y):
-            # advance a level and reset
-            self.level_nr += 1
-            self.reset()
+            try:
+                # advance a level and reset
+                self.level = next(self.levels)
+                self.reset()
+            except StopIteration:
+                self.next_state = ("Victory", None)
 
             # TODO animate level end
-            self.next_state = ("NextLevelGroup", None)
 
         if self.i % KEYBOARD_REPEAT_MOD == 0:
             next_x = self.app.player.dest_x + self.direction
