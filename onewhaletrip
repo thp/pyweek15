@@ -17,12 +17,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from engine.app import App
 from scenes.game import Game
-from scenes.intermissions import Start
-from scenes.intro import Intro
-from scenes.outro import Outro
-from scenes.gameover import GameOver
+from scenes.intermissions import Start, Intro, GameOver, Outro, Victory
 from scenes.cutscene import CutScene
-from scenes.victory import Victory
 
 from docopt import docopt
 arguments = docopt(__doc__)
