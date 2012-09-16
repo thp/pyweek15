@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=1 Whale Trip
-Exec=invoker --single-instance --type=e /opt/onewhaletrip/bin/onewhaletrip
+Exec=invoker --single-instance --type=e /opt/onewhaletrip/bin/onewhaletrip --opengl
 Icon=/opt/onewhaletrip/onewhaletrip.png
 Terminal=false
 Type=Application

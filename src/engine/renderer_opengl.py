@@ -39,10 +39,6 @@ class SpriteProxy:
         glDeleteTextures(self._texture_id)
 
     def _make_powerof2(self, surface):
-        if not is_gles:
-            # On the Desktop, non-power-of-2 texture usually work, too
-            return surface
-
         # Converts a surface so that it becomes a power-of-2 surface
         # (both width and height are a power of 2)
 

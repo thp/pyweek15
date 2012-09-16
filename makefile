@@ -14,7 +14,7 @@ install:
 	install -m755 $(PACKAGE) $(DESTDIR)/opt/$(PACKAGE)/bin/
 	cp -rpv data $(DESTDIR)/opt/$(PACKAGE)/
 	cp -rpv src $(DESTDIR)/opt/$(PACKAGE)/
-	cp -rpv docopt.py $(DESTDIR)/opt/$(PACKAGE)/src/
+	cp -rpv docopt.py gles1.py $(DESTDIR)/opt/$(PACKAGE)/src/
 	install -D $(PACKAGE).desktop $(DESTDIR)/usr/share/applications/$(PACKAGE).desktop
 	install -D $(PACKAGE).png $(DESTDIR)/opt/$(PACKAGE)/$(PACKAGE).png
 
