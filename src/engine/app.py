@@ -35,6 +35,8 @@ class App(object):
             s = scene(self)
             self._scenes.append(s)
         self.scene = self._get_scene(entry)
+        self.old_scene = None
+        self.scene_transition = 0.
 
     def _get_scene(self, s):
         for astate in self._scenes:
@@ -51,24 +53,54 @@ class App(object):
         while True:
             self._clock.tick(self.fps)
 
-            events = pygame.event.get()
-            for event in events:
-                self.scene.process_input(event)
+            fading_out = self.old_scene and self.scene_transition < .5
 
-            p = self.scene.process()
-            if p:
-                next_scene, scene_arg = p
-                if next_scene:
-                    if next_scene == "GoodBye":
-                        break
-                    else:
-                        # scene wants to change!
-                        self.scene = self._get_scene(next_scene)
-                        self.scene.resume(scene_arg)
+            if not fading_out:
+                events = pygame.event.get()
+                for event in events:
+                    self.scene.process_input(event)
+
+                p = self.scene.process()
+                if p:
+                    next_scene, scene_arg = p
+                    if next_scene:
+                        if next_scene == "GoodBye":
+                            break
+                        else:
+                            # scene wants to change!
+                            self.old_scene = self.scene
+                            self.scene_transition = 0.
+                            self.scene = self._get_scene(next_scene)
+                            self.scene.resume(scene_arg)
 
             self.renderer.begin()
-            self.scene.draw()
+
+            if self.scene_transition >= .95:
+                # Scene transition is done
+                self.old_scene = None
+            else:
+                # Push forward the transition
+                self.scene_transition += .1
+
+            if self.old_scene:
+                # Transition is in progress
+                if self.scene_transition < .5:
+                    # Fading out of old scene part
+                    brightness = 1. - self.scene_transition * 2
+                    self.renderer.global_tint = (brightness,)*3
+                    self.old_scene.draw()
+                else:
+                    # Fading in of new scene part
+                    brightness = (self.scene_transition-.5) * 2
+                    self.renderer.global_tint = (brightness,)*3
+                    self.scene.draw()
+            else:
+                # No transition is in progress - just draw scene
+                self.scene.draw()
+
+            self.renderer.global_tint = 1., 1., 1.
             if self.debug:
                 self.screen.draw_debug()
+
             self.renderer.finish()
 

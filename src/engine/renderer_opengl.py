@@ -45,6 +45,9 @@ class Renderer:
     def __init__(self, app):
         self.app = app
         self.tmp_sprite = None
+        self.global_offset_x = 0
+        self.global_offset_y = 0
+        self.global_tint = 1., 1., 1.
 
     def setup(self, size):
         glClearColor(0, 0, 0, 1)
@@ -82,9 +85,12 @@ class Renderer:
 
         w, h = map(float, sprite.get_size())
         x, y = map(float, pos)
+        x += self.global_offset_x
+        y += self.global_offset_y
 
         r, g, b = tint
-        glColor(r, g, b, opacity)
+        gr, gg, gb = self.global_tint
+        glColor(r*gr, g*gg, b*gb, opacity)
         vertices = array.array('f', [
             x, y, 0.,
             x, y+h*scale, 0.,
