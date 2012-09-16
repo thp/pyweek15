@@ -3,87 +3,49 @@ from engine.scene import Intermission
 
 class Start(Intermission):
     def _setup(self):
-        self.next_scene = ("IntroWhale", None)
+        self.next_scene = ("Intro", None)
+
+        self.background = self.app.resman.get_background("i_normal")[0]
 
         self.title = "ONE WHALE TRIP"
         self.story = ["a love story"]
-
-        self.background = self.app.resman.get_background("i_normal")[0]
         self.creatures = [self.app.resman.get_creature("whale_story")]
 
 
-class IntroWhale(Intermission):
-    def _setup(self):
-        self.next_scene = ("IntroSub", None)
-
-        self.title = "A LOVE STORY"
-        self.story = ["hi there! what a nice whale you are!"]
-
-        self.background = self.app.resman.get_background("i_normal")[0]
-        self.creatures = [self.app.resman.get_creature("whale_story")]
-
-
-class IntroSub(Intermission):
-    def _setup(self):
-        self.next_scene = ("IntroStory", None)
-
-        self.title = "A LOVE STORY"
-        self.story = ["the moment you saw that lovely creature...",
-                      "... you knew it was love on first sight"]
-
-        self.background = self.app.resman.get_background("i_normal")[0]
-        self.creatures = [self.app.resman.get_creature("submarine")]
-
-
-class IntroStory(Intermission):
-    def _setup(self):
-        self.next_scene = ("IntroPearls", None)
-
-        self.title = "A LOVE STORY"
-        self.story = ["at first your advances were met with...",
-                      "cold disinterest...",
-                      "cold disinterest... and distance",
-                      "a whole ocean of distance, in fact",
-                      "but that made your resolve only stronger",
-                      "across the ocean you would follow!"]
-
-        self.background = self.app.resman.get_background("i_normal")[0]
-        self.creatures = [self.app.resman.get_creature("whale_story_heart")]
-
-
-class IntroPearls(Intermission):
-    def _setup(self):
-        self.next_scene = ("IntroFishy", None)
-
-        self.title = "A LOVE STORY"
-        self.story = ["maybe a string of pearls would open doors?"]
-
-        self.background = self.app.resman.get_background("i_normal")[0]
-        self.creatures = [self.app.resman.get_creature("oyster_1_pearl")]
-
-
-class IntroFishy(Intermission):
-    def _setup(self):
-        self.next_scene = ("IntroEnemies", None)
-
-        self.title = "A LOVE STORY"
-        self.story = ["the journey is long and hard",
-                      "food will sustain you"]
-
-        self.background = self.app.resman.get_background("i_normal")[0]
-        self.creatures = [self.app.resman.get_creature("fishy_rainbow")]
-
-
-class IntroEnemies(Intermission):
+class Intro(Intermission):
     def _setup(self):
         self.next_scene = ("Game", None)
 
-        self.title = "A LOVE STORY"
-        self.story = ["watch out!",
-                      "there are many dangers to be avoided"]
-
         self.background = self.app.resman.get_background("i_normal")[0]
-        self.creatures = [self.app.resman.get_creature("diver")]
+
+        self.title = "A LOVE STORY"
+        self.story = [
+            [self.app.resman.get_creature("whale_story")],
+            "hi there! what a nice whale you are!",
+
+            [self.app.resman.get_creature("submarine")],
+            "the moment you saw that lovely creature...",
+            "... you knew it was love on first sight",
+
+            [self.app.resman.get_creature("whale_story_heart")],
+            "at first your advances were met with...",
+            "cold disinterest...",
+            "cold disinterest... and distance",
+            "a whole ocean of distance, in fact",
+            "but that made your resolve only stronger",
+            "across the ocean you would follow!",
+
+            [self.app.resman.get_creature("oyster_1_pearl")],
+            "maybe a string of pearls would open doors?",
+
+            [self.app.resman.get_creature("fishy_rainbow")],
+            "the journey is long and hard",
+            "food will sustain you",
+
+            [self.app.resman.get_creature("diver")],
+            "watch out!",
+            "there are many dangers to be avoided",
+        ]
 
 
 class GameOver(Intermission):

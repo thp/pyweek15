@@ -24,25 +24,37 @@ class Intermission(Scene):
     def __init__(self, app):
         super(Intermission, self).__init__(app)
 
+        self.creatures = None
+
         self._setup()
         self.story = iter(self.story)
-        self.line = next(self.story)
+        self.update()
 
     def _setup(self):
         """Define the details of this cut scene."""
         self.next_scene = ("Start", None)
 
+        self.background = self.app.resman.get_background("i_normal")[0]
+
         self.title = "ONE-WAY ALE-WHAY IP-TRAY"
-        self.story = ["a-way ove-lay ory-stay"]
+        self.story = [
+            [self.app.resman.get_creature("whale_story")],
+            "a-way ove-lay ory-stay",
+        ]
 
-        self.background = self.app.resman.get_background("beach")[0]
-        self.creatures = [self.app.resman.get_sprite("whale_2-1")]
 
+    def update(self):
+        item = next(self.story)
+        if type(item) is str:
+            self.line = item
+        else:
+            self.creatures = item
+            self.line = next(self.story)
 
     def process_input(self, event):
         if event.type == KEYDOWN:
             try:
-                self.line = next(self.story)
+                self.update()
             except StopIteration:
                 self.next_state = self.next_scene
 
