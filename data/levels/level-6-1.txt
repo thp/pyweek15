@@ -1,0 +1,132 @@
+#
+# :enemies:
+# a=coral_a
+# b=coral_b
+# c=coral_c
+# d=coral_d
+#
+# r=sandboxtoys
+# s=lanternfish
+# t=shoe
+# u=starfish
+# v=diver
+# w=jellyfish_b
+# x=jellyfish_a
+# y=rock_l
+# z=rock_m
+#
+#
+# :pickups:
+# f=fishy_rainbow
+#
+# p=pearl
+#
+# 0=oyster_0_pearl
+# 1=oyster_1_pearl
+# 2=oyster_2_pearl
+# 3=oyster_3_pearl
+#
+# :meta:
+# speed=10
+# background=surreal
+#
+
+
+
+
+
+ p   
+  p  
+ x p 
+  p  
+cp   
+ cp  
+   pc
+  pa 
+bp   
+ ap  
+   pc
+  pc 
+ap  f
+ ap  
+ z pc
+  pc 
+ap x
+ bp f
+ y pc
+  pa 
+c  b 
+ c  a
+f b  
+ c  b
+a  c 
+ a   
+abc  
+cb   
+a  u 
+  f  
+
+   ab
+  cab
+  abc
+ v ca
+
+  x  
+00   
+010  
+ 00  
+ y00 
+  yyy
+
+  x  
+0y   
+y1y  
+ 0y  
+ y0y 
+  yyy
+
+xxxxx
+ wwww
+
+xx   
+xxxx 
+   ww
+
+zy   
+ yzz 
+    s
+
+a 3 b
+ p c 
+p a  
+ p c 
+  p b
+ p b 
+p c  
+ p b 
+a 1 b
+ p c 
+p a  
+ p c 
+  p b
+ p b 
+p c  
+ p b 
+  p  
+     
+     
+  p  
+cpa  
+ cpb 
+  apc
+ bpa 
+bpa  
+ apb 
+   pc
+  pc 
+
+
+
+
+
+
