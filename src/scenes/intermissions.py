@@ -89,7 +89,7 @@ class NextLevelGroup_1_3(Intermission):
 
         self.background = self.app.resman.get_background("i_beach")[0]
 
-        self.title = "NEXT LEVEL"
+        self.title = "THE BEACH"
         self.story = iter(["press [enter] to begin"])
 
         self.creatures = [self.app.resman.get_creature("jellyfish_a"),
@@ -102,7 +102,7 @@ class NextLevelGroup_2_3(Intermission):
 
         self.background = self.app.resman.get_background("i_coralreef")[0]
 
-        self.title = "NEXT LEVEL"
+        self.title = "THE CORAL REEF"
         self.story = iter(["press [enter] to begin"])
 
         self.creatures = [self.app.resman.get_creature("diver")]
@@ -114,7 +114,7 @@ class NextLevelGroup_3_1(Intermission):
 
         self.background = self.app.resman.get_background("i_deepsea")[0]
 
-        self.title = "NEXT LEVEL"
+        self.title = "THE DEEP SEA"
         self.story = iter(["press [enter] to begin"])
 
         self.creatures = [self.app.resman.get_creature("lanternfish")]
@@ -126,7 +126,7 @@ class NextLevelGroup_4_1(Intermission):
 
         self.background = self.app.resman.get_background("i_cliff")[0]
 
-        self.title = "NEXT LEVEL"
+        self.title = "THE CLIFFS"
         self.story = iter(["press [enter] to begin"])
 
         self.creatures = [self.app.resman.get_creature("rock_l")]
@@ -138,7 +138,7 @@ class NextLevelGroup_5_1(Intermission):
 
         self.background = self.app.resman.get_background("i_surreal")[0]
 
-        self.title = "NEXT LEVEL"
+        self.title = "WHAT A TRIP!"
         self.story = iter(["press [enter] to begin"])
 
         self.creatures = [self.app.resman.get_creature("submarine")]
