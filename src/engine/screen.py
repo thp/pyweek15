@@ -122,7 +122,7 @@ class Screen(object):
         color = pygame.Color('white')
 
         # main message
-        pos_x = self.width/12
+        pos_x = self.width/15
         card = font.render(message, False, color)
         self.app.renderer.draw(card, (pos_x, self.height/2 + 50))
 
