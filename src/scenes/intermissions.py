@@ -50,7 +50,7 @@ class Intro(Intermission):
 
 
     def process_input(self, event):
-        if event.type == KEYDOWN and event.key == K_s:
+        if (event.type == KEYDOWN and event.key == K_s) or event.type == MOUSEBUTTONDOWN:
             self.next_state = self.next_scene
         super(Intro, self).process_input(event)
 
