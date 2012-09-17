@@ -172,4 +172,4 @@ class Outro(Intermission):
         self.story = ["the team:",
                       "gfx: lobbbe",
                       "code: thp, styts, hop",
-                      "sfx: thp",]
+                      "sfx: styts, thp",]
