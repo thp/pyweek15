@@ -55,11 +55,12 @@ class ResourceManager():
 
         import pygame.mixer as mixer
 
-        ## load sfx
-        for fn in glob.glob(self._path('sounds', "*.wav")):
-            bn, _ = os.path.splitext(os.path.basename(fn))
-            sound = mixer.Sound(fn)
-            self._sounds[bn] = sound
+        ## load sfx (wav and optionally ogg files if they exist)
+        for extension in ('*.wav', '*.ogg'):
+            for fn in glob.glob(self._path('sounds', extension)):
+                bn, _ = os.path.splitext(os.path.basename(fn))
+                sound = mixer.Sound(fn)
+                self._sounds[bn] = sound
 
         ## load fonts
         name, size = FONT_STD
