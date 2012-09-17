@@ -173,11 +173,11 @@ class Game(Scene):
 
             if y > self.app.screen.height * 3 / 4:
                 self.app.player.jump()
-
-            if x < self.app.screen.width / 3:
+            elif x < self.app.screen.width / 3:
                 go_left()
             elif x > self.app.screen.width * 2 / 3:
                 go_right()
+
         elif event.type == MOUSEBUTTONUP:
             self.direction = 0
             self.boost = False
