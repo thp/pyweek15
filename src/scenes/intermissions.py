@@ -37,7 +37,7 @@ class Intro(Intermission):
             "across the ocean you would follow!",
 
             [self.app.resman.get_creature("oyster_1_pearl")],
-            "maybe a string of pearls would open doors?",
+            "maybe a string of pearls would help?",
 
             [self.app.resman.get_creature("fishy_rainbow")],
             "the journey is long and hard",
@@ -65,8 +65,10 @@ class LostLife(Intermission):
 
         self.background = self.app.resman.get_background("i_deepsea")[0]
 
+        lives = int(self.app.player.health/3)
+
         self.title = "YOU LOST A LIFE"
-        self.story = ["be careful!"]
+        self.story = ["be careful! you have only %i left" % lives]
         self.creatures = [self.app.resman.get_creature("lost_life_whale")]
 
 
@@ -79,6 +81,72 @@ class GameOver(Intermission):
         self.title = "GAME OVER"
         self.story = ["it wasn't meant to be"]
         self.creatures = [self.app.resman.get_creature("game_over_whale")]
+
+
+class NextLevelGroup_1_3(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_beach")[0]
+
+        self.title = "THE BEACH"
+        self.story = iter(["the first hurdle is cleared...",
+                           "...but beware of those hairless apes",
+                           "ruining everything with their trash"])
+
+        self.creatures = [self.app.resman.get_creature("jellyfish_a"),
+                          self.app.resman.get_creature("jellyfish_b")]
+
+
+class NextLevelGroup_2_3(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_coralreef")[0]
+
+        self.title = "THE CORAL REEF"
+        self.story = iter(["everything is so colorful down here",
+                           "you wish you could share it with someone"])
+
+        self.creatures = [self.app.resman.get_creature("diver")]
+
+
+class NextLevelGroup_3_1(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_deepsea")[0]
+
+        self.title = "THE DEEP SEA"
+        self.story = iter(["it's getting dark and lonely",
+                           "you wish you had someone to hold"])
+
+        self.creatures = [self.app.resman.get_creature("lanternfish")]
+
+
+class NextLevelGroup_4_1(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_cliff")[0]
+
+        self.title = "THE CLIFFS"
+        self.story = iter(["closer, ever closer...",
+                           "you can feel your destination approaching"])
+
+        self.creatures = [self.app.resman.get_creature("rock_l")]
+
+
+class NextLevelGroup_5_1(Intermission):
+    def _setup(self):
+        self.next_scene = ("Game", None)
+
+        self.background = self.app.resman.get_background("i_surreal")[0]
+
+        self.title = "WHAT A TRIP!"
+        self.story = iter(["almost there"])
+
+        self.creatures = [self.app.resman.get_creature("submarine")]
 
 
 class Victory(Intermission):

@@ -1,0 +1,172 @@
+#
+# :enemies:
+# a=jellyfish_a
+# b=jellyfish_b
+# c=seaweed
+#
+# v=diver
+# w=coral_a
+# x=starfish
+# y=shoe
+# z=sandboxtoys
+#
+# :pickups:
+# f=fishy_red
+#
+# p=pearl
+#
+# 0=oyster_0_pearl
+# 1=oyster_1_pearl
+# 2=oyster_2_pearl
+# 3=oyster_3_pearl
+#
+# :meta:
+# speed=10
+# background=beach
+#
+
+
+
+
+
+
+
+
+
+  1  
+ 1   
+1   a
+ 1   
+  2  
+ 2   
+1   a
+ 1   
+
+y    
+ y   
+  y  
+   y 
+    y
+
+
+  10 
+
+ 10  
+
+10 aa
+
+ 10  
+
+ 02  
+
+02   
+
+10 bb
+
+ 10  
+
+
+aaaaa
+
+
+00010
+
+00100
+
+xxxxx
+
+01000
+
+00300
+
+xxxxx
+
+00002
+
+
+  x  
+ x x 
+x   x
+ x x 
+  x  
+
+
+ a   
+bb   
+ a   
+
+  y  
+
+  f  
+
+  y  
+
+
+p   y
+
+
+y   p
+
+
+p   y
+
+bbbbb
+
+x   p
+
+
+p   x
+
+
+x   p
+
+
+xxxxx
+
+
+  p  
+ p   
+p  z 
+ p   
+  z  
+   p 
+ z  p
+   p 
+  p  
+
+
+
+
+    p
+   p 
+  p x
+   z 
+  z  
+ z   
+z    
+  p  
+   p 
+y   p
+ x   
+  x  
+   z 
+    z
+
+
+    p
+   p 
+  p x
+   zc
+  zc 
+cz   
+f    
+  p  
+   p 
+    p
+   p 
+  p  
+
+
+
+
+

@@ -1,16 +1,23 @@
 
 from engine.scene import Scene
 from logic.level import Level
-from logic.player import Player
 from logic.enemy import Enemy
 
-from pygame.locals import *
+import math
+from itertools import *
+from operator import *
 
 import pygame
+from pygame.locals import *
 
-import math
+DEPTH = 15
+WORLD_DEPTH = 10 # fudge factor... works for DEPTH @ 15
 
-WORLD_DEPTH = 10 # fudge factor... works for self.DEPTH @ 15
+MAX_SPEEDUP = 4
+SPEEDUP_STEP = .1
+
+# keyboard repeat rate (modulo) -> higher value = less repeat
+KEYBOARD_REPEAT_MOD = 7
 
 
 MIN_DEST_X = 0
@@ -18,6 +25,10 @@ MAX_DEST_X = 4
 
 # This is not just enemies, but also pick-ups (for whatever reason)
 ENEMY_NAMES = [
+    'coral_a',
+    'coral_b',
+    'coral_c',
+    'coral_d',
     'pearl',
     'fishy_rainbow',
     'fishy_red',
@@ -41,61 +52,70 @@ ENEMY_NAMES = [
 ]
 
 class Game(Scene):
-    DEPTH = 15
-
-    MAX_SPEEDUP = 4
-    SPEEDUP_STEP = .1
-
-    # keyboard repeat rate (modulo) -> higher value = less repeat
-    KEYBOARD_REPEAT_MOD = 7
-
     def __init__(self, app):
         super(Game, self).__init__(app)
-
-        # health is 9: 3 lives are grouped per 3.
-        self._init(self.app.level_nr, score=0, health=9)
-
-
-    def _init(self, level_nr, score, health):
-        self.time = 0.
-        self.i = 0
-        self.direction = 0
-        self.boost = False
-        self.speedup = 0
-
-        self.level = Level(self.app.get_filename('levels/level%s.txt' % level_nr))
-
-        self.player = Player(self.app, health=health, coins_collected=score)
-
-        #self.message = None
 
         self.enemies = {}
 
         for key in ENEMY_NAMES:
             self.enemies[key] = Enemy(self.app, key)
 
+        # reset everything
+        self.reset(hard=True)
 
-    def resume(self, arg):
-        super(Game, self).resume(self)
-        if arg and 'next_level' in arg.keys():
-            self._init(arg['next_level'], arg['score'], arg['health'])
+    def reset(self, hard=False):
+        self.time = 0.
+        self.i = 0
+        self.direction = 0
+        self.boost = False
+        self.speedup = 0
+
+        if hard:
+            self.levels = self.level_progression()
+            self.level_nr = next(self.levels)
+        filename = "levels/level-%i-%i.txt" % self.level_nr
+        # XXX move this into resource manager (levels need a
+        # reset button first)
+        self.level = Level(self.app.get_filename(filename))
+
+        self.app.player.reset(hard)
+
+
+    def level_progression(self):
+        def advance():
+            for key, group in itr:
+                for level in group:
+                    #print "next level:", level
+                    yield level
+                # XXX ugly, ugly side effect
+                self.next_state = ("NextLevelGroup_%i_%i" % level, None)
+
+        levels = self.app.resman.levels
+        try:
+            # honor the command line switch for starting level
+            idx = levels.index(self.app.start_level)
+            levels = levels[idx:]
+        except ValueError:
+            pass
+
+        itr = groupby(levels, itemgetter(0))
+        return advance()
+
+
+
 
     def process(self):
-        # it's kind of annoying -> commented out
-        #if self.message:
-        #    return
-
         self.i += 1
 
         step = .01 * self.level.speed
         if self.boost:
-            if self.speedup < self.MAX_SPEEDUP:
-                self.speedup += self.SPEEDUP_STEP
-            if self.speedup > self.MAX_SPEEDUP:
-                self.speedup = self.MAX_SPEEDUP
+            if self.speedup < MAX_SPEEDUP:
+                self.speedup += SPEEDUP_STEP
+            if self.speedup > MAX_SPEEDUP:
+                self.speedup = MAX_SPEEDUP
         else:
             if self.speedup > 0:
-                self.speedup -= self.SPEEDUP_STEP * 2
+                self.speedup -= SPEEDUP_STEP * 2
             if self.speedup < 0:
                 self.speedup = 0
 
@@ -103,51 +123,47 @@ class Game(Scene):
 
         if self.time > 1.:
             self.time -= 1.
-            self.player.y += 1
-            #self.message = self.level.get_message(self.player.y)
+            self.app.player.y += 1
 
-        if self.level.exceeds_row(self.player.y):
-            # animate level end
-            self.next_state = ("CutScene", {
-                    "score": self.player.coins_collected,
-                    "health": self.player.health,
-                    "story": ["next level"]
-                })
+        if self.level.exceeds_row(self.app.player.y):
+            try:
+                # advance a level and reset
+                self.level_nr = next(self.levels)
+                self.reset()
+            except StopIteration:
+                self.next_state = ("Victory", None)
 
-        if self.i % self.KEYBOARD_REPEAT_MOD == 0:
-            next_x = self.player.dest_x + self.direction
+            # TODO: animate level end
+
+
+        if self.i % KEYBOARD_REPEAT_MOD == 0:
+            next_x = self.app.player.dest_x + self.direction
             if next_x >= MIN_DEST_X and next_x <= MAX_DEST_X:
-                self.player.dest_x += self.direction
+                self.app.player.dest_x += self.direction
 
-        self.player.step()
+        self.app.player.step()
         for enemy in self.enemies.values():
             enemy.step()
 
-        if self.player.health <= 0:
-            #print 'YOU ARE DEAD!'
+        if self.app.player.health <= 0:
+            # reset player and game
+            self.reset(hard=True)
             self.next_state = ("GameOver", None)
 
         return super(Game, self).process()
 
     def process_input(self, event):
-        #if self.message and event.type == KEYUP and event.key == K_RETURN:
-        #    rest = self.message.split('\n', 1)
-        #    if len(rest) == 2:
-        #        self.message = rest[1]
-        #    else:
-        #        self.message = None
-
         def go_left():
             self.direction = -1
             self.i = 0
-            if self.player.dest_x > MIN_DEST_X:
-                self.player.dest_x -= 1
+            if self.app.player.dest_x > MIN_DEST_X:
+                self.app.player.dest_x -= 1
 
         def go_right():
             self.direction = 1
             self.i = 0
-            if self.player.dest_x < MAX_DEST_X:
-                self.player.dest_x += 1
+            if self.app.player.dest_x < MAX_DEST_X:
+                self.app.player.dest_x += 1
 
         if event.type == MOUSEBUTTONDOWN:
             x, y = event.pos
@@ -156,7 +172,7 @@ class Game(Scene):
                 self.boost = True
 
             if y > self.app.screen.height * 3 / 4:
-                self.player.jump()
+                self.app.player.jump()
 
             if x < self.app.screen.width / 3:
                 go_left()
@@ -169,7 +185,7 @@ class Game(Scene):
             if event.key == K_RETURN:
                 pass
             elif event.key == K_SPACE:
-                self.player.jump()
+                self.app.player.jump()
             elif event.key == K_LEFT:
                 go_left()
             elif event.key == K_RIGHT:
@@ -192,32 +208,31 @@ class Game(Scene):
 
         lane:     0..5
         jump:     not defined yet
-        distance: 0..self.DEPTH+1 (number of rows)
+        distance: 0..DEPTH+1 (number of rows)
 
         world coordinates: 1x1xWORLD_DEPTH
         """
 
         x = (lane + 0.5) / 5.0
         y = (500.0 - jump) / 500.0
-        z = WORLD_DEPTH * (distance+0.5) / self.DEPTH
+        z = WORLD_DEPTH * (distance+0.5) / DEPTH
 
         return (x, y, z)
 
 
     def draw(self):
         backgrounds = self.app.resman.get_background(self.level.background)
-        pos = int(self.time + self.player.y) % len(backgrounds)
+        pos = int(self.time + self.app.player.y) % len(backgrounds)
         self.app.renderer.draw(backgrounds[pos], (0, 0))
 
-        x = self.player.x
+        x = self.app.player.x
         y = self.time
-        player_points = self.mkpoints(x, y, self.player.height)
-        #draw.polygon(screen, (255, 255, 255), player_points, 1)
+        player_points = self.mkpoints(x, y, self.app.player.height)
 
         # draw queue for back-to-front drawing of enemies
-        draw_queue = [(y, self.player, player_points)]
+        draw_queue = [(y, self.app.player, player_points)]
 
-        for yidx, offset in enumerate(range(self.player.y, self.player.y+self.DEPTH)):
+        for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+DEPTH)):
             if offset < len(self.level.rows):
                 for xidx, column in enumerate(self.level.rows[offset].items):
                     if column is None:
@@ -226,19 +241,15 @@ class Game(Scene):
                     x = xidx
                     y = yidx
 
-                    if yidx == 1 and xidx == self.player.dest_x and self.player.height < 10:
-                        c = column.collide(self.player)
+                    if yidx == 1 and xidx == self.app.player.dest_x and self.app.player.height < 10:
+                        c = column.collide(self.app.player)
                         if c > 0:
                             # do something when the player collides
-                            if self.player.health % 3 == 0:
-                                # lost a full life
-                                self.next_state = ("CutScene", {
-                                    "score": self.player.coins_collected,
-                                    "health": self.player.health,
-                                    "title": "YOU LOST A LIFE",
-                                    "story": ['be careful next time! only %i left' % int(self.player.health/3)],
-                                    "restart": True,
-                                })
+                            if self.app.player.health % 3 == 0:
+                                # lost a life
+                                # reset to beginning of current level
+                                self.reset()
+                                self.next_state = ("LostLife", None)
                         elif c < 0:
                             # picked up a coin
                             player_points = [self.app.screen.projection(*point)
@@ -266,12 +277,8 @@ class Game(Scene):
 
             self.app.screen.draw_sprite(y-self.time, sprite, points, tint)
 
-        self.app.screen.draw_stats(self.player.coins_collected,
-                                   self.player.health)
-
-        #if self.message:
-        #    message = self.message.split('\n', 1)[0]
-        #    self.app.screen.draw_message(message)
+        self.app.screen.draw_stats(self.app.player.coins_collected,
+                                   self.app.player.health)
 
 
     def mkpoints(self, x, y, height=0.):

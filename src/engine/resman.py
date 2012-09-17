@@ -16,7 +16,6 @@ class ResourceManager():
         self._creatures = {}
         self._sounds = {}
         self._fonts = {}
-        self._levels = {}
 
         current_dir = os.path.abspath(os.path.dirname(__file__))
         self.rsrc_dir = os.path.join(current_dir, '..', '..', 'data')
@@ -72,10 +71,16 @@ class ResourceManager():
         self._fonts[FONT_SMALL] = font
 
         ## load levels
-        for fn in glob.glob(self._path("levels", "*.txt")):
+        self.levels = []
+
+        for fn in sorted(glob.glob(self._path("levels", "*.txt"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
-            level = None
-            self._levels[bn] = level
+            try:
+                _, group, number = bn.split('-')
+            except ValueError:
+                # ignore broken filenames
+                continue
+            self.levels.append((int(group), int(number)))
 
 
     def get_sprite(self, name):

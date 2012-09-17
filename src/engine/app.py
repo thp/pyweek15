@@ -2,12 +2,13 @@ import pygame
 import os
 from resman import ResourceManager
 from audman import AudioManager
+from logic.player import Player
 from screen import Screen
 
 
 class App(object):
     def __init__(self, title, width, height, fullscreen,
-                 scenes, entry, level_nr=0, debug=False,
+                 scenes, entry, level_nr="1-1", debug=False,
                  opengl=False):
         pygame.init()
 
@@ -28,8 +29,11 @@ class App(object):
         self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
 
-        self.level_nr = level_nr
-        self.last_level = len(self.resman._levels) - 1
+        self.player = Player(self)
+
+        group, number = level_nr.split('-')
+        group, number = int(group), int(number)
+        self.start_level = (group, number)
 
         self._scenes = []
         for scene in scenes:
@@ -46,9 +50,6 @@ class App(object):
 
     def get_filename(self, basename):
         return self.resman._path(basename)
-
-    def next_level(self):
-        return None if self.level_nr == self.last_level else int(self.level_nr) + 1
 
     def run(self):
         while True:

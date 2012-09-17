@@ -1,0 +1,146 @@
+#
+# :enemies:
+# a=seaweed
+# b=seaweed
+# c=seaweed
+#
+# v=shoe
+# w=starfish
+# x=rock_s
+# y=rock_m
+# z=rock_l
+#
+# :pickups:
+# f=fishy_red
+#
+# p=pearl
+#
+# 0=oyster_0_pearl
+# 1=oyster_1_pearl
+# 2=oyster_2_pearl
+# 3=oyster_3_pearl
+#
+# :meta:
+# speed=10
+# background=normal
+#
+
+
+
+
+
+
+
+
+   p 
+  p  
+   p 
+  p  
+
+
+  p  
+ p   
+  p  
+ p   
+
+
+   a 
+  b  
+   a 
+  1  
+
+
+  a  
+ b   
+  a  
+   1 
+
+
+    a
+   ab
+p ca 
+p  ba
+p   c
+   a 
+    b
+
+
+c    
+ ab  
+ca   
+ ba p
+  c p
+ a  p
+  b  
+
+
+    a
+   ab
+1 ca 
+1  ba
+1   c
+   a 
+    b
+
+
+   a 
+  ab 
+ ca  
+p ba 
+p  c 
+p a  
+   b 
+   f 
+
+
+  c  
+  abp
+ ca p
+  bap
+   cp
+  a p
+   b 
+
+
+  p  
+ p   
+p    
+ p   
+  p  
+   p 
+    p
+   p 
+  p  
+
+
+   a 
+  ab 
+ caxz
+  ba 
+2  c 
+1 ay 
+   b 
+
+
+ c   
+ ab  
+caxz 
+ ba 1
+  c 2
+ ay 1
+  b  
+
+
+  p  
+ p   
+p x  
+ p   
+  p  
+   p 
+  y p
+   p 
+  p  
+
+
+
+
