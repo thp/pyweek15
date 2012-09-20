@@ -27,15 +27,21 @@ backgrounds/surreal-2.jpg
 backgrounds/surreal-3.jpg
 
 150:
-whale_a_1.png
-whale_a_2.png
-whale_a_3.png
-whale_b_1.png
-whale_b_2.png
-whale_b_3.png
-whale_c_1.png
-whale_c_2.png
-whale_c_3.png
+sprites/whale_0-1.png
+sprites/whale_0-2.png
+sprites/whale_0-3.png
+sprites/whale_1-1.png
+sprites/whale_1-2.png
+sprites/whale_1-3.png
+sprites/whale_2-1.png
+sprites/whale_2-2.png
+sprites/whale_2-3.png
+sprites/whale_3-1.png
+sprites/whale_3-2.png
+sprites/whale_3-3.png
+sprites/whale_4-1.png
+sprites/whale_4-2.png
+sprites/whale_4-3.png
 
 130:
 lanternfish_1.png
