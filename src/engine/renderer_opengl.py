@@ -109,6 +109,10 @@ class Renderer:
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(0, width, height, 0, 0, 1)
+        offset_x, offset_y = self.app.screen.offset
+        glTranslatef(offset_x, offset_y, 0)
+        scale = self.app.screen.scale
+        glScalef(scale, scale, 1)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 

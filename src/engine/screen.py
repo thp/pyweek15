@@ -19,7 +19,23 @@ class Screen(object):
         self.width = width
         self.height = height
 
-        self.display = pygame.display.set_mode((width, height), flags)
+        if fullscreen and self.app.renderer.IS_OPENGL:
+            size = (0, 0)
+        else:
+            size = (width, height)
+
+        self.display = pygame.display.set_mode(size, flags)
+
+        size = self.display.get_size()
+
+        # Scale to fill the screen, with letterboxing
+        self.scale = min(float(size[0]) / float(self.width),
+                         float(size[1]) / float(self.height))
+
+        # Calculate the offset for symmetric letterboxing
+        self.offset = ((size[0] - self.width*self.scale) / 2,
+                       (size[1] - self.height*self.scale) / 2)
+
         pygame.display.set_caption(title)
 
         # position of the camera

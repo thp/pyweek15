@@ -168,10 +168,9 @@ class Game(Scene):
         if event.type == MOUSEBUTTONDOWN:
             x, y = event.pos
 
-            if y < self.app.screen.height / 2:
+            if y < self.app.screen.height / 4:
                 self.boost = True
-
-            if y > self.app.screen.height * 3 / 4:
+            elif y > self.app.screen.height * 3 / 4:
                 self.app.player.jump()
             elif x < self.app.screen.width / 3:
                 go_left()
