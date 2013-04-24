@@ -72,6 +72,7 @@ class App(object):
                             # scene wants to change!
                             self.old_scene = self.scene
                             self.scene_transition = 0.
+                            # XXX: Tell the renderer to snapshot old_scene for transition
                             self.scene = self._get_scene(next_scene)
                             self.scene.resume(scene_arg)
 
@@ -82,20 +83,14 @@ class App(object):
                 self.old_scene = None
             else:
                 # Push forward the transition
-                self.scene_transition += .1
+                self.scene_transition += .05
 
             if self.old_scene:
-                # Transition is in progress
-                if self.scene_transition < .5:
-                    # Fading out of old scene part
-                    brightness = 1. - self.scene_transition * 2
-                    self.renderer.global_tint = (brightness,)*3
-                    self.old_scene.draw()
-                else:
-                    # Fading in of new scene part
-                    brightness = (self.scene_transition-.5) * 2
-                    self.renderer.global_tint = (brightness,)*3
-                    self.scene.draw()
+                # Fading in of new scene part
+                brightness = self.scene_transition
+                # XXX: Tell renderer to fade between old_scene and self.scene
+                self.renderer.global_tint = (brightness,)*3
+                self.scene.draw()
             else:
                 # No transition is in progress - just draw scene
                 self.scene.draw()
