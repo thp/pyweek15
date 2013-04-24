@@ -276,6 +276,7 @@ class Game(Scene):
 
             self.app.screen.draw_sprite(y-self.time, sprite, points, tint)
 
+        self.app.renderer.begin_overlay()
         self.app.screen.draw_stats(self.app.player.coins_collected,
                                    self.app.player.health)
 

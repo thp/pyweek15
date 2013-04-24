@@ -22,6 +22,9 @@ class Renderer:
     def begin(self):
         self.app.screen.display.fill((0, 0, 0))
 
+    def begin_overlay(self):
+        pass
+
     def draw(self, sprite, pos, scale=None, opacity=1., tint=None):
         # Opacity is ignored in this blitting renderer
         # Tint is also ignored in this blitting renderer
