@@ -87,6 +87,64 @@ class SpriteProxy:
         # Forward normal attribute requests to the sprite itself
         return getattr(self._sprite, name)
 
+class Framebuffer:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.texture_id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
+                0, GL_RGBA, GL_UNSIGNED_BYTE, None)
+        glBindTexture(GL_TEXTURE_2D, 0)
+        self.framebuffer_id = glGenFramebuffers(1)
+
+        self.bind()
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                GL_TEXTURE_2D, self.texture_id, 0)
+        self.unbind()
+
+    def __del__(self):
+        glDeleteFramebuffers(self.framebuffer_id)
+        glDeleteTextures(self.texture_id)
+
+    def bind(self):
+        glBindFramebuffer(GL_FRAMEBUFFER, self.framebuffer_id)
+
+    def unbind(self):
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+
+    def rerender(self):
+        # render self.texture_id as full screen quad
+        texcoords = array.array('f', [
+            0, 0,
+            0, 1,
+            1, 0,
+            1, 1,
+        ])
+        vtxcoords = array.array('f', [
+            -1, -1, 0,
+            -1, 1, 0,
+            1, -1, 0,
+            1, 1, 0,
+        ])
+        glColor4f(1., 1., 1., 1.)
+        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+        glVertexPointer(3, GL_FLOAT, 0, vtxcoords.tostring())
+        glTexCoordPointer(2, GL_FLOAT, 0, texcoords.tostring())
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
+        glPopMatrix()
+
 class Renderer:
     IS_OPENGL = True
     IS_OPENGL_ES = is_gles
@@ -97,6 +155,7 @@ class Renderer:
 
         self.app = app
         self.tmp_sprite = None
+        self.framebuffer = None
         self.global_offset_x = 0
         self.global_offset_y = 0
         self.global_tint = 1., 1., 1.
@@ -120,6 +179,8 @@ class Renderer:
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         glEnableClientState(GL_VERTEX_ARRAY)
 
+        self.framebuffer = Framebuffer(width, height)
+
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -128,6 +189,7 @@ class Renderer:
         return SpriteProxy(sprite)
 
     def begin(self):
+        self.framebuffer.bind()
         glClear(GL_COLOR_BUFFER_BIT)
 
     def draw(self, sprite, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
@@ -160,6 +222,10 @@ class Renderer:
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
     def finish(self):
+        self.framebuffer.unbind()
+        glClear(GL_COLOR_BUFFER_BIT)
+        self.framebuffer.rerender()
+
         if is_gles:
             sdl.SDL_GL_SwapBuffers()
         else:
