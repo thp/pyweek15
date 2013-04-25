@@ -93,7 +93,9 @@ def build_shader(typ, source):
     shader_id = glCreateShader(typ)
     glShaderSource(shader_id, source)
     glCompileShader(shader_id)
-    #print 'Shader Info Log:', glGetShaderInfoLog(shader_id)
+    log = glGetShaderInfoLog(shader_id)
+    if log:
+        print 'Shader Info Log:', log
     return shader_id
 
 class ShaderEffect:
@@ -104,7 +106,9 @@ class ShaderEffect:
         glAttachShader(self.program, self.vertex_shader)
         glAttachShader(self.program, self.fragment_shader)
         glLinkProgram(self.program)
-        #print 'Program Info Log:', glGetProgramInfoLog(self.program)
+        log = glGetProgramInfoLog(self.program)
+        if log:
+            print 'Program Info Log:', log
 
     def use(self):
         glUseProgram(self.program)
@@ -145,7 +149,7 @@ class Framebuffer:
     def unbind(self):
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
-    def rerender(self, effect=None):
+    def rerender(self, effect):
         # render self.texture_id as full screen quad
         texcoords = array.array('f', [
             0, 0,
@@ -159,46 +163,32 @@ class Framebuffer:
             1, -1, 0,
             1, 1, 0,
         ])
-        glColor4f(1., 1., 1., 1.)
 
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
-        if effect is None:
-            glVertexPointer(3, GL_FLOAT, 0, vtxcoords.tostring())
-            glTexCoordPointer(2, GL_FLOAT, 0, texcoords.tostring())
-            glMatrixMode(GL_PROJECTION)
-            glPushMatrix()
-            glLoadIdentity()
-            glMatrixMode(GL_MODELVIEW)
-            glPushMatrix()
-            glLoadIdentity()
-        else:
-            vtxcoords_s = vtxcoords.tostring()
-            pos = effect.attrib('position')
-            glEnableVertexAttribArray(pos)
-            glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE, 0, vtxcoords_s)
 
-            texcoords_s = texcoords.tostring()
-            tex = effect.attrib('texcoord')
-            glEnableVertexAttribArray(tex)
-            glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, texcoords_s)
+        effect.use()
 
-            effect.use()
+        vtxcoords_s = vtxcoords.tostring()
+        pos = effect.attrib('position')
+        glEnableVertexAttribArray(pos)
+        glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE, 0, vtxcoords_s)
 
-            dim = effect.uniform('dimensions')
-            glUniform2f(dim, self.width, self.height)
+        texcoords_s = texcoords.tostring()
+        tex = effect.attrib('texcoord')
+        glEnableVertexAttribArray(tex)
+        glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, texcoords_s)
 
-            tim = effect.uniform('time')
-            glUniform1f(tim, time.time() - self.started)
+        dim = effect.uniform('dimensions')
+        glUniform2f(dim, self.width, self.height)
+
+        tim = effect.uniform('time')
+        glUniform1f(tim, time.time() - self.started)
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
-        if effect is None:
-            glMatrixMode(GL_PROJECTION)
-            glPopMatrix()
-            glMatrixMode(GL_MODELVIEW)
-            glPopMatrix()
-        else:
-            glUseProgram(0)
+        glDisableVertexAttribArray(pos)
+        glDisableVertexAttribArray(tex)
+        glUseProgram(0)
 
 class Renderer:
     IS_OPENGL = True
@@ -212,6 +202,8 @@ class Renderer:
         self.tmp_sprite = None
         self.framebuffer = None
         self.framebuffer2 = None
+        self.effect_pipeline = []
+        self.postprocessed = False
         self.global_offset_x = 0
         self.global_offset_y = 0
         self.global_tint = 1., 1., 1.
@@ -220,25 +212,17 @@ class Renderer:
         glClearColor(0, 0, 0, 1)
 
         width, height = size
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, width, height, 0, 0, 1)
         offset_x, offset_y = self.app.screen.offset
-        glTranslatef(offset_x, offset_y, 0)
         scale = self.app.screen.scale
-        glScalef(scale, scale, 1)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
+
+        glViewport(0, 0, width, height)
 
         glEnable(GL_TEXTURE_2D)
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
-        glEnableClientState(GL_VERTEX_ARRAY)
 
         self.framebuffer = Framebuffer(width, height)
         self.framebuffer2 = Framebuffer(width, height)
 
-        default_vertex_shader = """
+        effect_vertex_shader = """
             attribute vec4 position;
             attribute vec2 texcoord;
 
@@ -251,7 +235,38 @@ class Renderer:
             }
         """
 
-        self.sepia_effect = ShaderEffect(default_vertex_shader, """
+        self.draw_sprites = ShaderEffect("""
+            attribute vec4 position;
+            attribute vec2 texcoord;
+
+            uniform vec2 size;
+            uniform vec2 offset;
+            uniform float scale;
+
+            varying vec2 tex;
+
+            void main()
+            {
+                gl_Position.x = 2.0 * (position.x*scale + offset.x) / size.x - 1.0;
+                gl_Position.y = 1.0 - 2.0 * (position.y*scale + offset.y) / size.y;
+                gl_Position.z = 0.0;
+                gl_Position.w = 1.0;
+
+                tex = texcoord;
+            }
+        """, """
+            uniform sampler2D sampler;
+            uniform vec4 color;
+
+            varying vec2 tex;
+
+            void main()
+            {
+                gl_FragColor = color * texture2D(sampler, tex);
+            }
+        """)
+
+        self.sepia_effect = ShaderEffect(effect_vertex_shader, """
             uniform sampler2D sampler;
 
             varying vec2 tex;
@@ -264,7 +279,7 @@ class Renderer:
             }
         """)
 
-        self.blur_effect = ShaderEffect(default_vertex_shader, """
+        self.blur_effect = ShaderEffect(effect_vertex_shader, """
             uniform sampler2D sampler;
             uniform vec2 dimensions;
 
@@ -286,7 +301,7 @@ class Renderer:
             }
         """)
 
-        self.underwater_effect = ShaderEffect(default_vertex_shader, """
+        self.underwater_effect = ShaderEffect(effect_vertex_shader, """
             uniform sampler2D sampler;
             uniform vec2 dimensions;
             uniform float time;
@@ -312,6 +327,17 @@ class Renderer:
             }
         """)
 
+        self.effect_pipeline = [self.blur_effect, self.underwater_effect]#, self.sepia_effect]
+
+        # Configure constant uniforms of draw_sprites
+        self.draw_sprites.use()
+        size_loc = self.draw_sprites.uniform('size') # vec2
+        offset_loc = self.draw_sprites.uniform('offset') # vec2
+        scale_loc = self.draw_sprites.uniform('scale') # float
+        glUniform2f(size_loc, width, height)
+        glUniform2f(offset_loc, offset_x, offset_y)
+        glUniform1f(scale_loc, scale)
+        glUseProgram(0)
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -321,11 +347,14 @@ class Renderer:
         return SpriteProxy(sprite)
 
     def begin(self):
-        self.postprocessed = False
-        self.framebuffer.bind()
+        if self.effect_pipeline:
+            self.postprocessed = False
+            self.framebuffer.bind()
         glClear(GL_COLOR_BUFFER_BIT)
 
     def draw(self, sprite, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
+        self.draw_sprites.use()
+
         if not hasattr(sprite, '_sprite'):
             # Upload dynamically-created sprite to texture memory
             if self.tmp_sprite is None:
@@ -341,7 +370,10 @@ class Renderer:
 
         r, g, b = tint
         gr, gg, gb = self.global_tint
-        glColor(r*gr, g*gg, b*gb, opacity)
+
+        color_loc = self.draw_sprites.uniform('color') # vec4
+        glUniform4f(color_loc, r*gr, g*gg, b*gb, opacity)
+
         vertices = array.array('f', [
             x, y, 0.,
             x, y+h*scale, 0.,
@@ -350,40 +382,51 @@ class Renderer:
         ])
 
         glBindTexture(GL_TEXTURE_2D, sprite._texture_id)
-        glVertexPointer(3, GL_FLOAT, 0, vertices.tostring())
-        glTexCoordPointer(2, GL_FLOAT, 0, sprite._texcoords.tostring())
+
+        vertices_data = vertices.tostring()
+        position_loc = self.draw_sprites.attrib('position')
+        glEnableVertexAttribArray(position_loc)
+        glVertexAttribPointer(position_loc, 3, GL_FLOAT, GL_FALSE, 0, vertices_data)
+
+        texcoord_data = sprite._texcoords.tostring()
+        texcoord_loc = self.draw_sprites.attrib('texcoord')
+        glEnableVertexAttribArray(texcoord_loc)
+        glVertexAttribPointer(texcoord_loc, 2, GL_FLOAT, GL_FALSE, 0, texcoord_data)
+
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
+
+        glDisableVertexAttribArray(texcoord_loc)
+        glDisableVertexAttribArray(position_loc)
+
+        glUseProgram(0)
 
     def begin_overlay(self):
         # Force postprocessing NOW, so overlays will be drawn as-is
         self.postprocess()
 
     def postprocess(self):
-        self.framebuffer.unbind()
+        if not self.effect_pipeline:
+            return
 
-        effect_pipeline = [self.blur_effect, self.underwater_effect]#, self.sepia_effect]
-        if not effect_pipeline:
-            # Draw framebuffer contents to screen
-            glClear(GL_COLOR_BUFFER_BIT)
-            self.framebuffer.rerender()
+        self.framebuffer.unbind()
 
         # Apply effects by drawing between framebuffers and
         # finally rendering the last effect to the screen
         a, b = self.framebuffer, self.framebuffer2
-        while effect_pipeline:
-            effect = effect_pipeline.pop(0)
-            if effect_pipeline:
+
+        for idx, effect in enumerate(self.effect_pipeline):
+            if idx < len(self.effect_pipeline) - 1:
                 b.bind()
             glClear(GL_COLOR_BUFFER_BIT)
             a.rerender(effect)
-            if effect_pipeline:
+            if idx < len(self.effect_pipeline) - 1:
                 b.unbind()
             a, b = b, a
 
         self.postprocessed = True
 
     def finish(self):
-        if not self.postprocessed:
+        if self.effect_pipeline and not self.postprocessed:
             self.postprocess()
 
         if is_gles:
