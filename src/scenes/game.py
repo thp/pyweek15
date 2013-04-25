@@ -260,7 +260,6 @@ class Game(Scene):
                         draw_queue.append((y, enemy, points))
                     elif column.name:
                         print '[WARNING] Missing graphic:', column.name
-                        self.app.screen.draw_polygon(pygame.Color('red'), points)
 
         # Draw all enemies (+player), back-to-front for proper stacking order
         for y, sprite, points in sorted(draw_queue, reverse=True):
