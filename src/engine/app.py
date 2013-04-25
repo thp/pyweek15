@@ -4,6 +4,24 @@ from resman import ResourceManager
 from audman import AudioManager
 from logic.player import Player
 from screen import Screen
+import time
+
+class TimeAccumulator:
+    def __init__(self, fps):
+        self.fps = fps
+        self.step = 1. / float(self.fps)
+        self.accumulated = 0
+        self.last_time = time.time()
+
+    def update(self, callback):
+        result = None
+        now = time.time()
+        self.accumulated += (now - self.last_time)
+        self.last_time = now
+        while self.accumulated > self.step:
+            self.accumulated -= self.step
+            result = callback()
+        return result
 
 
 class App(object):
@@ -16,6 +34,8 @@ class App(object):
 
         self._clock = pygame.time.Clock()
         self.fps = 30
+
+        self.accumulator = TimeAccumulator(self.fps)
 
         if opengl:
             from renderer_opengl import Renderer
@@ -62,7 +82,8 @@ class App(object):
                 for event in events:
                     self.scene.process_input(event)
 
-                p = self.scene.process()
+                p = self.accumulator.update(self.scene.process)
+
                 if p:
                     next_scene, scene_arg = p
                     if next_scene:
