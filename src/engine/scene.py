@@ -28,6 +28,9 @@ class Intermission(Scene):
 
         self.creatures = None
 
+        # Set to True in _setup to allow skipping of story
+        self.skipable = False
+
         self._setup()
         self.story = iter(self.story)
         self.update()
@@ -57,14 +60,20 @@ class Intermission(Scene):
             self.line = next(self.story)
 
     def process_input(self, event):
-        if event.type == KEYDOWN or event.type == MOUSEBUTTONDOWN:
+        if self.skipable and event.type == KEYDOWN and event.key == K_s:
+            self.next_state = self.next_scene
+        elif event.type == KEYDOWN or event.type == MOUSEBUTTONDOWN:
             try:
                 self.update()
             except StopIteration:
                 self.next_state = self.next_scene
+
         super(Intermission, self).process_input(event)
 
 
     def draw(self):
         self.app.screen.draw_card(self.title, self.line,
                                   self.background, self.creatures)
+        if self.skipable:
+            self.app.screen.draw_skip()
+

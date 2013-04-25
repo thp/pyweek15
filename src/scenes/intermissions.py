@@ -1,6 +1,5 @@
-from engine.scene import Intermission
-from pygame.locals import *
 
+from engine.scene import Intermission
 
 class Start(Intermission):
     def _setup(self):
@@ -19,6 +18,7 @@ class Intro(Intermission):
 
         self.background = self.app.resman.get_background("i_normal")[0]
 
+        self.skipable = True
         self.title = "A LOVE STORY"
         self.story = [
             [self.app.resman.get_creature("whale_story")],
@@ -47,16 +47,6 @@ class Intro(Intermission):
             "watch out!",
             "there are many dangers to be avoided",
         ]
-
-
-    def process_input(self, event):
-        if (event.type == KEYDOWN and event.key == K_s) or event.type == MOUSEBUTTONDOWN:
-            self.next_state = self.next_scene
-        super(Intro, self).process_input(event)
-
-    def draw(self):
-        super(Intro, self).draw()
-        self.app.screen.draw_skip()
 
 
 class LostLife(Intermission):
