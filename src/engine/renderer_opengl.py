@@ -11,9 +11,9 @@ try:
     from OpenGL.GL import *
     is_gles = False
 except ImportError:
-    print "Warning: Cannot import OpenGL - trying fallback on GLES v1"
+    print "Warning: Cannot import OpenGL - trying fallback on GLES v2"
     # on MeeGo Harmattan
-    from gles1 import *
+    from gles2 import *
     from ctypes import *
     sdl = CDLL('libSDL-1.2.so.0')
     is_gles = True
@@ -32,8 +32,8 @@ class SpriteProxy:
             texture_id = glGenTextures(1)
         self._texture_id = texture_id
         glBindTexture(GL_TEXTURE_2D, self._texture_id)
-        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         self._load_from(sprite)
 
     def __del__(self):
@@ -89,26 +89,60 @@ class SpriteProxy:
         # Forward normal attribute requests to the sprite itself
         return getattr(self._sprite, name)
 
+
+def check_shader_status(shader_id, source):
+    if is_gles:
+        result = GLint(0)
+        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, byref(result))
+        if result.value > 0:
+            buffer = create_string_buffer(result.value)
+            glGetShaderInfoLog(shader_id, result, None, byref(buffer))
+            print 'Shader info:', str(buffer.value)
+
+            glGetShaderiv(shader_id, GL_COMPILE_STATUS, byref(result))
+            if result.value != GL_TRUE:
+                print 'Failed to compile shader:'
+                print '\n'.join('%4d: %s' % (idx+1, line) for idx, line in enumerate(source.splitlines()))
+    else:
+        log = glGetShaderInfoLog(shader_id)
+        if log:
+            print 'Shader Info Log:', log
+
+def check_program_status(program_id):
+    if is_gles:
+        pass # TODO
+    else:
+        log = glGetProgramInfoLog(program_id)
+        if log:
+            print 'Program Info Log:', log
+
 def build_shader(typ, source):
     shader_id = glCreateShader(typ)
-    glShaderSource(shader_id, source)
+    try:
+        glShaderSource(shader_id, 1, byref(c_char_p(source)), None)
+    except:
+        glShaderSource(shader_id, source.replace('mediump', ''))
     glCompileShader(shader_id)
-    log = glGetShaderInfoLog(shader_id)
-    if log:
-        print 'Shader Info Log:', log
+    check_shader_status(shader_id, source)
     return shader_id
 
 class ShaderEffect:
     def __init__(self, vertex_shader, fragment_shader):
+        if is_gles:
+            vertex_shader = """
+            precision mediump float;
+            """ + vertex_shader
+            fragment_shader = """
+            precision mediump float;
+            """ + fragment_shader
+
         self.vertex_shader = build_shader(GL_VERTEX_SHADER, vertex_shader)
         self.fragment_shader = build_shader(GL_FRAGMENT_SHADER, fragment_shader)
         self.program = glCreateProgram()
         glAttachShader(self.program, self.vertex_shader)
         glAttachShader(self.program, self.fragment_shader)
         glLinkProgram(self.program)
-        log = glGetProgramInfoLog(self.program)
-        if log:
-            print 'Program Info Log:', log
+        check_program_status(self.program)
 
     def use(self):
         glUseProgram(self.program)
@@ -125,14 +159,25 @@ class Framebuffer:
         self.started = time.time()
         self.width = width
         self.height = height
-        self.texture_id = glGenTextures(1)
+        if is_gles:
+            texture_id = GLint(0)
+            glGenTextures(1, byref(texture_id))
+            self.texture_id = texture_id.value
+        else:
+            self.texture_id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
-        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
                 0, GL_RGBA, GL_UNSIGNED_BYTE, None)
         glBindTexture(GL_TEXTURE_2D, 0)
-        self.framebuffer_id = glGenFramebuffers(1)
+
+        if is_gles:
+            framebuffer_id = GLuint(0)
+            glGenFramebuffers(1, byref(framebuffer_id))
+            self.framebuffer_id = framebuffer_id.value
+        else:
+            self.framebuffer_id = glGenFramebuffers(1)
 
         self.bind()
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -196,7 +241,7 @@ class Renderer:
 
     def __init__(self, app):
         if is_gles:
-            sdl.SDL_GL_SetAttribute(17, 1) #SDL_GL_CONTEXT_MAJOR_VERSION
+            sdl.SDL_GL_SetAttribute(17, 2) #SDL_GL_CONTEXT_MAJOR_VERSION
 
         self.app = app
         self.tmp_sprite = None
@@ -327,7 +372,33 @@ class Renderer:
             }
         """)
 
-        self.effect_pipeline = [self.blur_effect, self.underwater_effect]#, self.sepia_effect]
+        self.gles_combined_effect = ShaderEffect(effect_vertex_shader, """
+            uniform sampler2D sampler;
+            uniform vec2 dimensions;
+            uniform float time;
+
+            varying vec2 tex;
+
+            void main()
+            {
+                // Shift texture lookup sideways depending on Y coordinate + time
+                vec2 pos = tex + vec2(6.0*sin(pow(tex.y, 2.0)*20.0+time)/dimensions.x, 0.0);
+                float radius = 15.0 * abs(0.3 - tex.y) / dimensions.x;
+                vec4 color = 0.2 * texture2D(sampler, pos)
+                             + 0.4 * texture2D(sampler, pos + vec2(radius, 0))
+                             + 0.4 * texture2D(sampler, pos + vec2(0, -radius));
+
+                // Vignette effect (brightest at center, darker towards edges)
+                float lum = 1.0 - length(tex - vec2(0.5, 0.5));
+
+                gl_FragColor = color * lum;
+            }
+        """)
+
+        if is_gles:
+            self.effect_pipeline = [self.gles_combined_effect]
+        else:
+            self.effect_pipeline = [self.blur_effect, self.underwater_effect]
 
         # Configure constant uniforms of draw_sprites
         self.draw_sprites.use()
@@ -370,6 +441,11 @@ class Renderer:
 
         r, g, b = tint
         gr, gg, gb = self.global_tint
+
+        if is_gles:
+            # Apply tinting here for performance reasons
+            gr *= 0.7
+            gg *= 0.9
 
         color_loc = self.draw_sprites.uniform('color') # vec4
         glUniform4f(color_loc, r*gr, g*gg, b*gb, opacity)
