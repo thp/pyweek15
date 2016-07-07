@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+"""
+Usage: main [(-l <level> | -s <scene>)] [-f] [-g] [-d] [-p <psu>]
+
+Options:
+    -l, --level <level>  start with level x
+    -s, --scene <scene>  start with scene x
+    -f, --fullscreen
+    -g, --opengl
+    -d, --debug
+    -p <psu>             make it run as mac app
+"""
+
+import pygame
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from engine.app import App
+from scenes.game import Game
+from scenes.intermissions import *
+
+from docopt import docopt
+arguments = docopt(__doc__)
+
+TITLE = "One Whale Trip"
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 480
+
+SCENES = [
+    Start,
+    Intro,
+    Game,
+    NextLevelGroup_1_3,
+    NextLevelGroup_2_3,
+    NextLevelGroup_3_1,
+    NextLevelGroup_4_1,
+    NextLevelGroup_5_1,
+    LostLife,
+    GameOver,
+    Victory,
+    Outro,
+]
+
+
+pygame.init()
+
+app = App(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, arguments['--fullscreen'],
+          scenes=SCENES,
+          entry=arguments['--scene'] or "Start",
+          level_nr=arguments['--level'] or "1-1",
+          debug=arguments['--debug'],
+          opengl=arguments['--opengl'],
+          )
+
+app.run()
+pygame.quit()

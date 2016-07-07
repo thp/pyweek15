@@ -1,0 +1,115 @@
+#
+# :enemies:
+# a=rock_s
+# b=rock_m
+# c=rock_l
+#
+# v=diver
+# w=coral_d
+# x=lanternfish
+# y=shell
+# z=seaweed
+#
+#
+# :pickups:
+# f=fishy_deepsea
+#
+# p=pearl
+#
+# 0=oyster_0_pearl
+# 1=oyster_1_pearl
+# 2=oyster_2_pearl
+# 3=oyster_3_pearl
+#
+# :meta:
+# speed=10
+# background=cliff
+#
+
+
+
+
+
+ p   
+  p  
+ x p 
+  p  
+cp   
+ cp  
+   pc
+  pa 
+bp   
+ ap  
+   pc
+  pc 
+ap  f
+ ap  
+   pc
+  pc 
+ap   
+ bp  
+   pc
+  pa 
+c  b 
+ c  a
+f b  
+ c  b
+a  c 
+ a   
+abc  
+cb   
+a    
+   ab
+  cab
+  abc
+   ca
+  x  
+00   
+010  
+ 00  
+ y00 
+  yyy
+
+  x  
+0y   
+y1y  
+ 0y  
+ y0y 
+  yyy
+
+
+
+a 3 b
+ p c 
+p a  
+ p c 
+  p b
+ p b 
+p c  
+ p b 
+a 1 b
+ p c 
+p a  
+ p c 
+  p b
+ p b 
+p c  
+ p b 
+  p  
+     
+     
+  p  
+cpa  
+ cpb 
+  apc
+ bpa 
+bpa  
+ apb 
+   pc
+  pc 
+
+
+
+
+
+
