@@ -10,6 +10,7 @@ class Player(Sprite):
 
     def __init__(self, app):
         self.app = app
+        self.health = 0
 
         self.init('whale_%d', 3)
         self.reset()

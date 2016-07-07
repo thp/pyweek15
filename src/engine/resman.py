@@ -83,6 +83,11 @@ class ResourceManager():
                 continue
             self.levels.append((int(group), int(number)))
 
+        ## load intermissions
+        self.intermissions = {}
+        for filename in glob.glob(self._path('intermissions', '*.txt')):
+            name, _ = os.path.splitext(os.path.basename(filename))
+            self.intermissions[name] = open(filename).read().splitlines()
 
     def get_sprite(self, name):
         return self._surfaces.get(name)

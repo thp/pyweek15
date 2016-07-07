@@ -1,0 +1,7 @@
+next_scene: Game
+background: i_cliff
+title: THE CLIFFS
+---
+(creatures: rock_l)
+closer, ever closer...
+you can feel your destination approaching

@@ -1,0 +1,8 @@
+next_scene: GoodBye
+background: i_outro
+title: GOOD BYE!
+---
+the team:
+gfx: lobbbe
+code: thp, styts, hop
+sfx: styts, thp

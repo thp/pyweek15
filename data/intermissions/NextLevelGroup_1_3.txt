@@ -1,0 +1,8 @@
+next_scene: Game
+background: i_beach
+title: THE BEACH
+---
+(creatures: jellyfish_a jellyfish_b)
+the first hurdle is cleared...
+...but beware of those hairless apes
+ruining everything with their trash

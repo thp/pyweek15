@@ -1,0 +1,7 @@
+next_scene: Game
+background: i_deepsea
+title: THE DEEP SEA
+---
+(creatures: lanternfish)
+it's getting dark and lonely
+you wish you had someone to hold

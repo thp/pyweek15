@@ -1,0 +1,6 @@
+next_scene: Start
+background: i_deepsea
+title: GAME OVER
+---
+(creatures: game_over_whale)
+it wasn't mean to be

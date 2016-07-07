@@ -1,0 +1,7 @@
+next_scene: Game
+background: i_coralreef
+title: THE CORAL REEF
+---
+(creatures: diver)
+everything is so colorful down here
+you wish you could share it with someone

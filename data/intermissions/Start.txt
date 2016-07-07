@@ -1,0 +1,6 @@
+next_scene: Intro
+background: i_normal
+title: ONE WHALE TRIP
+---
+(creatures: whale_story)
+a love story
