@@ -4,6 +4,7 @@ from resman import ResourceManager
 from audman import AudioManager
 from logic.player import Player
 from screen import Screen
+from scene import Intermission
 import time
 
 class TimeAccumulator:
@@ -55,18 +56,21 @@ class App(object):
         group, number = int(group), int(number)
         self.start_level = (group, number)
 
-        self._scenes = []
+        self._scenes = {}
+
         for scene in scenes:
             s = scene(self)
-            self._scenes.append(s)
+            self._scenes[s.name] = s
+
+        for name in self.resman.intermissions.keys():
+            self._scenes[name] = Intermission(self, name)
+
         self.scene = self._get_scene(entry)
         self.old_scene = None
         self.scene_transition = 0.
 
     def _get_scene(self, s):
-        for astate in self._scenes:
-            if astate.__class__.__name__ == s:
-                return astate
+        return self._scenes[s]
 
     def get_filename(self, basename):
         return self.resman._path(basename)

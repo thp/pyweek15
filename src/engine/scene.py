@@ -2,8 +2,9 @@ from pygame.locals import *
 
 
 class Scene(object):
-    def __init__(self, app):
+    def __init__(self, app, name):
         self.app = app
+        self.name = name
         self.next_state = None  # holds None or a string with classname of the place to go
 
     def process(self):
@@ -23,8 +24,12 @@ class Scene(object):
 
 
 class Intermission(Scene):
-    def __init__(self, app):
-        super(Intermission, self).__init__(app)
+    def __init__(self, app, name):
+        super(Intermission, self).__init__(app, name)
+        self.resume()
+
+    def resume(self):
+        super(Intermission, self).resume()
 
         self.creatures = None
 
@@ -34,22 +39,6 @@ class Intermission(Scene):
         self._setup()
         self.story = iter(self.story)
         self.update()
-
-    def _setup(self):
-        """Define the details of this cut scene."""
-        self.next_scene = "Start"
-
-        self.background = self.app.resman.get_background("i_normal")[0]
-
-        self.title = "ONE-WAY ALE-WHAY IP-TRAY"
-        self.story = [
-            [self.app.resman.get_creature("whale_story")],
-            "a-way ove-lay ory-stay",
-        ]
-
-    def resume(self):
-        super(Intermission, self).resume()
-        self.__init__(self.app)
 
     def update(self):
         item = next(self.story)
@@ -76,4 +65,49 @@ class Intermission(Scene):
                                   self.background, self.creatures)
         if self.skipable:
             self.app.screen.draw_skip()
+
+    def _parse_key_value(self, line):
+        key, value = line.split(':', 1)
+        value = value.strip()
+        return key, value
+
+    def _setup(self):
+        is_header = True
+
+        fmt_args = {
+            'player_lives': int(self.app.player.health/3),
+        }
+
+        self.story = []
+        for line in self.app.resman.intermissions[self.name]:
+            if not line:
+                continue
+
+            if is_header and line == '---':
+                is_header = False
+                continue
+
+            if is_header:
+                key, value = self._parse_key_value(line)
+                if key == 'next_scene':
+                    self.next_scene = value
+                elif key == 'background':
+                    self.background = self.app.resman.get_background(value)[0]
+                elif key == 'skipable':
+                    self.skipable = (value == 'true')
+                elif key == 'title':
+                    self.title = value
+                else:
+                    raise ValueError(line)
+            else:
+                if line.startswith('(') and line.endswith(')'):
+                    # Story meta definition
+                    key, value = self._parse_key_value(line[1:-1])
+                    if key == 'creatures':
+                        self.story.append([self.app.resman.get_creature(c) for c in value.split()])
+                    else:
+                        raise ValueError(line)
+                else:
+                    # Story text
+                    self.story.append(line.format(**fmt_args))
 

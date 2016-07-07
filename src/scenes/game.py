@@ -53,7 +53,7 @@ ENEMY_NAMES = [
 
 class Game(Scene):
     def __init__(self, app):
-        super(Game, self).__init__(app)
+        super(Game, self).__init__(app, 'Game')
 
         self.enemies = {}
 

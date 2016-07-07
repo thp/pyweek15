@@ -20,7 +20,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from engine.app import App
 from scenes.game import Game
-from scenes.intermissions import *
 
 from docopt import docopt
 arguments = docopt(__doc__)
@@ -30,18 +29,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 480
 
 SCENES = [
-    Start,
-    Intro,
     Game,
-    NextLevelGroup_1_3,
-    NextLevelGroup_2_3,
-    NextLevelGroup_3_1,
-    NextLevelGroup_4_1,
-    NextLevelGroup_5_1,
-    LostLife,
-    GameOver,
-    Victory,
-    Outro,
 ]
 
 
