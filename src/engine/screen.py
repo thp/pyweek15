@@ -108,19 +108,6 @@ class Screen(object):
             self.app.renderer.draw(sprite, (pos_x, pos_y))
 
 
-    def draw_message(self, message):
-        """Overlay a message to the player."""
-        font = self.app.resman.font(FONT_SMALL)
-
-        msg_surf = font.render(message, True, (255, 255, 255))
-        w, h = msg_surf.get_size()
-        pos = (self.width / 2 - w / 2, self.height / 2 - h / 2)
-
-        rect = (pos[0] - 10, pos[1] - 10, w + 20, h + 20)
-        pygame.draw.rect(self.display, (0, 0, 0), rect)
-        self.app.renderer.draw(msg_surf, pos)
-
-
     def draw_card(self, message, story=None, background=None, creatures=None):
         if background:
             self.app.renderer.draw(background, (0, 0))
