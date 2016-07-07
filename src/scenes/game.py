@@ -11,7 +11,6 @@ import pygame
 from pygame.locals import *
 
 DEPTH = 15
-WORLD_DEPTH = 10 # fudge factor... works for DEPTH @ 15
 
 MAX_SPEEDUP = 4
 SPEEDUP_STEP = .1
@@ -201,24 +200,6 @@ class Game(Scene):
         super(Game, self).process_input(event)
 
 
-    def map_coords(self, lane, jump, distance):
-        """
-        Translate game coordinates to world coordinates.
-
-        lane:     0..5
-        jump:     not defined yet
-        distance: 0..DEPTH+1 (number of rows)
-
-        world coordinates: 1x1xWORLD_DEPTH
-        """
-
-        x = (lane + 0.5) / 5.0
-        y = (500.0 - jump) / 500.0
-        z = WORLD_DEPTH * (distance+0.5) / DEPTH
-
-        return (x, y, z)
-
-
     def draw(self):
         backgrounds = self.app.resman.get_background(self.level.background)
         pos = int(self.time + self.app.player.y) % len(backgrounds)
@@ -226,10 +207,9 @@ class Game(Scene):
 
         x = self.app.player.x
         y = self.time
-        player_points = self.mkpoints(x, y, self.app.player.height)
 
         # draw queue for back-to-front drawing of enemies
-        draw_queue = [(y, self.app.player, player_points)]
+        draw_queue = [(y, self.app.player, (x, self.app.player.height / 500.0, y - self.time))]
 
         for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+DEPTH)):
             if offset < len(self.level.rows):
@@ -249,20 +229,15 @@ class Game(Scene):
                                 # reset to beginning of current level
                                 self.reset()
                                 self.next_state = "LostLife"
-                        elif c < 0:
-                            # picked up a coin
-                            player_points = [self.app.screen.projection(*point)
-                                             for point in player_points]
 
-                    points = self.mkpoints(x, y)
                     if column.name in self.enemies:
                         enemy = self.enemies[column.name]
-                        draw_queue.append((y, enemy, points))
+                        draw_queue.append((y, enemy, (x, 0.0, y - self.time)))
                     elif column.name:
                         print '[WARNING] Missing graphic:', column.name
 
         # Draw all enemies (+player), back-to-front for proper stacking order
-        for y, sprite, points in sorted(draw_queue, reverse=True):
+        for y, sprite, pos in sorted(draw_queue, reverse=True):
             if self.level.background == 'surreal':
                 # Special FX for the Surreal level - tint like crazy!
                 tint = [
@@ -273,18 +248,8 @@ class Game(Scene):
             else:
                 tint = 1., 1., 1.
 
-            self.app.screen.draw_sprite(y-self.time, sprite, points, tint)
+            self.app.screen.draw_sprite(y-self.time, sprite, pos, tint)
 
         self.app.renderer.begin_overlay()
         self.app.screen.draw_stats(self.app.player.coins_collected,
                                    self.app.player.health)
-
-
-    def mkpoints(self, x, y, height=0.):
-        return [
-                self.map_coords(x-.45, height, y-.45 - self.time),
-                self.map_coords(x+.45, height, y-.45 - self.time),
-                self.map_coords(x+.45, height, y+.45 - self.time),
-                self.map_coords(x-.45, height, y+.45 - self.time),
-        ]
-

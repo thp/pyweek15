@@ -48,6 +48,13 @@ class Screen(object):
         """Project world coordinates onto the screen.
         The world's dimensions are 1x1xWORLD_DEPTH"""
 
+        # x = 0..5      (lane)
+        # y = 0..10(?)  (depth/distance)
+        # z = 0..1      (jump height)
+
+        x = (x + 0.5) / 5.0
+        y = (1 - y) / 10.0 + 0.5
+
         x = x * self.width
         y = y * self.height
         z = z * self.width
@@ -68,10 +75,18 @@ class Screen(object):
             self.app.renderer.draw(surface, pos)
 
 
-    def draw_sprite(self, y, sprite, points, tint):
+    def draw_sprite(self, y, sprite, pos, tint):
         """Project a sprite onto the screen.
         Coordinates are given in world coordinates."""
-        points = [self.projection(*point) for point in points]
+
+        x, z, y = pos
+
+        points = [
+                self.projection(x-0.45, y, z-0.45),
+                self.projection(x-0.45, y, z+0.45),
+                self.projection(x+0.45, y, z-0.45),
+                self.projection(x+0.45, y, z+0.45),
+        ]
 
         # Fade in enemy sprites coming from the back
         if y > 10:
