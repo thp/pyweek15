@@ -10,8 +10,6 @@ from operator import *
 import pygame
 from pygame.locals import *
 
-DEPTH = 15
-
 MAX_SPEEDUP = 4
 SPEEDUP_STEP = .1
 
@@ -69,6 +67,8 @@ class Game(Scene):
         self.boost = False
         self.speedup = 0
 
+        self.app.screen.reset_camera()
+
         if hard:
             self.levels = self.level_progression()
             self.level_nr = next(self.levels)
@@ -104,6 +104,8 @@ class Game(Scene):
 
 
     def process(self):
+        self.app.screen.process()
+
         self.i += 1
 
         step = .01 * self.level.speed
@@ -120,7 +122,7 @@ class Game(Scene):
 
         self.time += step * (1 + self.speedup)
 
-        if self.time > 1.:
+        while self.time > 1.:
             self.time -= 1.
             self.app.player.y += 1
 
@@ -209,35 +211,43 @@ class Game(Scene):
         y = self.time
 
         # draw queue for back-to-front drawing of enemies
-        draw_queue = [(y, self.app.player, (x, self.app.player.height / 500.0, y - self.time))]
+        draw_queue = [(y, self.app.player, (x - 2.0, self.app.player.height / 100, 1.0))]
 
-        for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+DEPTH)):
-            if offset < len(self.level.rows):
-                for xidx, column in enumerate(self.level.rows[offset].items):
-                    if column is None:
-                        continue
+        # Fade in enemy sprites coming from the back
+        fade_offset = 3.0
+        fade_width = 10.0
+        fade_distance = int(fade_offset + fade_width + 1)
+        for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+fade_distance)):
+            if offset >= len(self.level.rows):
+                break
 
-                    x = xidx
-                    y = yidx
+            for xidx, column in enumerate(self.level.rows[offset].items):
+                if column is None:
+                    continue
 
-                    if yidx == 1 and xidx == self.app.player.dest_x and self.app.player.height < 10:
-                        c = column.collide(self.app.player)
-                        if c > 0:
-                            # do something when the player collides
-                            if self.app.player.health % 3 == 0:
-                                # lost a life
-                                # reset to beginning of current level
-                                self.reset()
-                                self.next_state = "LostLife"
+                x = xidx - 2.0
+                y = yidx
 
-                    if column.name in self.enemies:
-                        enemy = self.enemies[column.name]
-                        draw_queue.append((y, enemy, (x, 0.0, y - self.time)))
-                    elif column.name:
-                        print '[WARNING] Missing graphic:', column.name
+                if yidx == 1 and xidx == self.app.player.dest_x and self.app.player.height < 10:
+                    if column.collide(self.app.player):
+                        # lost a life
+                        # reset to beginning of current level
+                        self.reset()
+                        self.next_state = "LostLife"
+
+                if column.name in self.enemies:
+                    enemy = self.enemies[column.name]
+                    draw_queue.append((y, enemy, (x, 0.0, y - self.time)))
+
+                elif column.name:
+                    print '[WARNING] Missing graphic:', column.name
+
+        self.app.screen.before_draw()
 
         # Draw all enemies (+player), back-to-front for proper stacking order
-        for y, sprite, pos in sorted(draw_queue, reverse=True):
+        for y, sprite, pos in reversed(draw_queue):
+            opacity = 1.0
+
             if self.level.background == 'surreal':
                 # Special FX for the Surreal level - tint like crazy!
                 tint = [
@@ -248,7 +258,11 @@ class Game(Scene):
             else:
                 tint = 1., 1., 1.
 
-            self.app.screen.draw_sprite(y-self.time, sprite, pos, tint)
+            # Fade in enemy sprites coming from the back
+            opacity = max(0.0, 1.0 - ((y - self.time) - fade_offset) / fade_width)
+            tint = map(lambda x: x*opacity, tint)
+
+            self.app.screen.draw_sprite(sprite, pos, opacity, tint)
 
         self.app.renderer.begin_overlay()
         self.app.screen.draw_stats(self.app.player.coins_collected,

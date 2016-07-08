@@ -62,6 +62,8 @@ class Player(Sprite):
             self.app.audman.sfx("crash")
             self.blinking = self.BLINKING_FRAMES
 
+        return (self.health % 3 == 0)
+
     def step(self):
         self.x = self.x * .5 + self.dest_x * .5
         self.height += self.vertical_velocity

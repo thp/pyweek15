@@ -51,7 +51,7 @@ class Enemy(Sprite):
         left = min(point[0] for point in points)
         right = max(point[0] for point in points)
         bottom = max(point[1] for point in points)
-        factor = float(right-left) / float(w)
+        factor = min(4.0, float(right-left) / float(w))
 
         x, _ = center(points)
         x = left + (right-left)/2 - (w*factor)/2

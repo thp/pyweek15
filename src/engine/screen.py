@@ -1,6 +1,10 @@
 import pygame
 from resman import FONT_STD, FONT_SMALL
+from pygame.locals import *
 
+import math
+
+from vmath import Matrix4x4, Vec3
 
 class Screen(object):
     def __init__(self, app, title, width, height, fullscreen=True):
@@ -38,34 +42,69 @@ class Screen(object):
 
         pygame.display.set_caption(title)
 
-        # position of the camera
-        self.zeye = width * 1.2   # Assumed distance from Screen
-        self.xeye = width * 0.5   # Middle of the screen
-        self.yeye = height * 0.33 # High horizon
+        self.eye_z_target = -1.0
+        self.eye_y_target = 3.0
+        self.center_y_target = -29.0
+        self.center_z_target = 100.0
 
+        self.eye_z = self.eye_z_target
+        self.eye_y = self.eye_y_target
+        self.center_y = self.center_y_target
+        self.center_z = self.center_z_target
+
+        self.fov = 90.0
+
+        self.reset_camera()
+        self.before_draw()
+
+    def reset_camera(self):
+        self.eye_z = -100.0
+        self.eye_y = 300.0
+
+    def process(self):
+        alpha = 0.1
+        self.eye_y = self.eye_y * (1.0 - alpha) + self.eye_y_target * alpha
+        self.eye_z = self.eye_z * (1.0 - alpha) + self.eye_z_target * alpha
+        self.center_y = self.center_y * (1.0 - alpha) + self.center_y_target * alpha
+        self.center_z = self.center_z * (1.0 - alpha) + self.center_z_target * alpha
+
+    def process_input(self, event):
+        if event.type == KEYDOWN:
+            if event.key == K_1:
+                self.eye_y += 1.0
+            elif event.key == K_2:
+                self.eye_y -= 1.0
+            elif event.key == K_3:
+                self.center_y += 1.0
+            elif event.key == K_4:
+                self.center_y -= 1.0
+            elif event.key == K_5:
+                self.fov += 1.0
+            elif event.key == K_6:
+                self.fov -= 1.0
+
+    def before_draw(self):
+        projection = Matrix4x4.perspective(self.fov / 180.0 * math.pi, self.width / self.height, 0.0001, 200.0)
+
+        eye = Vec3(0.0, self.eye_y, self.eye_z)
+        center = Vec3(0.0, self.center_y, self.center_z)
+        up = Vec3(0.0, 1.0, 0.0)
+
+        modelview = Matrix4x4()
+        modelview.lookAt(eye, center, up)
+        self.modelview_projection = projection * modelview
 
     def projection(self, x, y, z):
-        """Project world coordinates onto the screen.
-        The world's dimensions are 1x1xWORLD_DEPTH"""
+        """Project world coordinates onto the screen."""
 
-        # x = 0..5      (lane)
-        # y = 0..10(?)  (depth/distance)
-        # z = 0..1      (jump height)
+        # x = -1..+1      (lane)
+        # y = 0..1        (jump height)
+        # z = 0..10(?)    (depth/distance)
 
-        x = (x + 0.5) / 5.0
-        y = (1 - y) / 10.0 + 0.5
+        result = self.modelview_projection.map_vec3(Vec3(x, y, z))
 
-        x = x * self.width
-        y = y * self.height
-        z = z * self.width
+        return ((0.5 + 0.5 * -result.x) * self.width, (0.5 + 0.5 * -result.y) * self.height)
 
-        # projection
-        xs = (self.zeye * (x - self.xeye)) / (self.zeye + z) + self.xeye
-        ys = (self.zeye * (y - self.yeye)) / (self.zeye + z) + self.yeye
-
-        return (xs, ys)
-
- 
     def draw_debug(self):
             # display fps
             font = self.app.resman.font(FONT_SMALL)
@@ -74,26 +113,28 @@ class Screen(object):
             pos = (self.width-surface.get_width(), self.height-surface.get_height())
             self.app.renderer.draw(surface, pos)
 
+    def draw_text(self, text):
+        font = self.app.resman.font(FONT_SMALL)
+        surface = font.render(text, False, pygame.Color('white'), pygame.Color('black'))
+        pos = ((self.width-surface.get_width()) / 2, self.height-surface.get_height())
+        self.app.renderer.draw(surface, pos)
 
-    def draw_sprite(self, y, sprite, pos, tint):
+    def draw_sprite(self, sprite, pos, opacity, tint):
         """Project a sprite onto the screen.
         Coordinates are given in world coordinates."""
 
-        x, z, y = pos
+        x, y, z = pos
+
+        delta = 0.45
 
         points = [
-                self.projection(x-0.45, y, z-0.45),
-                self.projection(x-0.45, y, z+0.45),
-                self.projection(x+0.45, y, z-0.45),
-                self.projection(x+0.45, y, z+0.45),
+                self.projection(x-delta, y-delta, z),
+                self.projection(x+delta, y-delta, z),
+                self.projection(x+delta, y+delta, z),
+                self.projection(x-delta, y+delta, z),
         ]
 
-        # Fade in enemy sprites coming from the back
-        if y > 10:
-            opacity = 1. - (y-10)/5.
-            tint = map(lambda x: x*opacity, tint)
-        else:
-            opacity = 1.
+        #pygame.draw.polygon(self.display, pygame.Color('blue'), points, 2)
 
         sprite.draw(self.display, points, opacity, tint)
 

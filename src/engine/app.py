@@ -85,6 +85,7 @@ class App(object):
                 events = pygame.event.get()
                 for event in events:
                     self.scene.process_input(event)
+                    self.screen.process_input(event)
 
                 next_scene = self.accumulator.update(self.scene.process)
 
