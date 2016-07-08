@@ -49,8 +49,6 @@ class Level:
         self.speed = self.DEFAULT_SPEED
         self.background = 'test'
 
-        self.messages = {}
-
         section = self.ENEMIES
         for line in open(filename):
             if ':enemies:' in line:
@@ -71,19 +69,7 @@ class Level:
             if line.startswith('#'):
                 continue
 
-            if line.startswith('!'):
-                index = len(self.rows)
-                msg = line[1:].rstrip('\n')
-                if index in self.messages:
-                    self.messages[index] += '\n' + msg
-                else:
-                    self.messages[index] = msg
-                continue
-
             self.rows.append(Row(self, line.rstrip('\n')))
-
-    def get_message(self, y):
-        return self.messages.get(y)
 
     def exceeds_row(self, y):
         return y >= self.rows.__len__()
