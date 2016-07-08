@@ -34,7 +34,7 @@ class Player(Sprite):
         if self.can_jump:
             self.vertical_velocity = 15
             self.can_jump = False
-            self.app.audman.sfx("jump", 1)
+            self.app.audman.sfx("jump")
 
     def picked_up(self, thingie):
         if thingie == 'pearl':
