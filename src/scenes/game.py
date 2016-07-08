@@ -20,42 +20,11 @@ KEYBOARD_REPEAT_MOD = 7
 MIN_DEST_X = 0
 MAX_DEST_X = 4
 
-# This is not just enemies, but also pick-ups (for whatever reason)
-ENEMY_NAMES = [
-    'coral_a',
-    'coral_b',
-    'coral_c',
-    'coral_d',
-    'pearl',
-    'fishy_rainbow',
-    'fishy_red',
-    'fishy_deepsea',
-    'diver',
-    'seaweed',
-    'lanternfish',
-    'shell',
-    'sandboxtoys',
-    'oyster_0_pearl',
-    'oyster_1_pearl',
-    'oyster_2_pearl',
-    'oyster_3_pearl',
-    'rock_m',
-    'rock_l',
-    'rock_s',
-    'jellyfish_a',
-    'jellyfish_b',
-    'starfish',
-    'shoe',
-]
-
 class Game(Scene):
     def __init__(self, app):
         super(Game, self).__init__(app, 'Game')
 
         self.enemies = {}
-
-        for key in ENEMY_NAMES:
-            self.enemies[key] = Enemy(self.app, key)
 
         # reset everything
         self.reset(hard=True)
@@ -235,12 +204,11 @@ class Game(Scene):
                         self.reset()
                         self.next_state = "LostLife"
 
-                if column.name in self.enemies:
+                if column.name:
+                    if column.name not in self.enemies:
+                        self.enemies[column.name] = Enemy(self.app, column.name)
                     enemy = self.enemies[column.name]
                     draw_queue.append((y, enemy, (x, 0.0, y - self.time)))
-
-                elif column.name:
-                    print '[WARNING] Missing graphic:', column.name
 
         self.app.screen.before_draw()
 
