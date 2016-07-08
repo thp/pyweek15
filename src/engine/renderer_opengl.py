@@ -360,13 +360,10 @@ class Renderer:
                 // Vignette effect (brightest at center, darker towards edges)
                 float lum = 1.0 - length(tex - vec2(0.5, 0.5));
 
-                // blue-green'ish tint base color
-                vec4 tint = vec4(0.0, 0.01, 0.05, 1.0);
-
                 // Vignette color is also blue-green'ish
-                vec4 vignette = vec4(lum * 0.7, lum * 0.9, lum, 1.0);
+                vec4 vignette = vec4(lum * 0.95, lum * 0.98, lum, 1.0);
 
-                gl_FragColor = tint + vignette * color;
+                gl_FragColor = vignette * color;
             }
         """)
 
