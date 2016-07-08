@@ -15,10 +15,7 @@ class Screen(object):
             flags |= pygame.FULLSCREEN
 
         if self.app.renderer.IS_OPENGL:
-            if self.app.renderer.IS_OPENGL_ES:
-                flags |= 0x00000040 # SDL_OPENGLES
-            else:
-                flags |= pygame.OPENGL | pygame.DOUBLEBUF | pygame.HWSURFACE
+            flags |= pygame.OPENGL | pygame.DOUBLEBUF | pygame.HWSURFACE
 
         self.width = width
         self.height = height
