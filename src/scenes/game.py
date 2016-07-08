@@ -126,7 +126,7 @@ class Game(Scene):
             self.time -= 1.
             self.app.player.y += 1
 
-        if self.level.exceeds_row(self.app.player.y):
+        if self.app.player.y > len(self.level.rows):
             try:
                 # advance a level and reset
                 self.level_nr = next(self.levels)
@@ -221,7 +221,7 @@ class Game(Scene):
             if offset >= len(self.level.rows):
                 break
 
-            for xidx, column in enumerate(self.level.rows[offset].items):
+            for xidx, column in enumerate(self.level.rows[offset]):
                 if column is None:
                     continue
 

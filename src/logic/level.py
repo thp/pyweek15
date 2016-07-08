@@ -1,8 +1,4 @@
-
-import re
-
-
-class Item:
+class Item(object):
     def __init__(self, name, is_enemy):
         self.name = name
         self.is_enemy = is_enemy
@@ -10,45 +6,23 @@ class Item:
     def collide(self, player):
         if self.is_enemy:
             return player.crashed()
-
-        if self.name:
+        elif self.name:
             player.picked_up(self.name)
             self.name = ''
 
         return False
 
-    def __repr__(self):
-        return '%s%s' % (self.name, ' (enemy)' if self.is_enemy else '')
 
-
-class Row:
-    WIDTH = 5
-
-    def __init__(self, level, line):
-        self.level = level
-
-        # pad line to WIDTH chars
-        line = line + (' '*(self.WIDTH-len(line)))
-
-        self.items = []
-        for char in line:
-            self.items.append(self.level.lookup(char))
-
-    def __repr__(self):
-        return repr(self.items)
-
-
-class Level:
-    DEFAULT_SPEED = 10
-
+class Level(object):
     ENEMIES, PICKUP, META = range(3)
 
     def __init__(self, filename):
         self.charmap = {}
         self.rows = []
-        self.speed = self.DEFAULT_SPEED
+        self.speed = 10
         self.background = 'test'
 
+        width = 5
         section = self.ENEMIES
         for line in open(filename):
             if ':enemies:' in line:
@@ -58,40 +32,16 @@ class Level:
             elif ':meta:' in line:
                 section = self.META
 
-            definition = re.match(r'^# ([^=]+)=(.*)$', line.strip())
-            if definition:
-                key, value = definition.groups()
-                if section in (self.ENEMIES, self.PICKUP):
-                    self.add_item(key, value, section == self.ENEMIES)
-                elif section == self.META:
-                    self.set_meta(key, value)
-
             if line.startswith('#'):
+                if '=' in line:
+                    key, value = (x.strip() for x in line[1:].strip().split('=', 1))
+                    if section in (self.ENEMIES, self.PICKUP):
+                        assert key not in self.charmap
+                        self.charmap[key] = (value, section == self.ENEMIES)
+                    elif section == self.META:
+                        if key == 'background':
+                            self.background = value.strip()
                 continue
 
-            self.rows.append(Row(self, line.rstrip('\n')))
-
-    def exceeds_row(self, y):
-        return y >= self.rows.__len__()
-
-    def add_item(self, char, name, is_enemy):
-        assert char not in self.charmap
-        self.charmap[char] = (name, is_enemy)
-
-    def set_meta(self, key, value):
-        if key == 'speed':
-            self.speed = int(value)
-        elif key == 'background':
-            self.background = value.strip()
-
-    def lookup(self, char):
-        if char == ' ':
-            return None
-        return Item(*self.charmap[char])
-
-
-if __name__ == '__main__':
-    level = Level('level.txt')
-    for row in level.rows:
-        print row
-
+            line = line.rstrip('\n') + (' ' * width)
+            self.rows.append([Item(*self.charmap[line[i]]) if line[i] != ' ' else None for i in range(width)])
