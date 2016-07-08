@@ -249,8 +249,6 @@ class Renderer:
         self.framebuffer2 = None
         self.effect_pipeline = []
         self.postprocessed = False
-        self.global_offset_x = 0
-        self.global_offset_y = 0
         self.global_tint = 1., 1., 1.
 
     def setup(self, size):
@@ -436,8 +434,6 @@ class Renderer:
 
         w, h = map(float, sprite.get_size())
         x, y = map(float, pos)
-        x += self.global_offset_x
-        y += self.global_offset_y
 
         r, g, b = tint
         gr, gg, gb = self.global_tint
