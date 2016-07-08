@@ -6,8 +6,6 @@ Options:
     -l, --level <level>  start with level x
     -s, --scene <scene>  start with scene x
     -f, --fullscreen
-    -g, --opengl
-    -d, --debug
     -p <psu>             make it run as mac app
 """
 
@@ -38,10 +36,7 @@ pygame.init()
 app = App(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, arguments['--fullscreen'],
           scenes=SCENES,
           entry=arguments['--scene'] or "Start",
-          level_nr=arguments['--level'] or "1-1",
-          debug=arguments['--debug'],
-          opengl=arguments['--opengl'],
-          )
+          level_nr=arguments['--level'] or "1-1")
 
 app.run()
 pygame.quit()

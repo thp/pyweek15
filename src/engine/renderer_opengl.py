@@ -159,8 +159,6 @@ class Framebuffer:
         glUseProgram(0)
 
 class Renderer:
-    IS_OPENGL = True
-
     def __init__(self, app):
         self.app = app
         self.tmp_sprite = None

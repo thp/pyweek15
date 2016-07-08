@@ -5,6 +5,7 @@ from audman import AudioManager
 from logic.player import Player
 from screen import Screen
 from scene import Intermission
+from renderer_opengl import Renderer
 import time
 
 class TimeAccumulator:
@@ -27,21 +28,13 @@ class TimeAccumulator:
 
 class App(object):
     def __init__(self, title, width, height, fullscreen,
-                 scenes, entry, level_nr="1-1", debug=False,
-                 opengl=False):
+                 scenes, entry, level_nr="1-1"):
         pygame.init()
-
-        self.debug = debug
 
         self._clock = pygame.time.Clock()
         self.fps = 30
 
         self.accumulator = TimeAccumulator(self.fps)
-
-        if opengl:
-            from renderer_opengl import Renderer
-        else:
-            from renderer_blit import Renderer
 
         self.renderer = Renderer(self)
         self.screen = Screen(self, title, width, height, fullscreen)
@@ -120,8 +113,4 @@ class App(object):
                 self.scene.draw()
 
             self.renderer.global_tint = 1., 1., 1.
-            if self.debug:
-                self.screen.draw_debug()
-
             self.renderer.finish()
-

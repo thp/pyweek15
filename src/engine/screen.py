@@ -10,17 +10,14 @@ class Screen(object):
     def __init__(self, app, title, width, height, fullscreen=True):
         self.app = app
 
-        flags = 0
+        flags = pygame.OPENGL | pygame.DOUBLEBUF | pygame.HWSURFACE
         if fullscreen:
             flags |= pygame.FULLSCREEN
-
-        if self.app.renderer.IS_OPENGL:
-            flags |= pygame.OPENGL | pygame.DOUBLEBUF | pygame.HWSURFACE
 
         self.width = width
         self.height = height
 
-        if fullscreen and self.app.renderer.IS_OPENGL:
+        if fullscreen:
             size = (0, 0)
         else:
             size = (width, height)
@@ -101,14 +98,6 @@ class Screen(object):
         result = self.modelview_projection.map_vec3(Vec3(x, y, z))
 
         return ((0.5 + 0.5 * -result.x) * self.width, (0.5 + 0.5 * -result.y) * self.height)
-
-    def draw_debug(self):
-            # display fps
-            font = self.app.resman.font(FONT_SMALL)
-            surface = font.render("FPS: %2.2f" % self.app._clock.get_fps(), False,
-                                  pygame.Color('white'), pygame.Color('black'))
-            pos = (self.width-surface.get_width(), self.height-surface.get_height())
-            self.app.renderer.draw(surface, pos)
 
     def draw_text(self, text):
         font = self.app.resman.font(FONT_SMALL)
