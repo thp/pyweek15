@@ -1,8 +1,6 @@
 
 from engine.sprite import Sprite
 
-from logic.lamemath import center
-
 # some objects have 2 or 3 frames
 nr_frames = {
     "lanternfish": 3,
@@ -53,7 +51,6 @@ class Enemy(Sprite):
         bottom = max(point[1] for point in points)
         factor = min(4.0, float(right-left) / float(w))
 
-        x, _ = center(points)
         x = left + (right-left)/2 - (w*factor)/2
         y = bottom - h*factor
 

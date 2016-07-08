@@ -1,8 +1,13 @@
 from engine.sprite import Sprite
-from logic.lamemath import center
 import math
 INITIAL_HEALTH = 9
 MAX_HEALTH = 30
+
+def center(points):
+    """Calculate the center of a list of points"""
+    sum_x, sum_y = map(sum, zip(*points))
+    n = len(points)
+    return float(sum_x) / n, float(sum_y) / n
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
