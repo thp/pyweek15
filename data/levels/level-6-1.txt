@@ -27,7 +27,6 @@
 # 3=oyster_3_pearl
 #
 # :meta:
-# speed=10
 # background=surreal
 #
 
