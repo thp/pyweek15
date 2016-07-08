@@ -1,42 +1,12 @@
-
 from engine.sprite import Sprite
-
-# some objects have 2 or 3 frames
-nr_frames = {
-    "lanternfish": 3,
-    "fishy_rainbow": 2,
-    "fishy_red": 2,
-    "fishy_deepsea": 2,
-    "seaweed": 2,
-    "diver": 3,
-    "pearl": 1,
-    "shell": 1,
-    "sandboxtoys": 1,
-    "oyster_0_pearl": 1,
-    "oyster_1_pearl": 1,
-    "oyster_2_pearl": 1,
-    "oyster_3_pearl": 1,
-    'rock_m': 1,
-    'rock_l': 1,
-    'rock_s': 1,
-    'jellyfish_a': 2,
-    'jellyfish_b': 2,
-    'starfish': 1,
-    'shoe': 2,
-    "coral_a": 2,
-    "coral_b": 1,
-    "coral_c": 2,
-    "coral_d": 1,
-}
-
 
 class Enemy(Sprite):
     def __init__(self, app, name):
         self.app = app
-        if self.app.resman.get_sprite(name) is not None:
-            self.init(name, 1)
-        else:
-            self.init(name + '-%d', nr_frames[name])
+        frames = 0
+        while self.app.resman.get_sprite('%s-%d' % (name, frames+1)) is not None:
+            frames += 1
+        self.init(name, frames)
 
     def step(self):
         self.process()
@@ -58,4 +28,3 @@ class Enemy(Sprite):
         # and with the bottom (frontmost) edge of the
         # polygon aligned with the bottom of the enemy
         self.app.renderer.draw(sprite, (x, y), factor, opacity, tint)
-

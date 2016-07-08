@@ -17,7 +17,7 @@ class Player(Sprite):
         self.app = app
         self.health = 0
 
-        self.init('whale_%d', 3)
+        self.init('whale', 3)
         self.reset()
 
 
@@ -96,7 +96,7 @@ class Player(Sprite):
 
         sprite_name = self.current_sprite_name()
 
-        sprite_name = sprite_name.replace('whale_', 'whale_%s-' % self.dest_x)
+        sprite_name = sprite_name.replace('whale', 'whale_%s' % self.dest_x)
         sprite = self.lookup_sprite(sprite_name)
 
         w, h = sprite.get_size()
