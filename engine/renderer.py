@@ -127,24 +127,19 @@ class Renderer:
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
     def postprocess(self):
-        if not self.effect_pipeline:
-            return
-
-        self.fbs[0].unbind()
-
-        a, b = self.fbs
-        for idx, effect in enumerate(self.effect_pipeline[:-1]):
-            b.bind()
+        if self.effect_pipeline and not self.postprocessed:
+            self.fbs[0].unbind()
+            a, b = self.fbs
+            for idx, effect in enumerate(self.effect_pipeline[:-1]):
+                b.bind()
+                glClear(GL_COLOR_BUFFER_BIT)
+                a.rerender(effect)
+                b.unbind()
+                a, b = b, a
             glClear(GL_COLOR_BUFFER_BIT)
-            a.rerender(effect)
-            b.unbind()
-            a, b = b, a
-        glClear(GL_COLOR_BUFFER_BIT)
-        a.rerender(self.effect_pipeline[-1])
-        self.postprocessed = True
+            a.rerender(self.effect_pipeline[-1])
+            self.postprocessed = True
 
     def finish(self):
         self.global_tint = 1., 1., 1.
-
-        if self.effect_pipeline and not self.postprocessed:
-            self.postprocess()
+        self.postprocess()
