@@ -16,13 +16,12 @@ class Item(object):
 class Level(object):
     ENEMIES, PICKUP, META = range(3)
 
-    def __init__(self, leveldata):
+    def __init__(self, leveldata, width=5):
         self.charmap = {}
         self.rows = []
         self.speed = 10
         self.background = 'test'
 
-        width = 5
         section = self.ENEMIES
         for line in leveldata:
             if ':enemies:' in line:
@@ -41,7 +40,6 @@ class Level(object):
                     elif section == self.META:
                         if key == 'background':
                             self.background = value.strip()
-                continue
-
-            line = line.rstrip('\n') + (' ' * width)
-            self.rows.append([Item(*self.charmap[line[i]]) if line[i] != ' ' else None for i in range(width)])
+            else:
+                line = line.rstrip('\n') + (' ' * width)
+                self.rows.append([Item(*self.charmap[line[i]]) if line[i] != ' ' else None for i in range(width)])

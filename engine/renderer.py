@@ -48,20 +48,14 @@ class Framebuffer:
         self.started = time.time()
         self.width = width
         self.height = height
-        self.texture_id = glGenTextures(1)
         self.framebuffer_id = glGenFramebuffers(1)
-        glBindTexture(GL_TEXTURE_2D, self.texture_id)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, None)
-        glBindTexture(GL_TEXTURE_2D, 0)
+        self.texture = Texture(width, height, None)
         self.bind()
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.texture_id, 0)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.texture._texture_id, 0)
         self.unbind()
 
     def __del__(self):
         glDeleteFramebuffers(self.framebuffer_id)
-        glDeleteTextures(self.texture_id)
 
     def bind(self):
         glBindFramebuffer(GL_FRAMEBUFFER, self.framebuffer_id)
@@ -70,7 +64,7 @@ class Framebuffer:
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
     def rerender(self, effect):
-        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+        glBindTexture(GL_TEXTURE_2D, self.texture._texture_id)
         effect.use()
         pos = effect.attrib('position')
         glEnableVertexAttribArray(pos)

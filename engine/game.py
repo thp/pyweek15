@@ -115,26 +115,22 @@ class Game(Scene):
                                          (self.app.player.y + self.time - self.camera_y) + 1.0))]
 
         for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+self.FADE_DISTANCE)):
-            if offset >= len(self.level.rows) or offset < 0:
-                break
+            if offset > 0 and offset < len(self.level.rows):
+                for xidx, column in enumerate(self.level.rows[offset]):
+                    if column:
+                        if yidx == 1 and xidx == self.app.player.dest_x and self.app.player.height < 10:
+                            if column.collide(self.app.player):
+                                self.reset()
+                                self.app.go_to_scene('LostLife')
 
-            for xidx, column in enumerate(self.level.rows[offset]):
-                if column:
-                    if yidx == 1 and xidx == self.app.player.dest_x and self.app.player.height < 10:
-                        if column.collide(self.app.player):
-                            self.reset()
-                            self.app.go_to_scene('LostLife')
-
-                    if column.name:
-                        if column.name not in self.enemies:
-                            self.enemies[column.name] = Enemy(self.app, column.name)
-                        enemy = self.enemies[column.name]
-                        draw_queue.append((enemy, (xidx - 2.0, 0.0, yidx - self.time)))
+                        if column.name:
+                            if column.name not in self.enemies:
+                                self.enemies[column.name] = Enemy(self.app, column.name)
+                            draw_queue.append((self.enemies[column.name], (xidx - 2.0, 0.0, yidx - self.time)))
 
         backgrounds = self.app.resman.get_background(self.level.background)
         self.app.renderer.draw(backgrounds[int(self.time + self.app.player.y) % len(backgrounds)], (0, 0))
 
-        # Draw all enemies (+player), back-to-front for proper stacking order
         for sprite, pos in reversed(draw_queue):
             tint = 1., 1., 1.
             if self.level.background == 'surreal':
@@ -146,14 +142,8 @@ class Game(Scene):
             self.app.screen.draw_sprite(sprite, pos, opacity, map(lambda x: x*opacity, tint))
 
         self.app.renderer.begin_overlay()
-        if self.app.player.y > len(self.level.rows):
-            self.app.screen.draw_text([
-                'Level clear!',
-                'Collected: ... / ...',
-                'Lives used: ...',
-            ])
-        elif self.app.player.y < 0:
-            self.app.screen.draw_text([
-                'Get Ready',
-            ])
+        if self.app.player.y < 0:
+            self.app.screen.draw_text(['Get Ready'])
+        elif self.app.player.y > len(self.level.rows):
+            self.app.screen.draw_text(['Level clear!', 'Collected: ... / ...', 'Lives used: ...'])
         self.app.screen.draw_stats(self.app.player.coins_collected, self.app.player.health)
