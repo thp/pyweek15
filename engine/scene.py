@@ -34,10 +34,7 @@ class Intermission(Scene):
             self.update()
 
     def draw(self):
-        self.app.screen.draw_card(self.title, self.line,
-                                  self.background, self.creatures)
-        if self.skipable:
-            self.app.screen.draw_skip()
+        self.app.screen.draw_card(self.title, self.line, self.background, self.creatures, self.skipable)
 
     def _setup(self):
         is_header = True

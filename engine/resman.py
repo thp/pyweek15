@@ -38,6 +38,9 @@ class ResourceManager():
         return self.app.renderer.upload_texture(surf.get_width(), surf.get_height(),
                                                 pygame.image.tostring(surf, 'RGBA', 1))
 
+    def render_text(self, font, text):
+        return self.upload_surface(self.fonts[font].render(text, True, (255, 255, 255)))
+
     def sfx(self, name):
         pygame.mixer.find_channel(True).play(self.sounds[name])
 

@@ -15,13 +15,12 @@ class Screen(object):
 
     def draw_text(self, lines):
         spacing = 10
-        surfaces = [self.app.resman.fonts[FONT_SMALL].render(line, True, (255, 255, 255)) for line in lines]
-        total_height = (len(surfaces) - 1) * spacing + sum(surface.get_height() for surface in surfaces)
+        surfaces = [self.app.resman.render_text(FONT_SMALL, line) for line in lines]
+        total_height = (len(surfaces) - 1) * spacing + sum(surface.h for surface in surfaces)
         y = (self.height - total_height) / 2
         for surface in surfaces:
-            pos = ((self.width - surface.get_width()) / 2, y)
-            self.app.renderer.draw(surface, pos)
-            y += surface.get_height() + spacing
+            self.app.renderer.draw(surface, ((self.width - surface.w) / 2, y))
+            y += surface.h + spacing
 
     def projection(self, x, y, z):
         result = self.modelview_projection.map_vec3(Vec3(x, y, z))
@@ -37,7 +36,7 @@ class Screen(object):
         self.app.renderer.draw(icon, (pos_x, pos_y))
 
         pos_x += icon.w + self.SPACING
-        text_surf = self.app.resman.fonts[FONT_STD].render('%d' % bonus, True, (255, 255, 0))
+        text_surf = self.app.resman.render_text(FONT_STD, '%d' % bonus)
         self.app.renderer.draw(text_surf, (pos_x, pos_y-3))
 
         pos_x, pos_y = self.width, self.SPACING
@@ -48,27 +47,21 @@ class Screen(object):
             pos_x -= icon_width + self.SPACING
             self.app.renderer.draw(sprite, (pos_x, pos_y))
 
-    def draw_card(self, message, story=None, background=None, creatures=None):
+    def draw_card(self, message, story, background, creatures, skipable):
         self.app.renderer.draw(background, (0, 0))
 
         pos_x = self.width/15
-        card = self.app.resman.fonts[FONT_STD].render(message, False, (255, 255, 255))
-        self.app.renderer.draw(card, (pos_x, self.height/2 + 50))
+        self.app.renderer.draw(self.app.resman.render_text(FONT_STD, message), (pos_x, self.height/2 + 50))
+        self.app.renderer.draw(self.app.resman.render_text(FONT_STD, story), (pos_x, self.height/2 + 100))
 
-        if story:
-            self.app.renderer.draw(self.app.resman.fonts[FONT_STD].render(story, False, (255, 255, 255)),
-                                   (pos_x, self.height/2 + 100))
+        width = sum(creature.w for creature in creatures) + self.SPACING * len(creatures)
+        pos_x = 3*self.width/4 - width/2
+        pos_x = min(pos_x, self.width - width)
+        for creature in creatures:
+            pos_y = self.height/3 - creature.h/2
+            self.app.renderer.draw(creature, (pos_x, pos_y))
+            pos_x += creature.w + self.SPACING
 
-        if creatures:
-            width = sum(creature.w for creature in creatures) + self.SPACING * len(creatures)
-            pos_x = 3*self.width/4 - width/2
-            pos_x = min(pos_x, self.width - width)
-            for creature in creatures:
-                pos_y = self.height/3 - creature.h/2
-                self.app.renderer.draw(creature, (pos_x, pos_y))
-                pos_x += creature.w + self.SPACING
-
-    def draw_skip(self):
-        text = self.app.resman.fonts[FONT_SMALL].render("[S] ... SKIP INTRO", False, (255, 255, 255))
-        self.app.renderer.draw(text, (self.width - text.get_width() - self.SPACING,
-                                      self.height - text.get_height() - self.SPACING))
+        if skipable:
+            text = self.app.resman.render_text(FONT_SMALL, "[S] ... SKIP INTRO")
+            self.app.renderer.draw(text, (self.width - text.w - self.SPACING, self.height - text.h - self.SPACING))

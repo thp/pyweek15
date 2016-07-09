@@ -104,18 +104,14 @@ class Renderer:
             self.fbs[0].bind()
         glClear(GL_COLOR_BUFFER_BIT)
 
-    def draw(self, sprite, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
-        if not isinstance(sprite, Texture):
-            # Upload dynamically-created sprite to texture memory
-            sprite = self.app.resman.upload_surface(sprite)
-
+    def draw(self, texture, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
         x, y = pos
         r, g, b = tint
         gr, gg, gb = self.global_tint
-        hs, ws = sprite.h * scale, sprite.w * scale
+        hs, ws = texture.h * scale, texture.w * scale
 
         self.draw_sprites.enable_arrays([x,y,x,y+hs,x+ws,y,x+ws,y+hs], [0,1,0,0,1,1,1,0])
-        glBindTexture(GL_TEXTURE_2D, sprite._texture_id)
+        glBindTexture(GL_TEXTURE_2D, texture._texture_id)
         glUniform4f(self.draw_sprites.uniform('color'), r*gr, g*gg, b*gb, opacity)
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
