@@ -12,7 +12,7 @@ class Sprite(object):
         else:
             self.sprites = ['%s-%d' % (basename, x) for x in make_sequence(frames)]
 
-        self.frames_per_sprite = int(duration * self.app.fps)
+        self.frames_per_sprite = int(duration / self.app.accumulator.step)
         self.current_sprite = 0
         self.current_frame = 0
 

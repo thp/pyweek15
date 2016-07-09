@@ -35,8 +35,7 @@ class App(object):
         dpy_width, dpy_height = self.display.get_size()
 
         self.running = True
-        self.fps = 30
-        self.accumulator = TimeAccumulator(self.fps)
+        self.accumulator = TimeAccumulator(30)
         self.renderer = Renderer(self)
         self.screen = Screen(self, width, height, dpy_width, dpy_height)
         self.resman = ResourceManager(self)
