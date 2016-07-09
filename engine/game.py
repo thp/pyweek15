@@ -67,8 +67,8 @@ class Game(Scene):
             self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + (-1 if (key == 'left') else 1)))
 
     def draw(self):
-        draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100,
-                                         (self.app.player.y + self.time - self.camera_y) + 1.0))]
+        now, height = self.app.player.y + self.time, self.app.player.height / 100
+        draw_queue = [(self.app.player, (self.app.player.x - 2.0, height, now - self.camera_y + 1.0))]
 
         for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+self.FADE_DISTANCE)):
             if offset > 0 and offset < len(self.level.rows):
@@ -85,13 +85,13 @@ class Game(Scene):
                             draw_queue.append((self.enemies[column.name], (xidx - 2.0, 0.0, yidx - self.time)))
 
         backgrounds = self.app.resman.backgrounds[self.level.background]
-        self.app.renderer.draw(backgrounds[int(self.time + self.app.player.y) % len(backgrounds)], (0, 0))
+        self.app.renderer.draw(backgrounds[int(now) % len(backgrounds)], (0, 0))
 
         for sprite, pos in reversed(draw_queue):
             tint = 1., 1., 1.
             if self.level.background == 'surreal':
                 # Special FX for the Surreal level - tint like crazy!
-                tint = [.5+.5*math.sin(a+(self.time+self.app.player.y)*b) for a, b in ((0,4.5),(.9,2.0),(4.5,9.5))]
+                tint = [.5+.5*math.sin(a+now*b) for a, b in ((0,4.5),(.9,2.0),(4.5,9.5))]
 
             # Fade in enemy sprites coming from the back
             opacity = max(0.0, 1.0 - (pos[2] - float(self.FADE_OFFSET)) / float(self.FADE_WIDTH))
