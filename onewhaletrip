@@ -17,7 +17,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from engine.app import App
-from engine.game import Game
 
 from docopt import docopt
 arguments = docopt(__doc__)
@@ -26,15 +25,9 @@ TITLE = "One Whale Trip"
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 480
 
-SCENES = [
-    Game,
-]
-
-
 pygame.init()
 
 app = App(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, arguments['--fullscreen'],
-          scenes=SCENES,
           entry=arguments['--scene'] or "Start",
           level_nr=arguments['--level'] or "1-1")
 

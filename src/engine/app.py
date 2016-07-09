@@ -8,6 +8,7 @@ from player import Player
 from screen import Screen
 from scene import Intermission
 from renderer import Renderer
+from game import Game
 
 class TimeAccumulator:
     def __init__(self, fps):
@@ -26,8 +27,7 @@ class TimeAccumulator:
 
 
 class App(object):
-    def __init__(self, title, width, height, fullscreen,
-                 scenes, entry, level_nr="1-1"):
+    def __init__(self, title, width, height, fullscreen, entry, level_nr="1-1"):
         pygame.init()
 
         self.running = True
@@ -50,21 +50,13 @@ class App(object):
         group, number = int(group), int(number)
         self.start_level = (group, number)
 
-        self._scenes = {}
-
-        for scene in scenes:
-            s = scene(self)
-            self._scenes[s.name] = s
-
+        self._scenes = {'Game': Game(self)}
         for name in self.resman.intermissions.keys():
             self._scenes[name] = Intermission(self, name)
 
-        self.scene = self._get_scene(entry)
+        self.scene = self._scenes[entry]
         self.old_scene = None
         self.scene_transition = 0.
-
-    def _get_scene(self, s):
-        return self._scenes[s]
 
     def go_to_scene(self, name):
         if name == "GoodBye":
@@ -75,7 +67,7 @@ class App(object):
         self.old_scene = self.scene
         self.scene_transition = 0.
         # XXX: Tell the renderer to snapshot old_scene for transition
-        self.scene = self._get_scene(name)
+        self.scene = self._scenes[name]
         self.scene.resume()
 
     def run(self):
