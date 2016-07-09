@@ -30,29 +30,20 @@ class ShaderEffect:
         self.program = glCreateProgram()
         glAttachShader(self.program, self.vertex_shader)
         glAttachShader(self.program, self.fragment_shader)
+        glBindAttribLocation(self.program, 0, 'position')
+        glBindAttribLocation(self.program, 1, 'texcoord')
         glLinkProgram(self.program)
 
     def use(self):
         glUseProgram(self.program)
 
-    def attrib(self, name):
-        return glGetAttribLocation(self.program, name)
-
     def uniform(self, name):
         return glGetUniformLocation(self.program, name)
 
-
-def enable_arrays(effect, pairs):
-    effect.use()
-    for attrib, vtxarray in pairs:
-        loc = effect.attrib(attrib)
-        glEnableVertexAttribArray(loc)
-        glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, vtxarray.tostring())
-        yield loc
-
-def disable_arrays(locs):
-    for loc in locs:
-        glDisableVertexAttribArray(loc)
+    def enable_arrays(self, position, texcoord):
+        self.use()
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', position).tostring())
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', texcoord).tostring())
 
 class Framebuffer:
     def __init__(self, width, height):
@@ -73,13 +64,11 @@ class Framebuffer:
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
     def rerender(self, effect):
-        locs = list(enable_arrays(effect, (('position', array.array('f', [-1, -1, -1, 1, 1, -1, 1, 1])),
-                                           ('texcoord', array.array('f', [0, 0, 0, 1, 1, 0, 1, 1])))))
+        effect.enable_arrays([-1,-1,-1,1,1,-1,1,1], [0,0,0,1,1,0,1,1])
         glUniform2f(effect.uniform('dimensions'), self.texture.w, self.texture.h)
         glUniform1f(effect.uniform('time'), time.time() - self.started)
         glBindTexture(GL_TEXTURE_2D, self.texture._texture_id)
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-        disable_arrays(locs)
 
 class Renderer:
     def __init__(self, app):
@@ -97,6 +86,8 @@ class Renderer:
         glViewport(0, 0, width, height)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnableVertexAttribArray(0)
+        glEnableVertexAttribArray(1)
 
         self.fbs = [Framebuffer(width, height), Framebuffer(width, height)]
 
@@ -125,21 +116,15 @@ class Renderer:
             # Upload dynamically-created sprite to texture memory
             sprite = self.upload_texture(sprite.get_width(), sprite.get_height(), self.app.resman.get_rgba(sprite))
 
-        w, h = map(float, (sprite.w, sprite.h))
-        x, y = map(float, pos)
-
+        x, y = pos
         r, g, b = tint
         gr, gg, gb = self.global_tint
+        hs, ws = sprite.h * scale, sprite.w * scale
 
-        vtxdata, texdata = [x, y, x, y+h*scale, x+w*scale, y, x+w*scale, y+h*scale], [0., 1., 0., 0., 1., 1., 1., 0.]
-        locs = list(enable_arrays(self.draw_sprites, (('position', array.array('f', vtxdata)),
-                                                      ('texcoord', array.array('f', texdata)))))
+        self.draw_sprites.enable_arrays([x,y,x,y+hs,x+ws,y,x+ws,y+hs], [0,1,0,0,1,1,1,0])
         glBindTexture(GL_TEXTURE_2D, sprite._texture_id)
         glUniform4f(self.draw_sprites.uniform('color'), r*gr, g*gg, b*gb, opacity)
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-        disable_arrays(locs)
-
-        glUseProgram(0)
 
     def begin_overlay(self):
         # Force postprocessing NOW, so overlays will be drawn as-is
