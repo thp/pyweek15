@@ -101,7 +101,7 @@ class Game(Scene):
                                 self.enemies[column.name] = Enemy(self.app, column.name)
                             draw_queue.append((self.enemies[column.name], (xidx - 2.0, 0.0, yidx - self.time)))
 
-        backgrounds = self.app.resman.get_background(self.level.background)
+        backgrounds = self.app.resman.backgrounds[self.level.background]
         self.app.renderer.draw(backgrounds[int(self.time + self.app.player.y) % len(backgrounds)], (0, 0))
 
         for sprite, pos in reversed(draw_queue):

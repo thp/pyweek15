@@ -91,7 +91,7 @@ class Renderer:
 
         self.fbs = [Framebuffer(width, height), Framebuffer(width, height)]
 
-        mkshader = lambda vert, frag: ShaderEffect(self.app.resman.get_shader(vert), self.app.resman.get_shader(frag))
+        mkshader = lambda vert, frag: ShaderEffect(self.app.resman.shaders[vert], self.app.resman.shaders[frag])
         self.draw_sprites = mkshader('draw_sprites.vsh', 'draw_sprites.fsh')
         self.blur_effect = mkshader('effect_vertex_shader.vsh', 'blur_effect.fsh')
         self.underwater_effect = mkshader('effect_vertex_shader.vsh', 'underwater_effect.fsh')

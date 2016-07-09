@@ -60,7 +60,7 @@ class Intermission(Scene):
                 if key == 'next_scene':
                     self.next_scene = value
                 elif key == 'background':
-                    self.background = self.app.resman.get_background(value)[0]
+                    self.background = self.app.resman.backgrounds[value][0]
                 elif key == 'skipable':
                     self.skipable = (value == 'true')
                 elif key == 'title':
@@ -72,7 +72,7 @@ class Intermission(Scene):
                     # Story meta definition
                     key, value = self._parse_key_value(line[1:-1])
                     if key == 'creatures':
-                        self.story.append([self.app.resman.get_creature(c) for c in value.split()])
+                        self.story.append([self.app.resman.creatures[c] for c in value.split()])
                     else:
                         raise ValueError(line)
                 else:

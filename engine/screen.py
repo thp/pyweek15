@@ -17,7 +17,7 @@ class Screen(object):
         self.modelview_projection = projection * modelview
 
     def draw_text(self, lines):
-        font = self.app.resman.font(FONT_SMALL)
+        font = self.app.resman.fonts[FONT_SMALL]
         spacing = 10
         surfaces = [font.render(line, True, (255, 255, 255)) for line in lines]
         total_height = (len(surfaces) - 1) * spacing + sum(surface.get_height() for surface in surfaces)
@@ -42,10 +42,10 @@ class Screen(object):
         ], opacity, tint)
 
     def draw_stats(self, bonus, health):
-        font = self.app.resman.font(FONT_STD)
+        font = self.app.resman.fonts[FONT_STD]
 
         pos_x, pos_y = self.SPACING, self.SPACING
-        icon = self.app.resman.get_sprite("pearlcount_icon-1")
+        icon = self.app.resman.sprites['pearlcount_icon-1']
         self.app.renderer.draw(icon, (pos_x, pos_y))
 
         pos_x += icon.w + self.SPACING
@@ -55,7 +55,7 @@ class Screen(object):
         pos_x, pos_y = self.width, self.SPACING
         while health > 0:
             health, rest = health - 3, min(health, 3)
-            sprite = self.app.resman.get_sprite("whale_ico-%d" % rest)
+            sprite = self.app.resman.sprites['whale_ico-%d' % rest]
             icon_width = sprite.w
             pos_x -= icon_width + self.SPACING
             self.app.renderer.draw(sprite, (pos_x, pos_y))
@@ -63,7 +63,7 @@ class Screen(object):
     def draw_card(self, message, story=None, background=None, creatures=None):
         self.app.renderer.draw(background, (0, 0))
 
-        font = self.app.resman.font(FONT_STD)
+        font = self.app.resman.fonts[FONT_STD]
         pos_x = self.width/15
         card = font.render(message, False, (255, 255, 255))
         self.app.renderer.draw(card, (pos_x, self.height/2 + 50))
@@ -81,6 +81,6 @@ class Screen(object):
                 pos_x += creature.w + self.SPACING
 
     def draw_skip(self):
-        text = self.app.resman.font(FONT_SMALL).render("[S] ... SKIP INTRO", False, (255, 255, 255))
+        text = self.app.resman.fonts[FONT_SMALL].render("[S] ... SKIP INTRO", False, (255, 255, 255))
         self.app.renderer.draw(text, (self.width - text.get_width() - self.SPACING,
                                       self.height - text.get_height() - self.SPACING))

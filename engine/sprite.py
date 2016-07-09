@@ -26,7 +26,7 @@ class Sprite(object):
         return self.sprites[self.current_sprite]
 
     def _draw(self, sprite_name, points, max_scale, opacity, tint, align_bottom, yoffset):
-        sprite = self.app.resman.get_sprite(sprite_name)
+        sprite = self.app.resman.sprites[sprite_name]
         w, h = sprite.w, sprite.h
         left = min(point[0] for point in points)
         right = max(point[0] for point in points)
@@ -46,7 +46,7 @@ class Enemy(Sprite):
     def __init__(self, app, name):
         self.app = app
         frames = 0
-        while self.app.resman.get_sprite('%s-%d' % (name, frames+1)) is not None:
+        while '%s-%d' % (name, frames+1) in self.app.resman.sprites:
             frames += 1
         self.init(name, frames)
 
