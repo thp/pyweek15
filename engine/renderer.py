@@ -114,7 +114,7 @@ class Renderer:
     def draw(self, sprite, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
         if not isinstance(sprite, Texture):
             # Upload dynamically-created sprite to texture memory
-            sprite = self.upload_texture(sprite.get_width(), sprite.get_height(), self.app.resman.get_rgba(sprite))
+            sprite = self.app.resman.upload_surface(sprite)
 
         x, y = pos
         r, g, b = tint

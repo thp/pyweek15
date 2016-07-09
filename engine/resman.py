@@ -32,15 +32,13 @@ class ResourceManager():
 
         for fn in sorted(glob.glob(_path('sprites', "*.png"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
-            surf = pygame.image.load(fn).convert_alpha()
-            surf = self.app.renderer.upload_texture(surf.get_width(), surf.get_height(), self.get_rgba(surf))
+            surf = self.upload_surface(pygame.image.load(fn).convert_alpha())
             self.sprites[bn] = surf
 
         for fn in sorted(glob.glob(_path('backgrounds', "*.jpg"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
             key, frame = bn.split('-')
-            surf = pygame.image.load(fn)
-            surf = self.app.renderer.upload_texture(surf.get_width(), surf.get_height(), self.get_rgba(surf))
+            surf = self.upload_surface(pygame.image.load(fn).convert_alpha())
             if key in self.backgrounds:
                 self.backgrounds[key].append(surf)
             else:
@@ -50,8 +48,7 @@ class ResourceManager():
             bn, _ = os.path.splitext(os.path.basename(fn))
             surf = pygame.image.load(fn)
             surf = surf.convert_alpha()
-            surf = self.app.renderer.upload_texture(surf.get_width(), surf.get_height(), self.get_rgba(surf))
-            self.creatures[bn] = surf
+            self.creatures[bn] = self.upload_surface(surf)
 
         for fn in glob.glob(_path('sounds', '*.wav')):
             bn, _ = os.path.splitext(os.path.basename(fn))
@@ -75,5 +72,6 @@ class ResourceManager():
         pickup_lines = [line.strip().split(':') for line in open(_path('pickups.txt')) if not line.startswith('#')]
         self.pickups = {thingie: (sfx, int(coins), int(lives)) for thingie, sfx, coins, lives in pickup_lines}
 
-    def get_rgba(self, sprite):
-        return pygame.image.tostring(sprite, 'RGBA', 1)
+    def upload_surface(self, surf):
+        return self.app.renderer.upload_texture(surf.get_width(), surf.get_height(),
+                                                pygame.image.tostring(surf, 'RGBA', 1))
