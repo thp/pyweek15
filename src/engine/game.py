@@ -144,7 +144,6 @@ class Game(Scene):
                         enemy = self.enemies[column.name]
                         draw_queue.append((enemy, (xidx - 2.0, 0.0, yidx - self.time)))
 
-        self.app.screen.before_draw()
         backgrounds = self.app.resman.get_background(self.level.background)
         self.app.renderer.draw(backgrounds[int(self.time + self.app.player.y) % len(backgrounds)], (0, 0))
 

@@ -42,7 +42,14 @@ class Screen(object):
         self.center_z = 100.0
         self.fov = 90.0
 
-        self.before_draw()
+        projection = Matrix4x4.perspective(self.fov / 180.0 * math.pi, self.width / self.height, 0.0001, 200.0)
+
+        eye = Vec3(0.0, self.eye_y, self.eye_z)
+        center = Vec3(0.0, self.center_y, self.center_z)
+        up = Vec3(0.0, 1.0, 0.0)
+
+        modelview = Matrix4x4.lookAt(eye, center, up)
+        self.modelview_projection = projection * modelview
 
     def process_input(self, event):
         if event.type == KEYDOWN:
@@ -58,16 +65,6 @@ class Screen(object):
                 self.fov += 1.0
             elif event.key == K_6:
                 self.fov -= 1.0
-
-    def before_draw(self):
-        projection = Matrix4x4.perspective(self.fov / 180.0 * math.pi, self.width / self.height, 0.0001, 200.0)
-
-        eye = Vec3(0.0, self.eye_y, self.eye_z)
-        center = Vec3(0.0, self.center_y, self.center_z)
-        up = Vec3(0.0, 1.0, 0.0)
-
-        modelview = Matrix4x4.lookAt(eye, center, up)
-        self.modelview_projection = projection * modelview
 
     def projection(self, x, y, z):
         """Project world coordinates onto the screen."""
