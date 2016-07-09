@@ -30,5 +30,5 @@ class Level(object):
                 elif section == self.META and key == 'background':
                     self.background = value.strip()
             else:
-                line = line.rstrip('\n') + (' ' * width)
+                line = line + (' ' * width)
                 self.rows.append([Item(*self.charmap[line[i]]) if line[i] != ' ' else None for i in range(width)])
