@@ -17,10 +17,10 @@ if __name__ == '__main__':
     except ValueError:
         fullscreen = False
 
-    entry, level_nr = 'Start', '1-1'
-    if len(sys.argv) == 3:
-        entry, level_nr = sys.argv[1:]
+    entry = 'Start'
+    if len(sys.argv) == 2:
+        entry = sys.argv[1]
 
-    App('One Whale Trip', 800, 480, fullscreen, entry, level_nr).run()
+    App('One Whale Trip', 800, 480, fullscreen, entry).run()
 
     pygame.quit()

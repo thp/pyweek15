@@ -26,7 +26,7 @@ class TimeAccumulator:
 
 
 class App(object):
-    def __init__(self, title, width, height, fullscreen, entry, level_nr="1-1"):
+    def __init__(self, title, width, height, fullscreen, entry):
         pygame.init()
 
         self.running = True
@@ -44,10 +44,6 @@ class App(object):
         self.renderer.setup(self.screen.display.get_size())
 
         self.player = Player(self)
-
-        group, number = level_nr.split('-')
-        group, number = int(group), int(number)
-        self.start_level = (group, number)
 
         self._scenes = {'Game': Game(self)}
         for name in self.resman.intermissions.keys():
