@@ -27,7 +27,7 @@ class Sprite(object):
 
     def _draw(self, sprite_name, points, max_scale, opacity, tint, align_bottom, yoffset):
         sprite = self.app.resman.get_sprite(sprite_name)
-        w, h = sprite.get_size()
+        w, h = sprite.w, sprite.h
         left = min(point[0] for point in points)
         right = max(point[0] for point in points)
         bottom = max(point[1] for point in points)

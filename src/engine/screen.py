@@ -51,21 +51,6 @@ class Screen(object):
         modelview = Matrix4x4.lookAt(eye, center, up)
         self.modelview_projection = projection * modelview
 
-    def process_input(self, event):
-        if event.type == KEYDOWN:
-            if event.key == K_1:
-                self.eye_y += 1.0
-            elif event.key == K_2:
-                self.eye_y -= 1.0
-            elif event.key == K_3:
-                self.center_y += 1.0
-            elif event.key == K_4:
-                self.center_y -= 1.0
-            elif event.key == K_5:
-                self.fov += 1.0
-            elif event.key == K_6:
-                self.fov -= 1.0
-
     def projection(self, x, y, z):
         """Project world coordinates onto the screen."""
 
@@ -117,7 +102,7 @@ class Screen(object):
         icon = self.app.resman.get_sprite("pearlcount_icon-1")
         self.app.renderer.draw(icon, (offset, offset))
 
-        pos_x += icon.get_width() + offset
+        pos_x += icon.w + offset
         text_surf = font.render('%d' % bonus, True, (255, 255, 0))
         self.app.renderer.draw(text_surf, (pos_x, pos_y-3))
 
@@ -127,16 +112,13 @@ class Screen(object):
         while health > 0:
             health, rest = health - 3, min(health, 3)
             sprite = self.app.resman.get_sprite("whale_ico-%d" % rest)
-            icon_width = sprite.get_width()
+            icon_width = sprite.w
             pos_x -= icon_width + offset
             self.app.renderer.draw(sprite, (pos_x, pos_y))
 
 
     def draw_card(self, message, story=None, background=None, creatures=None):
-        if background:
-            self.app.renderer.draw(background, (0, 0))
-        else:
-            self.display.fill(pygame.Color('black'))
+        self.app.renderer.draw(background, (0, 0))
 
         font = self.app.resman.font(FONT_STD)
         color = pygame.Color('white')
@@ -152,15 +134,15 @@ class Screen(object):
             self.app.renderer.draw(card, (pos_x, self.height/2 + 100))
 
         if creatures:
-            width = sum(creature.get_width() for creature in creatures)
+            width = sum(creature.w for creature in creatures)
             width += 20 * len(creatures)
 
             pos_x = 3*self.width/4 - width/2
             pos_x = min(pos_x, self.width - width)
             for creature in creatures:
-                pos_y = self.height/3 - creature.get_height()/2
+                pos_y = self.height/3 - creature.h/2
                 self.app.renderer.draw(creature, (pos_x, pos_y))
-                pos_x += creature.get_width() + 20
+                pos_x += creature.w + 20
 
 
     def draw_skip(self):

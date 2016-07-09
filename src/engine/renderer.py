@@ -1,26 +1,21 @@
 import time
 import array
 
-import pygame
 from OpenGL.GL import *
 
 class SpriteProxy():
-    def __init__(self, sprite):
-        self.sprite = sprite
-        w, h = sprite.get_size()
-        data = pygame.image.tostring(sprite, 'RGBA', 1)
+    def __init__(self, w, h, rgba):
+        self.w = w
+        self.h = h
         self._texture_id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self._texture_id)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.w, self.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba)
 
     def __del__(self):
         glDeleteTextures(self._texture_id)
-
-    def __getattr__(self, name):
-        return getattr(self.sprite, name)
 
 def build_shader(typ, source):
     shader_id = glCreateShader(typ)
@@ -125,9 +120,8 @@ class Renderer:
         glUniform2f(self.draw_sprites.uniform('offset'), offset_x, offset_y)
         glUniform1f(self.draw_sprites.uniform('scale'), scale)
 
-    def register_sprite(self, name, sprite):
-        # Upload the sprite as a texture
-        return SpriteProxy(sprite)
+    def register_sprite(self, width, height, rgba):
+        return SpriteProxy(width, height, rgba)
 
     def begin(self):
         if self.effect_pipeline:
@@ -140,9 +134,9 @@ class Renderer:
 
         if not isinstance(sprite, SpriteProxy):
             # Upload dynamically-created sprite to texture memory
-            sprite = SpriteProxy(sprite)
+            sprite = self.register_sprite(sprite.get_width(), sprite.get_height(), self.app.resman.get_rgba(sprite))
 
-        w, h = map(float, sprite.get_size())
+        w, h = map(float, (sprite.w, sprite.h))
         x, y = map(float, pos)
 
         r, g, b = tint

@@ -25,10 +25,7 @@ class TimeAccumulator:
 
 class App(object):
     def __init__(self, title, width, height, fullscreen, entry):
-        pygame.init()
-
         self.running = True
-        self._clock = pygame.time.Clock()
         self.fps = 30
 
         self.accumulator = TimeAccumulator(self.fps)
@@ -62,13 +59,10 @@ class App(object):
 
     def run(self):
         while self.running:
-            self._clock.tick(self.fps)
-
             if self.scene_transition == 1.:
                 events = pygame.event.get()
                 for event in events:
                     self.scene.process_input(event)
-                    self.screen.process_input(event)
 
                 self.accumulator.update(self.scene.process)
 

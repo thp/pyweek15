@@ -5,18 +5,16 @@ import pygame
 FONT_STD = ("visitor2", 38)
 FONT_SMALL = ("visitor2", 25)
 
-import pygame.mixer as mixer
-
 class AudioManager():
     def __init__(self, app):
         self.app = app
         self.sounds = {}
 
     def register_sound(self, name, filename):
-        self.sounds[name] = mixer.Sound(filename)
+        self.sounds[name] = pygame.mixer.Sound(filename)
 
     def sfx(self, name):
-        mixer.find_channel(True).play(self.sounds[name])
+        pygame.mixer.find_channel(True).play(self.sounds[name])
 
 
 class ResourceManager():
@@ -35,13 +33,14 @@ class ResourceManager():
         for fn in sorted(glob.glob(_path('sprites', "*.png"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
             surf = pygame.image.load(fn).convert_alpha()
-            surf = self.app.renderer.register_sprite(bn, surf)
+            surf = self.app.renderer.register_sprite(surf.get_width(), surf.get_height(), self.get_rgba(surf))
             self._surfaces[bn] = surf
 
         for fn in sorted(glob.glob(_path('backgrounds', "*.jpg"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
             key, frame = bn.split('-')
-            surf = self.app.renderer.register_sprite(bn, pygame.image.load(fn))
+            surf = pygame.image.load(fn)
+            surf = self.app.renderer.register_sprite(surf.get_width(), surf.get_height(), self.get_rgba(surf))
             if key in self._backgrounds:
                 self._backgrounds[key].append(surf)
             else:
@@ -51,6 +50,7 @@ class ResourceManager():
             bn, _ = os.path.splitext(os.path.basename(fn))
             surf = pygame.image.load(fn)
             surf = surf.convert_alpha()
+            surf = self.app.renderer.register_sprite(surf.get_width(), surf.get_height(), self.get_rgba(surf))
             self._creatures[bn] = surf
 
         for fn in glob.glob(_path('sounds', '*.wav')):
@@ -96,3 +96,6 @@ class ResourceManager():
 
     def font(self, font_spec):
         return self._fonts[font_spec]
+
+    def get_rgba(self, sprite):
+        return pygame.image.tostring(sprite, 'RGBA', 1)
