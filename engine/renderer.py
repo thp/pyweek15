@@ -11,41 +11,33 @@ class Texture():
         glBindTexture(GL_TEXTURE_2D, self._texture_id)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.w, self.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba)
 
-    def __del__(self):
-        glDeleteTextures(self._texture_id)
+    __del__ = lambda self: glDeleteTextures(self._texture_id)
 
-def build_shader(typ, source):
-    shader_id = glCreateShader(typ)
-    glShaderSource(shader_id, source)
-    glCompileShader(shader_id)
-    return shader_id
-
-class ShaderEffect:
+class ShaderEffect():
     def __init__(self, vertex_shader, fragment_shader):
-        self.vertex_shader = build_shader(GL_VERTEX_SHADER, vertex_shader)
-        self.fragment_shader = build_shader(GL_FRAGMENT_SHADER, fragment_shader)
         self.program = glCreateProgram()
-        glAttachShader(self.program, self.vertex_shader)
-        glAttachShader(self.program, self.fragment_shader)
+        for shader_type, shader_src in ((GL_VERTEX_SHADER, vertex_shader), (GL_FRAGMENT_SHADER, fragment_shader)):
+            shader_id = glCreateShader(shader_type)
+            glShaderSource(shader_id, shader_src)
+            glCompileShader(shader_id)
+            glAttachShader(self.program, shader_id)
         glBindAttribLocation(self.program, 0, 'position')
         glBindAttribLocation(self.program, 1, 'texcoord')
         glLinkProgram(self.program)
 
-    def use(self):
-        glUseProgram(self.program)
+    use = lambda self: glUseProgram(self.program)
+    uniform = lambda self, name: glGetUniformLocation(self.program, name)
+    __del__ = lambda self: glDeleteProgram(self.program)
 
-    def uniform(self, name):
-        return glGetUniformLocation(self.program, name)
-
-    def enable_arrays(self, position, texcoord):
+    def enable_arrays(self, texture, position, texcoord):
         self.use()
+        glBindTexture(GL_TEXTURE_2D, texture._texture_id)
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', position).tostring())
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', texcoord).tostring())
 
-class Framebuffer:
+class Framebuffer():
     def __init__(self, width, height):
         self.started = time.time()
         self.framebuffer_id = glGenFramebuffers(1)
@@ -54,23 +46,17 @@ class Framebuffer:
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.texture._texture_id, 0)
         self.unbind()
 
-    def __del__(self):
-        glDeleteFramebuffers(self.framebuffer_id)
-
-    def bind(self):
-        glBindFramebuffer(GL_FRAMEBUFFER, self.framebuffer_id)
-
-    def unbind(self):
-        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+    __del__ = lambda self: glDeleteFramebuffers(self.framebuffer_id)
+    bind = lambda self: glBindFramebuffer(GL_FRAMEBUFFER, self.framebuffer_id)
+    unbind = lambda self: glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
     def rerender(self, effect):
-        effect.enable_arrays([-1,-1,-1,1,1,-1,1,1], [0,0,0,1,1,0,1,1])
+        effect.enable_arrays(self.texture, [-1,-1,-1,1,1,-1,1,1], [0,0,0,1,1,0,1,1])
         glUniform2f(effect.uniform('dimensions'), self.texture.w, self.texture.h)
         glUniform1f(effect.uniform('time'), time.time() - self.started)
-        glBindTexture(GL_TEXTURE_2D, self.texture._texture_id)
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
-class Renderer:
+class Renderer():
     def __init__(self, app):
         self.app = app
         self.postprocessed = False
@@ -81,6 +67,7 @@ class Renderer:
         glViewport(0, 0, width, height)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glEnableVertexAttribArray(0)
         glEnableVertexAttribArray(1)
 
@@ -110,8 +97,7 @@ class Renderer:
         gr, gg, gb = self.global_tint
         hs, ws = texture.h * scale, texture.w * scale
 
-        self.draw_sprites.enable_arrays([x,y,x,y+hs,x+ws,y,x+ws,y+hs], [0,1,0,0,1,1,1,0])
-        glBindTexture(GL_TEXTURE_2D, texture._texture_id)
+        self.draw_sprites.enable_arrays(texture, [x,y,x,y+hs,x+ws,y,x+ws,y+hs], [0,1,0,0,1,1,1,0])
         glUniform4f(self.draw_sprites.uniform('color'), r*gr, g*gg, b*gb, opacity)
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
