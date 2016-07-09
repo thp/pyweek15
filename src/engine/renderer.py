@@ -182,94 +182,14 @@ class Renderer:
         self.framebuffer = Framebuffer(width, height)
         self.framebuffer2 = Framebuffer(width, height)
 
-        effect_vertex_shader = """
-            attribute vec4 position;
-            attribute vec2 texcoord;
+        self.draw_sprites = ShaderEffect(self.app.resman.get_shader('draw_sprites.vsh'),
+                                         self.app.resman.get_shader('draw_sprites.fsh'))
 
-            varying vec2 tex;
+        self.blur_effect = ShaderEffect(self.app.resman.get_shader('effect_vertex_shader.vsh'),
+                                        self.app.resman.get_shader('blur_effect.fsh'))
 
-            void main()
-            {
-                gl_Position = position;
-                tex = texcoord;
-            }
-        """
-
-        self.draw_sprites = ShaderEffect("""
-            attribute vec4 position;
-            attribute vec2 texcoord;
-
-            uniform vec2 size;
-            uniform vec2 offset;
-            uniform float scale;
-
-            varying vec2 tex;
-
-            void main()
-            {
-                gl_Position.x = 2.0 * (position.x*scale + offset.x) / size.x - 1.0;
-                gl_Position.y = 1.0 - 2.0 * (position.y*scale + offset.y) / size.y;
-                gl_Position.z = 0.0;
-                gl_Position.w = 1.0;
-
-                tex = texcoord;
-            }
-        """, """
-            uniform sampler2D sampler;
-            uniform vec4 color;
-
-            varying vec2 tex;
-
-            void main()
-            {
-                gl_FragColor = color * texture2D(sampler, tex);
-            }
-        """)
-
-        self.blur_effect = ShaderEffect(effect_vertex_shader, """
-            uniform sampler2D sampler;
-            uniform vec2 dimensions;
-
-            varying vec2 tex;
-
-            void main()
-            {
-                float radius = 10.0 * abs(0.3 - tex.y);
-                vec2 offset = vec2(radius / dimensions.x, radius / dimensions.y);
-                gl_FragColor = 0.3 * texture2D(sampler, tex)
-                             + 0.1 * texture2D(sampler, tex + vec2(0, -offset.y))
-                             + 0.1 * texture2D(sampler, tex + vec2(0, offset.y))
-                             + 0.1 * texture2D(sampler, tex + vec2(-offset.x, 0))
-                             + 0.1 * texture2D(sampler, tex + vec2(offset.x, 0))
-                             + 0.075 * texture2D(sampler, tex + vec2(-offset.x, -offset.y))
-                             + 0.075 * texture2D(sampler, tex + vec2(offset.x, offset.y))
-                             + 0.075 * texture2D(sampler, tex + vec2(-offset.x, offset.y))
-                             + 0.075 * texture2D(sampler, tex + vec2(offset.x, -offset.y));
-            }
-        """)
-
-        self.underwater_effect = ShaderEffect(effect_vertex_shader, """
-            uniform sampler2D sampler;
-            uniform vec2 dimensions;
-            uniform float time;
-
-            varying vec2 tex;
-
-            void main()
-            {
-                // Shift texture lookup sideways depending on Y coordinate + time
-                vec2 pos = tex + vec2(6.0*sin(pow(tex.y, 2.0)*20.0+time)/dimensions.x, 0.0);
-                vec4 color = texture2D(sampler, pos);
-
-                // Vignette effect (brightest at center, darker towards edges)
-                float lum = 1.0 - length(tex - vec2(0.5, 0.5));
-
-                // Vignette color is also blue-green'ish
-                vec4 vignette = vec4(lum * 0.95, lum * 0.98, lum, 1.0);
-
-                gl_FragColor = vignette * color;
-            }
-        """)
+        self.underwater_effect = ShaderEffect(self.app.resman.get_shader('effect_vertex_shader.vsh'),
+                                              self.app.resman.get_shader('underwater_effect.fsh'))
 
         self.effect_pipeline = [self.blur_effect, self.underwater_effect]
 

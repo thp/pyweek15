@@ -71,6 +71,10 @@ class ResourceManager():
             name, _ = os.path.splitext(os.path.basename(filename))
             self.intermissions[name] = open(filename).read().splitlines()
 
+        self._shaders = {}
+        for filename in glob.glob(_path('shaders', '*.*')):
+            self._shaders[os.path.basename(filename)] = open(filename).read()
+
     def get_sprite(self, name):
         return self._surfaces.get(name)
 
@@ -79,6 +83,9 @@ class ResourceManager():
 
     def get_creature(self, name):
         return self._creatures.get(name)
+
+    def get_shader(self, name):
+        return self._shaders.get(name)
 
     def font(self, font_spec):
         return self._fonts[font_spec]

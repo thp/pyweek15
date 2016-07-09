@@ -39,10 +39,11 @@ class App(object):
 
         self.renderer = Renderer(self)
         self.screen = Screen(self, title, width, height, fullscreen)
-        self.renderer.setup(self.screen.display.get_size())
 
         self.audman = AudioManager(self)
         self.resman = ResourceManager(self)
+
+        self.renderer.setup(self.screen.display.get_size())
 
         self.player = Player(self)
 
