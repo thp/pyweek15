@@ -6,9 +6,10 @@ import os
 import sys
 import subprocess
 
-ASSETS_DIR = 'assets'
-OUTPUT_DIR = 'data/sprites'
-MAPPING_FILE = 'convert_sprites.in'
+HERE = os.path.dirname(__file__)
+ASSETS_DIR = os.path.join(HERE, '..', 'assets')
+OUTPUT_DIR = os.path.join(HERE, '..', 'data', 'sprites')
+MAPPING_FILE = os.path.join(HERE, 'convert_sprites.in')
 
 input_files = [
     glob.glob(os.path.join(ASSETS_DIR, '*.jpg')),
