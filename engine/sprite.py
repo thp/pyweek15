@@ -58,18 +58,10 @@ class Enemy(Sprite):
         self._draw(sprite_name, points, 4.0, opacity, tint, True, 0.0)
 
 class Player(Sprite):
-    GRAVITY = 1.2  # .981
-    BLINKING_FRAMES = 20
-    INITIAL_HEALTH = 9
-    MAX_HEALTH = 30
-
     def __init__(self, app):
         self.app = app
-        self.health = 0
-
         self.init('whale', 3)
-        self.reset()
-
+        self.reset(hard=True)
 
     def reset(self, hard=False):
         self.x = 2
@@ -79,11 +71,9 @@ class Player(Sprite):
         self.vertical_velocity = 0
         self.can_jump = True
         self.blinking = 0
-
         if hard:
             self.coins_collected = 0
-            self.health = self.INITIAL_HEALTH
-            self.max_health = self.MAX_HEALTH
+            self.health = 9
 
     def jump(self):
         if self.can_jump:
@@ -99,13 +89,13 @@ class Player(Sprite):
         if lives != 0:
             # [11:47pm] lobbbe_: what about that: you get your health back to full if you eat a fishy,
             # and if your health is already full - and only then - you get an extra life?
-            self.health = min((int(self.health/3) + lives)*3, self.MAX_HEALTH)
+            self.health = min((int(self.health/3) + lives)*3, 30)
 
     def crashed(self):
         if not self.blinking:
             self.health -= 1
             self.app.resman.sfx("crash")
-            self.blinking = self.BLINKING_FRAMES
+            self.blinking = 20
 
         return (self.health % 3 == 0)
 
@@ -116,15 +106,13 @@ class Player(Sprite):
             self.can_jump = True
             self.height = 0
             self.vertical_velocity = 0
-        self.vertical_velocity -= self.GRAVITY
+        self.vertical_velocity -= 1.2
         if self.blinking:
             self.blinking -= 1
         self.process()
 
-
     def draw(self, points, opacity, tint):
         tint = 1., 1., 1.
-
         if self.blinking:
             value = 1. - abs(math.sin(self.blinking*.2))
             tint = 1, value, value
