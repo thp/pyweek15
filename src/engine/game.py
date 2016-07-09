@@ -1,6 +1,6 @@
 from scene import Scene
 from level import Level
-from enemy import Enemy
+from sprite import Enemy
 
 import math
 from itertools import *

@@ -3,7 +3,7 @@ import os
 import time
 
 from resman import ResourceManager, AudioManager
-from player import Player
+from sprite import Player
 from screen import Screen
 from scene import Intermission
 from renderer import Renderer
