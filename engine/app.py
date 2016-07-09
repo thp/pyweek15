@@ -52,11 +52,10 @@ class App(object):
     def go_to_scene(self, name):
         if name == "GoodBye":
             self.running = False
-            return
-
-        self.scene_transition = 0.
-        self.scene = self._scenes[name]
-        self.scene.resume()
+        else:
+            self.scene_transition = 0.
+            self.scene = self._scenes[name]
+            self.scene.resume()
 
     def run(self):
         while self.running:
@@ -67,7 +66,6 @@ class App(object):
                 for event in events:
                     if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == QUIT:
                         self.running = False
-                        break
                     self.scene.process_input(event)
                 self.accumulator.update(self.scene.process)
 

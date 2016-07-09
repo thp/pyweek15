@@ -19,7 +19,6 @@ class Level(object):
     def __init__(self, leveldata, width=5):
         self.charmap = {}
         self.rows = []
-        self.speed = 10
         self.background = 'test'
 
         section = self.ENEMIES

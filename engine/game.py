@@ -51,16 +51,13 @@ class Game(Scene):
                 self.speedup = 0
 
         self.i += 1
-        step = .01 * self.level.speed
-        self.time += step * (1 + self.speedup)
-
+        self.time += 0.1 * (1 + self.speedup)
         self.time, dy = math.modf(self.time)
         self.app.player.y += int(dy)
 
         if self.app.player.y > len(self.level.rows):
             if (self.app.player.y - self.camera_y) > self.FADE_DISTANCE:
                 try:
-                    # advance a level and reset
                     self.level_info = next(self.levels)
                     self.reset()
                 except StopIteration:
