@@ -101,11 +101,8 @@ class Game(Scene):
 
             # TODO: animate level end
 
-
         if self.i % KEYBOARD_REPEAT_MOD == 0:
-            next_x = self.app.player.dest_x + self.direction
-            if next_x >= MIN_DEST_X and next_x <= MAX_DEST_X:
-                self.app.player.dest_x += self.direction
+            next_x = max(MIN_DEST_X, min(MAX_DEST_X, self.app.player.dest_x + self.direction))
 
         self.app.player.step()
         for enemy in self.enemies.values():
@@ -168,15 +165,8 @@ class Game(Scene):
 
 
     def draw(self):
-        backgrounds = self.app.resman.get_background(self.level.background)
-        pos = int(self.time + self.app.player.y) % len(backgrounds)
-        self.app.renderer.draw(backgrounds[pos], (0, 0))
-
-        x = self.app.player.x
-        y = self.time
-
         # draw queue for back-to-front drawing of enemies
-        draw_queue = [(y, self.app.player, (x - 2.0, self.app.player.height / 100, 1.0))]
+        draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100, 1.0))]
 
         # Fade in enemy sprites coming from the back
         fade_offset = 3.0
@@ -204,30 +194,28 @@ class Game(Scene):
                     if column.name not in self.enemies:
                         self.enemies[column.name] = Enemy(self.app, column.name)
                     enemy = self.enemies[column.name]
-                    draw_queue.append((y, enemy, (x, 0.0, y - self.time)))
+                    draw_queue.append((enemy, (x, 0.0, y - self.time)))
 
         self.app.screen.before_draw()
 
+        backgrounds = self.app.resman.get_background(self.level.background)
+        self.app.renderer.draw(backgrounds[int(self.time + self.app.player.y) % len(backgrounds)], (0, 0))
+
         # Draw all enemies (+player), back-to-front for proper stacking order
-        for y, sprite, pos in reversed(draw_queue):
+        for sprite, pos in reversed(draw_queue):
             opacity = 1.0
 
             if self.level.background == 'surreal':
                 # Special FX for the Surreal level - tint like crazy!
-                tint = [
-                    .5+.5*math.sin(self.i*.009),
-                    .5+.5*math.sin(.9+self.i*.004),
-                    .5+.5*math.sin(4.5+self.i*.2),
-                ]
+                tint = [.5+.5*math.sin(self.i*.009), .5+.5*math.sin(.9+self.i*.004), .5+.5*math.sin(4.5+self.i*.2)]
             else:
                 tint = 1., 1., 1.
 
             # Fade in enemy sprites coming from the back
-            opacity = max(0.0, 1.0 - ((y - self.time) - fade_offset) / fade_width)
+            opacity = max(0.0, 1.0 - (pos[2] - fade_offset) / fade_width)
             tint = map(lambda x: x*opacity, tint)
 
             self.app.screen.draw_sprite(sprite, pos, opacity, tint)
 
         self.app.renderer.begin_overlay()
-        self.app.screen.draw_stats(self.app.player.coins_collected,
-                                   self.app.player.health)
+        self.app.screen.draw_stats(self.app.player.coins_collected, self.app.player.health)
