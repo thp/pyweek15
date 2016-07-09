@@ -19,7 +19,6 @@ class Game(Scene):
 
     def reset(self, hard=False):
         self.time = 0.
-        self.i = 0
         self.direction = 0
         self.boost = False
         self.speedup = 0
@@ -50,7 +49,6 @@ class Game(Scene):
             if self.speedup < 0:
                 self.speedup = 0
 
-        self.i += 1
         self.time += 0.1 * (1 + self.speedup)
         self.time, dy = math.modf(self.time)
         self.app.player.y += int(dy)
@@ -76,7 +74,6 @@ class Game(Scene):
     def process_input(self, event):
         def go(direction):
             self.direction = direction
-            self.i = 0
             self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + direction))
 
         if event.type == MOUSEBUTTONDOWN:
@@ -132,7 +129,7 @@ class Game(Scene):
             tint = 1., 1., 1.
             if self.level.background == 'surreal':
                 # Special FX for the Surreal level - tint like crazy!
-                tint = [.5+.5*math.sin(self.i*.009), .5+.5*math.sin(.9+self.i*.004), .5+.5*math.sin(4.5+self.i*.2)]
+                tint = [.5+.5*math.sin(a+(self.time+self.app.player.y)*b) for a, b in ((0,4.5),(.9,2.0),(4.5,9.5))]
 
             # Fade in enemy sprites coming from the back
             opacity = max(0.0, 1.0 - (pos[2] - float(self.FADE_OFFSET)) / float(self.FADE_WIDTH))
