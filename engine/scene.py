@@ -5,9 +5,6 @@ class Scene(object):
         self.app = app
         self.name = name
 
-    def process(self):
-        pass
-
 class Intermission(Scene):
     def __init__(self, app, name):
         super(Intermission, self).__init__(app, name)
@@ -18,6 +15,9 @@ class Intermission(Scene):
         self.skipable = False
         self._setup()
         self.update()
+
+    def process(self):
+        pass
 
     def update(self):
         item = self.story.pop(0)
@@ -65,16 +65,10 @@ class Intermission(Scene):
                     self.skipable = (value == 'true')
                 elif key == 'title':
                     self.title = value
-                else:
-                    raise ValueError(line)
             else:
                 if line.startswith('(') and line.endswith(')'):
-                    # Story meta definition
                     key, value = self._parse_key_value(line[1:-1])
                     if key == 'creatures':
                         self.story.append([self.app.resman.creatures[c] for c in value.split()])
-                    else:
-                        raise ValueError(line)
                 else:
-                    # Story text
                     self.story.append(line.format(**fmt_args))
