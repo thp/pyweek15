@@ -63,8 +63,6 @@ class Renderer():
         self.global_tint = 1., 1., 1.
 
     def resize(self, width, height):
-        glClearColor(0, 0, 0, 1)
-        glViewport(0, 0, width, height)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)

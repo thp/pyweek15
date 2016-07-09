@@ -4,9 +4,8 @@ class Sprite(object):
     def init(self, basename, frames, duration=.2):
         self.duration = duration
 
-        if frames == 0:
-            self.sprites = [basename]
-        else:
+        self.sprites = [basename]
+        if frames != 0:
             self.sprites = ['%s-%d' % (basename, x) for x in range(1, frames+1) + range(frames-1, 1, -1)]
 
         self.frames_per_sprite = int(duration / self.app.accumulator.step)
