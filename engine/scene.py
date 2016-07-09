@@ -17,24 +17,23 @@ class Intermission(Scene):
         self.creatures = None
         self.skipable = False
         self._setup()
-        self.story = iter(self.story)
         self.update()
 
     def update(self):
-        item = next(self.story)
+        item = self.story.pop(0)
         if type(item) is str:
             self.line = item
         else:
             self.creatures = item
-            self.line = next(self.story)
+            self.line = self.story.pop(0)
 
     def process_input(self, event):
         if self.skipable and event.type == KEYDOWN and event.key == K_s:
             self.app.go_to_scene(self.next_scene)
         elif event.type == KEYDOWN:
-            try:
+            if self.story:
                 self.update()
-            except StopIteration:
+            else:
                 self.app.go_to_scene(self.next_scene)
 
     def draw(self):
@@ -79,4 +78,3 @@ class Intermission(Scene):
                 else:
                     # Story text
                     self.story.append(line.format(**fmt_args))
-
