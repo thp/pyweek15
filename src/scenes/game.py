@@ -41,10 +41,8 @@ class Game(Scene):
         if hard:
             self.levels = self.level_progression()
             self.level_nr = next(self.levels)
-        filename = "levels/level-%i-%i.txt" % self.level_nr
-        # XXX move this into resource manager (levels need a
-        # reset button first)
-        self.level = Level(self.app.get_filename(filename))
+        _, _, leveldata = self.level_nr
+        self.level = Level(leveldata)
 
         self.app.player.reset(hard)
 

@@ -40,8 +40,8 @@ class App(object):
         self.screen = Screen(self, title, width, height, fullscreen)
         self.renderer.setup(self.screen.display.get_size())
 
-        self.resman = ResourceManager(self)
         self.audman = AudioManager(self)
+        self.resman = ResourceManager(self)
 
         self.player = Player(self)
 
@@ -64,9 +64,6 @@ class App(object):
 
     def _get_scene(self, s):
         return self._scenes[s]
-
-    def get_filename(self, basename):
-        return self.resman._path(basename)
 
     def run(self):
         while True:

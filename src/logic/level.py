@@ -16,7 +16,7 @@ class Item(object):
 class Level(object):
     ENEMIES, PICKUP, META = range(3)
 
-    def __init__(self, filename):
+    def __init__(self, leveldata):
         self.charmap = {}
         self.rows = []
         self.speed = 10
@@ -24,7 +24,7 @@ class Level(object):
 
         width = 5
         section = self.ENEMIES
-        for line in open(filename):
+        for line in leveldata:
             if ':enemies:' in line:
                 section = self.ENEMIES
             elif ':pickups:' in line:
