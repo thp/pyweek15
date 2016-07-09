@@ -109,5 +109,5 @@ class Game(Scene):
         if self.app.player.y < 0:
             self.app.screen.draw_text(['Get Ready'])
         elif self.app.player.y > len(self.level.rows):
-            self.app.screen.draw_text(['Level clear!', 'Collected: ... / ...', 'Lives used: ...'])
+            self.app.screen.draw_text(['Level clear'])
         self.app.screen.draw_stats(self.app.player.coins_collected, self.app.player.health)
