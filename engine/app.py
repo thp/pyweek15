@@ -27,21 +27,18 @@ class TimeAccumulator:
 class App(object):
     KEYMAP = {K_SPACE: ' ', K_s: 's', K_LEFT: 'left', K_RIGHT: 'right', K_UP: 'up'}
 
-    def __init__(self, title, width, height, fullscreen, entry):
+    def __init__(self, title, width, height, entry):
         pygame.init()
-        self.display = pygame.display.set_mode((0, 0) if fullscreen else (width, height), pygame.OPENGL |
-                                               pygame.DOUBLEBUF | (pygame.FULLSCREEN if fullscreen else 0))
+        self.display = pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
         pygame.display.set_caption(title)
-        dpy_width, dpy_height = self.display.get_size()
 
         self.running = True
         self.accumulator = TimeAccumulator(30)
         self.renderer = Renderer(self)
-        self.screen = Screen(self, width, height, dpy_width, dpy_height)
+        self.screen = Screen(self, width, height)
         self.resman = ResourceManager(self)
         self.player = Player(self)
-
-        self.renderer.setup(dpy_width, dpy_height)
+        self.renderer.resize(width, height)
 
         self._scenes = {'Game': Game(self)}
         for name in self.resman.intermissions.keys():

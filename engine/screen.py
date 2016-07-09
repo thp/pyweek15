@@ -4,13 +4,10 @@ from vmath import Matrix4x4, Vec3
 class Screen(object):
     SPACING = 10
 
-    def __init__(self, app, width, height, dpy_width, dpy_height):
+    def __init__(self, app, width, height):
         self.app = app
         self.width = width
         self.height = height
-
-        self.scale = min(float(dpy_width) / float(self.width), float(dpy_height) / float(self.height))
-        self.offset = ((dpy_width - self.width*self.scale) / 2, (dpy_height - self.height*self.scale) / 2)
 
         projection = Matrix4x4.perspective(90.0 / 180.0 * 3.1415, self.width / self.height, 0.0001, 200.0)
         modelview = Matrix4x4.lookAt(Vec3(0.0, 3.0, -1.0), Vec3(0.0, -29.0, 100.0), Vec3(0.0, 1.0, 0.0))

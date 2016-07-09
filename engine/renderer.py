@@ -73,15 +73,10 @@ class Framebuffer:
 class Renderer:
     def __init__(self, app):
         self.app = app
-        self.fbs = [None, None]
-        self.effect_pipeline = []
         self.postprocessed = False
         self.global_tint = 1., 1., 1.
 
-    def setup(self, width, height):
-        offset_x, offset_y = self.app.screen.offset
-        scale = self.app.screen.scale
-
+    def resize(self, width, height):
         glClearColor(0, 0, 0, 1)
         glViewport(0, 0, width, height)
         glEnable(GL_BLEND)
@@ -99,8 +94,6 @@ class Renderer:
 
         self.draw_sprites.use()
         glUniform2f(self.draw_sprites.uniform('size'), width, height)
-        glUniform2f(self.draw_sprites.uniform('offset'), offset_x, offset_y)
-        glUniform1f(self.draw_sprites.uniform('scale'), scale)
 
     def upload_texture(self, width, height, rgba):
         return Texture(width, height, rgba)
