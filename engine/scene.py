@@ -10,7 +10,7 @@ class Intermission(Scene):
         self.resume()
 
     def resume(self):
-        self.creatures = None
+        self.creatures = []
         self.skipable = False
         self._setup()
         self.update()
