@@ -3,8 +3,7 @@ import glob
 import pygame
 from collections import defaultdict
 
-FONT_STD = ("visitor2", 38)
-FONT_SMALL = ("visitor2", 25)
+FONT_SMALL, FONT_STD = 25, 38
 
 class ResourceManager():
     def __init__(self, app):
@@ -18,9 +17,8 @@ class ResourceManager():
 
         self.sprites = {bn(fn): img(fn) for fn in gb('sprites', "*.png")}
         self.creatures = {bn(fn): img(fn) for fn in gb('creatures', "*.png")}
-        self.fonts = {(name, size): pygame.font.Font(path('fonts', '%s.ttf' % name), size)
-                      for name, size in (FONT_STD, FONT_SMALL)}
-        self.intermissions = {bn(fn): open(fn).read().splitlines() for fn in gb('intermissions', '*.txt')}
+        self.fonts = {size: pygame.font.Font(path('fonts', 'visitor2.ttf'), size) for size in (FONT_STD, FONT_SMALL)}
+        self.intermissions = {bn(fn): lines(fn) for fn in gb('intermissions', '*.txt')}
         self.shaders = {os.path.basename(fn): open(fn).read() for fn in gb('shaders', '*.*')}
         self.sounds = {bn(fn): pygame.mixer.Sound(fn) for fn in gb('sounds', '*.wav')}
 
