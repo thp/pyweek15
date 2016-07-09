@@ -7,15 +7,11 @@ import math
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, KEYDOWN, KEYUP
 from pygame.locals import K_SPACE, K_LEFT, K_RIGHT, K_UP
 
-MAX_SPEEDUP = 4
-SPEEDUP_STEP = .1
-MIN_DEST_X = 0
-MAX_DEST_X = 4
-
 class Game(Scene):
     FADE_OFFSET = 3
     FADE_WIDTH = 10
     FADE_DISTANCE = int(FADE_OFFSET + FADE_WIDTH + 1)
+    MAX_SPEEDUP = 4
 
     def __init__(self, app):
         super(Game, self).__init__(app, 'Game')
@@ -43,25 +39,23 @@ class Game(Scene):
         self.app.go_to_scene('Victory')
 
     def process(self):
-        self.i += 1
-
-        step = .01 * self.level.speed
         if self.boost:
-            if self.speedup < MAX_SPEEDUP:
-                self.speedup += SPEEDUP_STEP
-            if self.speedup > MAX_SPEEDUP:
-                self.speedup = MAX_SPEEDUP
+            if self.speedup < self.MAX_SPEEDUP:
+                self.speedup += 0.1
+            if self.speedup > self.MAX_SPEEDUP:
+                self.speedup = self.MAX_SPEEDUP
         else:
             if self.speedup > 0:
-                self.speedup -= SPEEDUP_STEP * 2
+                self.speedup -= 0.2
             if self.speedup < 0:
                 self.speedup = 0
 
+        self.i += 1
+        step = .01 * self.level.speed
         self.time += step * (1 + self.speedup)
 
-        while self.time > 1.:
-            self.time -= 1.
-            self.app.player.y += 1
+        self.time, dy = math.modf(self.time)
+        self.app.player.y += int(dy)
 
         if self.app.player.y > len(self.level.rows):
             if (self.app.player.y - self.camera_y) > self.FADE_DISTANCE:
@@ -86,7 +80,7 @@ class Game(Scene):
         def go(direction):
             self.direction = direction
             self.i = 0
-            self.app.player.dest_x = max(MIN_DEST_X, min(MAX_DEST_X, self.app.player.dest_x + direction))
+            self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + direction))
 
         if event.type == MOUSEBUTTONDOWN:
             x, y = event.pos

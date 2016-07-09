@@ -24,38 +24,30 @@ class TimeAccumulator:
             self.accumulated -= self.step
             callback()
 
-
 class App(object):
     def __init__(self, title, width, height, fullscreen, entry):
         pygame.init()
-
-        self.running = True
-        self.fps = 30
-
-        self.accumulator = TimeAccumulator(self.fps)
-
         self.display = pygame.display.set_mode((0, 0) if fullscreen else (width, height), pygame.OPENGL |
                                                pygame.DOUBLEBUF | (pygame.FULLSCREEN if fullscreen else 0))
         pygame.display.set_caption(title)
         dpy_width, dpy_height = self.display.get_size()
 
+        self.running = True
+        self.fps = 30
+        self.accumulator = TimeAccumulator(self.fps)
         self.renderer = Renderer(self)
         self.screen = Screen(self, width, height, dpy_width, dpy_height)
-
         self.audman = AudioManager(self)
         self.resman = ResourceManager(self)
+        self.player = Player(self)
 
         self.renderer.setup(dpy_width, dpy_height)
-
-        self.player = Player(self)
 
         self._scenes = {'Game': Game(self)}
         for name in self.resman.intermissions.keys():
             self._scenes[name] = Intermission(self, name)
         self._scenes['Game'].reset(hard=True)
-
-        self.scene = self._scenes[entry]
-        self.scene_transition = 0.
+        self.go_to_scene(entry)
 
     def go_to_scene(self, name):
         if name == "GoodBye":
@@ -68,28 +60,19 @@ class App(object):
 
     def run(self):
         while self.running:
-            if self.scene_transition == 1.:
+            self.scene_transition += .05
+            if self.scene_transition >= .95:
+                self.scene_transition = 1.0
                 events = pygame.event.get()
                 for event in events:
                     if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == QUIT:
                         self.running = False
                         break
-
                     self.scene.process_input(event)
-
                 self.accumulator.update(self.scene.process)
 
             self.renderer.begin()
-
-            if self.scene_transition >= .95:
-                # Scene transition is done
-                self.scene_transition = 1.0
-            else:
-                # Push forward the transition
-                self.scene_transition += .05
-
             self.renderer.global_tint = (self.scene_transition,)*3
-
             self.scene.draw()
             self.renderer.finish()
             pygame.display.flip()
