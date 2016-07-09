@@ -4,8 +4,7 @@ from sprite import Enemy
 
 import math
 
-from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, KEYDOWN, KEYUP
-from pygame.locals import K_SPACE, K_LEFT, K_RIGHT, K_UP
+from pygame.locals import KEYDOWN, KEYUP, K_SPACE, K_LEFT, K_RIGHT, K_UP
 
 class Game(Scene):
     FADE_OFFSET = 3
@@ -19,7 +18,6 @@ class Game(Scene):
 
     def reset(self, hard=False):
         self.time = 0.
-        self.direction = 0
         self.boost = False
         self.speedup = 0
         self.camera_y = 0
@@ -72,37 +70,15 @@ class Game(Scene):
             self.app.go_to_scene('GameOver')
 
     def process_input(self, event):
-        def go(direction):
-            self.direction = direction
-            self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + direction))
-
-        if event.type == MOUSEBUTTONDOWN:
-            x, y = event.pos
-            if y < self.app.screen.height / 4:
-                self.boost = True
-            elif y > self.app.screen.height * 3 / 4:
-                self.app.player.jump()
-            elif x < self.app.screen.width / 3:
-                go(-1)
-            elif x > self.app.screen.width * 2 / 3:
-                go(1)
-        elif event.type == MOUSEBUTTONUP:
-            self.direction = 0
-            self.boost = False
-        elif event.type == KEYDOWN:
+        if event.type == KEYDOWN:
             if event.key == K_SPACE:
                 self.app.player.jump()
-            elif event.key == K_LEFT:
-                go(-1)
-            elif event.key == K_RIGHT:
-                go(1)
+            elif event.key in (K_LEFT, K_RIGHT):
+                self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + (-1 if (event.key == K_LEFT) else 1)))
             elif event.key == K_UP:
                 self.boost = True
-        elif event.type == KEYUP:
-            if event.key == K_LEFT or event.key == K_RIGHT:
-                self.direction = 0
-            elif event.key == K_UP:
-                self.boost = False
+        elif event.type == KEYUP and event.key == K_UP:
+            self.boost = False
 
     def draw(self):
         draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100,

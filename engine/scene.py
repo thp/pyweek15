@@ -1,4 +1,4 @@
-from pygame.locals import KEYDOWN, MOUSEBUTTONDOWN, K_s
+from pygame.locals import KEYDOWN, K_s
 
 
 class Scene(object):
@@ -47,7 +47,7 @@ class Intermission(Scene):
     def process_input(self, event):
         if self.skipable and event.type == KEYDOWN and event.key == K_s:
             self.app.go_to_scene(self.next_scene)
-        elif event.type == KEYDOWN or event.type == MOUSEBUTTONDOWN:
+        elif event.type == KEYDOWN:
             try:
                 self.update()
             except StopIteration:
