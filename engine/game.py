@@ -8,7 +8,6 @@ class Game(Scene):
     FADE_OFFSET = 3
     FADE_WIDTH = 10
     FADE_DISTANCE = int(FADE_OFFSET + FADE_WIDTH + 1)
-    MAX_SPEEDUP = 4
 
     def __init__(self, app):
         super(Game, self).__init__(app, 'Game')
@@ -37,10 +36,8 @@ class Game(Scene):
         self.app.go_to_scene('Victory')
 
     def process(self):
-        self.speedup = max(0, min(self.MAX_SPEEDUP, self.speedup + (0.1 if self.boost else -0.2)))
-
-        self.time += 0.1 * (1 + self.speedup)
-        self.time, dy = math.modf(self.time)
+        self.speedup = max(0, min(4, self.speedup + (0.1 if self.boost else -0.2)))
+        self.time, dy = math.modf(self.time + 0.1 * (1 + self.speedup))
         self.app.player.y += int(dy)
 
         if self.app.player.y > len(self.level.rows):
