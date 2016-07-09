@@ -19,7 +19,6 @@ class Game(Scene):
     def __init__(self, app):
         super(Game, self).__init__(app, 'Game')
         self.enemies = {}
-        self.reset(hard=True)
 
     def reset(self, hard=False):
         self.time = 0.
@@ -34,14 +33,12 @@ class Game(Scene):
         self.level = Level(self.level_info)
         self.app.player.reset(hard)
 
-    def level_progression(self):
-        last_group_nr, last_level_nr = None, None
+    def level_progression(self, last_group_nr=None):
         for group_nr, level_nr, level_data in sorted(self.app.resman.levels):
-            if last_group_nr is not None and last_group_nr != group_nr:
-                self.app.go_to_scene('NextLevelGroup_%d_%d' % (last_group_nr, last_level_nr))
+            if last_group_nr != group_nr:
+                self.app.go_to_scene('LevelGroupIntro-%d' % (group_nr,))
             yield level_data
             last_group_nr = group_nr
-            last_level_nr = level_nr
         self.app.go_to_scene('Victory')
 
     def process(self):

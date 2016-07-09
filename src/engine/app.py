@@ -46,6 +46,7 @@ class App(object):
         self._scenes = {'Game': Game(self)}
         for name in self.resman.intermissions.keys():
             self._scenes[name] = Intermission(self, name)
+        self._scenes['Game'].reset(hard=True)
 
         self.scene = self._scenes[entry]
         self.scene_transition = 0.
