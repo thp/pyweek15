@@ -89,53 +89,39 @@ class Game(Scene):
             self.app.go_to_scene('GameOver')
 
     def process_input(self, event):
-        def go_left():
-            self.direction = -1
+        def go(direction):
+            self.direction = direction
             self.i = 0
-            if self.app.player.dest_x > MIN_DEST_X:
-                self.app.player.dest_x -= 1
-
-        def go_right():
-            self.direction = 1
-            self.i = 0
-            if self.app.player.dest_x < MAX_DEST_X:
-                self.app.player.dest_x += 1
+            self.app.player.dest_x = max(MIN_DEST_X, min(MAX_DEST_X, self.app.player.dest_x + direction))
 
         if event.type == MOUSEBUTTONDOWN:
             x, y = event.pos
-
             if y < self.app.screen.height / 4:
                 self.boost = True
             elif y > self.app.screen.height * 3 / 4:
                 self.app.player.jump()
             elif x < self.app.screen.width / 3:
-                go_left()
+                go(-1)
             elif x > self.app.screen.width * 2 / 3:
-                go_right()
-
+                go(1)
         elif event.type == MOUSEBUTTONUP:
             self.direction = 0
             self.boost = False
         elif event.type == KEYDOWN:
-            if event.key == K_RETURN:
-                pass
-            elif event.key == K_SPACE:
+            if event.key == K_SPACE:
                 self.app.player.jump()
             elif event.key == K_LEFT:
-                go_left()
+                go(-1)
             elif event.key == K_RIGHT:
-                go_right()
+                go(1)
             elif event.key == K_UP:
                 self.boost = True
         elif event.type == KEYUP:
-            if event.key == K_LEFT:
-                self.direction = 0
-            elif event.key == K_RIGHT:
+            if event.key == K_LEFT or event.key == K_RIGHT:
                 self.direction = 0
             elif event.key == K_UP:
                 self.boost = False
         super(Game, self).process_input(event)
-
 
     def draw(self):
         draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100,
@@ -146,19 +132,17 @@ class Game(Scene):
                 break
 
             for xidx, column in enumerate(self.level.rows[offset]):
-                if column is None:
-                    continue
+                if column:
+                    if yidx == 1 and xidx == self.app.player.dest_x and self.app.player.height < 10:
+                        if column.collide(self.app.player):
+                            self.reset()
+                            self.app.go_to_scene('LostLife')
 
-                if yidx == 1 and xidx == self.app.player.dest_x and self.app.player.height < 10:
-                    if column.collide(self.app.player):
-                        self.reset()
-                        self.app.go_to_scene('LostLife')
-
-                if column.name:
-                    if column.name not in self.enemies:
-                        self.enemies[column.name] = Enemy(self.app, column.name)
-                    enemy = self.enemies[column.name]
-                    draw_queue.append((enemy, (xidx - 2.0, 0.0, yidx - self.time)))
+                    if column.name:
+                        if column.name not in self.enemies:
+                            self.enemies[column.name] = Enemy(self.app, column.name)
+                        enemy = self.enemies[column.name]
+                        draw_queue.append((enemy, (xidx - 2.0, 0.0, yidx - self.time)))
 
         self.app.screen.before_draw()
         backgrounds = self.app.resman.get_background(self.level.background)
