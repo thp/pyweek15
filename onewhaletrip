@@ -1,26 +1,9 @@
 #!/usr/bin/env python
 
-import pygame
 import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from engine.app import App
-
-if __name__ == '__main__':
-    pygame.init()
-
-    try:
-        sys.argv.remove('-f')
-        fullscreen = True
-    except ValueError:
-        fullscreen = False
-
-    entry = 'Start'
-    if len(sys.argv) == 2:
-        entry = sys.argv[1]
-
-    App('One Whale Trip', 800, 480, fullscreen, entry).run()
-
-    pygame.quit()
+import engine
+engine.main(sys.argv[1:])
