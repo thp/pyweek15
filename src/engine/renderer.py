@@ -7,8 +7,7 @@ from OpenGL.GL import *
 
 class SpriteProxy:
     def __init__(self, sprite):
-        self._sprite = sprite
-        self._texcoords = None
+        self._texcoords = array.array('f', [0., 1., 0., 0., 1., 1., 1., 0.])
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glActiveTexture(GL_TEXTURE0)
         texture_id = glGenTextures(1)
@@ -16,37 +15,18 @@ class SpriteProxy:
         glBindTexture(GL_TEXTURE_2D, self._texture_id)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        self._load_from(sprite)
-
-    def __del__(self):
-        # Make sure to cleanup GL state to not leak textures
-        glDeleteTextures(self._texture_id)
-
-    def _load_from(self, sprite):
-        w0, h0 = sprite.get_size()
         self._sprite = sprite
-
         w, h = sprite.get_size()
-
-        wf = float(w0)/float(w)
-        hf = float(h0)/float(h)
-
-        # Account for the different texture size by making
-        # the texture coordinates use only part of the image
-        self._texcoords = array.array('f', [
-            0., 1.,
-            0., 0.,
-            1., 1.,
-            1., 0.,
-        ])
-
         data = pygame.image.tostring(sprite, 'RGBA', 1)
         glBindTexture(GL_TEXTURE_2D, self._texture_id)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h,
                 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
 
+    def __del__(self):
+        # Make sure to cleanup GL state to not leak textures
+        glDeleteTextures(self._texture_id)
+
     def __getattr__(self, name):
-        # Forward normal attribute requests to the sprite itself
         return getattr(self._sprite, name)
 
 
@@ -161,7 +141,6 @@ class Framebuffer:
 class Renderer:
     def __init__(self, app):
         self.app = app
-        self.tmp_sprite = None
         self.framebuffer = None
         self.framebuffer2 = None
         self.effect_pipeline = []
@@ -221,11 +200,7 @@ class Renderer:
 
         if not hasattr(sprite, '_sprite'):
             # Upload dynamically-created sprite to texture memory
-            if self.tmp_sprite is None:
-                self.tmp_sprite = SpriteProxy(sprite)
-            else:
-                self.tmp_sprite._load_from(sprite)
-            sprite = self.tmp_sprite
+            sprite = SpriteProxy(sprite)
 
         w, h = map(float, sprite.get_size())
         x, y = map(float, pos)
