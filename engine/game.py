@@ -5,7 +5,7 @@ from sprite import Enemy
 import math
 
 class Game(Scene):
-    FADE_OFFSET = 3
+    FADE_OFFSET = 6
     FADE_WIDTH = 10
     FADE_DISTANCE = int(FADE_OFFSET + FADE_WIDTH + 1)
 
@@ -102,7 +102,7 @@ class Game(Scene):
                 tint = [.5+.5*math.sin(a+now*b) for a, b in ((0,4.5),(.9,2.0),(4.5,9.5))]
 
             # Fade in enemy sprites coming from the back
-            opacity = max(0.0, 1.0 - (pos[2] - float(self.FADE_OFFSET)) / float(self.FADE_WIDTH))
+            opacity = min(1.0, max(0.0, 1.0 - (pos[2] - float(self.FADE_OFFSET)) / float(self.FADE_WIDTH)))
             self.app.screen.draw_sprite(sprite, pos, opacity, map(lambda x: x*opacity, tint))
 
         self.app.renderer.postprocess()
