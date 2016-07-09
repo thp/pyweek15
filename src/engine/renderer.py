@@ -3,7 +3,7 @@ import array
 
 from OpenGL.GL import *
 
-class SpriteProxy():
+class Texture():
     def __init__(self, w, h, rgba):
         self.w = w
         self.h = h
@@ -120,8 +120,8 @@ class Renderer:
         glUniform2f(self.draw_sprites.uniform('offset'), offset_x, offset_y)
         glUniform1f(self.draw_sprites.uniform('scale'), scale)
 
-    def register_sprite(self, width, height, rgba):
-        return SpriteProxy(width, height, rgba)
+    def upload_texture(self, width, height, rgba):
+        return Texture(width, height, rgba)
 
     def begin(self):
         if self.effect_pipeline:
@@ -132,9 +132,9 @@ class Renderer:
     def draw(self, sprite, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
         self.draw_sprites.use()
 
-        if not isinstance(sprite, SpriteProxy):
+        if not isinstance(sprite, Texture):
             # Upload dynamically-created sprite to texture memory
-            sprite = self.register_sprite(sprite.get_width(), sprite.get_height(), self.app.resman.get_rgba(sprite))
+            sprite = self.upload_texture(sprite.get_width(), sprite.get_height(), self.app.resman.get_rgba(sprite))
 
         w, h = map(float, (sprite.w, sprite.h))
         x, y = map(float, pos)

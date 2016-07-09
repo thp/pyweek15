@@ -33,14 +33,14 @@ class ResourceManager():
         for fn in sorted(glob.glob(_path('sprites', "*.png"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
             surf = pygame.image.load(fn).convert_alpha()
-            surf = self.app.renderer.register_sprite(surf.get_width(), surf.get_height(), self.get_rgba(surf))
+            surf = self.app.renderer.upload_texture(surf.get_width(), surf.get_height(), self.get_rgba(surf))
             self._surfaces[bn] = surf
 
         for fn in sorted(glob.glob(_path('backgrounds', "*.jpg"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
             key, frame = bn.split('-')
             surf = pygame.image.load(fn)
-            surf = self.app.renderer.register_sprite(surf.get_width(), surf.get_height(), self.get_rgba(surf))
+            surf = self.app.renderer.upload_texture(surf.get_width(), surf.get_height(), self.get_rgba(surf))
             if key in self._backgrounds:
                 self._backgrounds[key].append(surf)
             else:
@@ -50,7 +50,7 @@ class ResourceManager():
             bn, _ = os.path.splitext(os.path.basename(fn))
             surf = pygame.image.load(fn)
             surf = surf.convert_alpha()
-            surf = self.app.renderer.register_sprite(surf.get_width(), surf.get_height(), self.get_rgba(surf))
+            surf = self.app.renderer.upload_texture(surf.get_width(), surf.get_height(), self.get_rgba(surf))
             self._creatures[bn] = surf
 
         for fn in glob.glob(_path('sounds', '*.wav')):
