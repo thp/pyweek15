@@ -28,7 +28,7 @@ class ResourceManager():
         current_dir = os.path.abspath(os.path.dirname(__file__))
 
         def _path(*relative):
-            return os.path.join(current_dir, '..', '..', 'data', *relative)
+            return os.path.join(current_dir, '..', 'data', *relative)
 
         for fn in sorted(glob.glob(_path('sprites', "*.png"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
