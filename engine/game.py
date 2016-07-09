@@ -1,5 +1,5 @@
 from scene import Scene
-from level import Level
+from resman import Level
 from sprite import Enemy
 
 import math
