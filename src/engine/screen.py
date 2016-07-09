@@ -1,51 +1,19 @@
-import math
-
 from resman import FONT_STD, FONT_SMALL
 from vmath import Matrix4x4, Vec3
-
-import pygame
 
 class Screen(object):
     SPACING = 10
 
-    def __init__(self, app, title, width, height, fullscreen=True):
+    def __init__(self, app, width, height, dpy_width, dpy_height):
         self.app = app
-
-        flags = pygame.OPENGL | pygame.DOUBLEBUF | pygame.HWSURFACE
-        if fullscreen:
-            flags |= pygame.FULLSCREEN
-
         self.width = width
         self.height = height
 
-        if fullscreen:
-            size = (0, 0)
-        else:
-            size = (width, height)
+        self.scale = min(float(dpy_width) / float(self.width), float(dpy_height) / float(self.height))
+        self.offset = ((dpy_width - self.width*self.scale) / 2, (dpy_height - self.height*self.scale) / 2)
 
-        self.display = pygame.display.set_mode(size, flags)
-
-        size = self.display.get_size()
-
-        # Scale to fill the screen, with letterboxing
-        self.scale = min(float(size[0]) / float(self.width), float(size[1]) / float(self.height))
-        self.offset = ((size[0] - self.width*self.scale) / 2, (size[1] - self.height*self.scale) / 2)
-
-        pygame.display.set_caption(title)
-
-        self.eye_z = -1.0
-        self.eye_y = 3.0
-        self.center_y = -29.0
-        self.center_z = 100.0
-        self.fov = 90.0
-
-        projection = Matrix4x4.perspective(self.fov / 180.0 * math.pi, self.width / self.height, 0.0001, 200.0)
-
-        eye = Vec3(0.0, self.eye_y, self.eye_z)
-        center = Vec3(0.0, self.center_y, self.center_z)
-        up = Vec3(0.0, 1.0, 0.0)
-
-        modelview = Matrix4x4.lookAt(eye, center, up)
+        projection = Matrix4x4.perspective(90.0 / 180.0 * 3.1415, self.width / self.height, 0.0001, 200.0)
+        modelview = Matrix4x4.lookAt(Vec3(0.0, 3.0, -1.0), Vec3(0.0, -29.0, 100.0), Vec3(0.0, 1.0, 0.0))
         self.modelview_projection = projection * modelview
 
     def draw_text(self, lines):
@@ -60,22 +28,18 @@ class Screen(object):
             y += surface.get_height() + spacing
 
     def projection(self, x, y, z):
-        # x = -1..+1      (lane)
-        # y = 0..1        (jump height)
-        # z = 0..10(?)    (depth/distance)
         result = self.modelview_projection.map_vec3(Vec3(x, y, z))
         return ((0.5 + 0.5 * -result.x) * self.width, (0.5 + 0.5 * -result.y) * self.height)
 
     def draw_sprite(self, sprite, pos, opacity, tint):
         x, y, z = pos
         delta = 0.45
-        points = [
+        sprite.draw([
             self.projection(x-delta, y-delta, z),
             self.projection(x+delta, y-delta, z),
             self.projection(x+delta, y+delta, z),
             self.projection(x-delta, y+delta, z),
-        ]
-        sprite.draw(points, opacity, tint)
+        ], opacity, tint)
 
     def draw_stats(self, bonus, health):
         font = self.app.resman.font(FONT_STD)
@@ -88,9 +52,7 @@ class Screen(object):
         text_surf = font.render('%d' % bonus, True, (255, 255, 0))
         self.app.renderer.draw(text_surf, (pos_x, pos_y-3))
 
-        # health
         pos_x, pos_y = self.width, self.SPACING
-
         while health > 0:
             health, rest = health - 3, min(health, 3)
             sprite = self.app.resman.get_sprite("whale_ico-%d" % rest)
@@ -102,32 +64,23 @@ class Screen(object):
         self.app.renderer.draw(background, (0, 0))
 
         font = self.app.resman.font(FONT_STD)
-        color = (255, 255, 255)
-
-        # main message
         pos_x = self.width/15
-        card = font.render(message, False, color)
+        card = font.render(message, False, (255, 255, 255))
         self.app.renderer.draw(card, (pos_x, self.height/2 + 50))
 
-        # additional message
         if story:
-            card = font.render(story, False, color)
-            self.app.renderer.draw(card, (pos_x, self.height/2 + 100))
+            self.app.renderer.draw(font.render(story, False, (255, 255, 255)), (pos_x, self.height/2 + 100))
 
         if creatures:
-            spacing = 20
-            width = sum(creature.w for creature in creatures)
-            width += spacing * len(creatures)
-
+            width = sum(creature.w for creature in creatures) + self.SPACING * len(creatures)
             pos_x = 3*self.width/4 - width/2
             pos_x = min(pos_x, self.width - width)
             for creature in creatures:
                 pos_y = self.height/3 - creature.h/2
                 self.app.renderer.draw(creature, (pos_x, pos_y))
-                pos_x += creature.w + spacing
+                pos_x += creature.w + self.SPACING
 
     def draw_skip(self):
-        font = self.app.resman.font(FONT_SMALL)
-        text = font.render("[S] ... SKIP INTRO", False, (255, 255, 255))
-        pos = (self.width - text.get_width() - self.SPACING, self.height - text.get_height() - self.SPACING)
-        self.app.renderer.draw(text, pos)
+        text = self.app.resman.font(FONT_SMALL).render("[S] ... SKIP INTRO", False, (255, 255, 255))
+        self.app.renderer.draw(text, (self.width - text.get_width() - self.SPACING,
+                                      self.height - text.get_height() - self.SPACING))

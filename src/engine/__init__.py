@@ -1,10 +1,6 @@
-import pygame
-
 from engine.app import App
 
 def main(argv):
-    pygame.init()
-
     try:
         argv.remove('-f')
         fullscreen = True
@@ -16,5 +12,3 @@ def main(argv):
         entry = argv[0]
 
     App('One Whale Trip', 800, 480, fullscreen, entry).run()
-
-    pygame.quit()

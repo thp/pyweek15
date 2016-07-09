@@ -92,8 +92,7 @@ class Renderer:
         self.postprocessed = False
         self.global_tint = 1., 1., 1.
 
-    def setup(self, size):
-        width, height = size
+    def setup(self, width, height):
         offset_x, offset_y = self.app.screen.offset
         scale = self.app.screen.scale
 

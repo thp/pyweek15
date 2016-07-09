@@ -27,18 +27,25 @@ class TimeAccumulator:
 
 class App(object):
     def __init__(self, title, width, height, fullscreen, entry):
+        pygame.init()
+
         self.running = True
         self.fps = 30
 
         self.accumulator = TimeAccumulator(self.fps)
 
+        self.display = pygame.display.set_mode((0, 0) if fullscreen else (width, height), pygame.OPENGL |
+                                               pygame.DOUBLEBUF | (pygame.FULLSCREEN if fullscreen else 0))
+        pygame.display.set_caption(title)
+        dpy_width, dpy_height = self.display.get_size()
+
         self.renderer = Renderer(self)
-        self.screen = Screen(self, title, width, height, fullscreen)
+        self.screen = Screen(self, width, height, dpy_width, dpy_height)
 
         self.audman = AudioManager(self)
         self.resman = ResourceManager(self)
 
-        self.renderer.setup(self.screen.display.get_size())
+        self.renderer.setup(dpy_width, dpy_height)
 
         self.player = Player(self)
 
