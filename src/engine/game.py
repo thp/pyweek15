@@ -10,21 +10,14 @@ from pygame.locals import *
 
 MAX_SPEEDUP = 4
 SPEEDUP_STEP = .1
-
-# keyboard repeat rate (modulo) -> higher value = less repeat
 KEYBOARD_REPEAT_MOD = 7
-
-
 MIN_DEST_X = 0
 MAX_DEST_X = 4
 
 class Game(Scene):
     def __init__(self, app):
         super(Game, self).__init__(app, 'Game')
-
         self.enemies = {}
-
-        # reset everything
         self.reset(hard=True)
 
     def reset(self, hard=False):
@@ -33,40 +26,22 @@ class Game(Scene):
         self.direction = 0
         self.boost = False
         self.speedup = 0
-
         self.app.screen.reset_camera()
-
         if hard:
             self.levels = self.level_progression()
-            self.level_nr = next(self.levels)
-        _, _, leveldata = self.level_nr
-        self.level = Level(leveldata)
-
+            self.level_info = next(self.levels)
+        self.level = Level(self.level_info)
         self.app.player.reset(hard)
 
-
     def level_progression(self):
-        def advance():
-            for key, group in itr:
-                for level in group:
-                    #print "next level:", level
-                    yield level
-                # XXX ugly, ugly side effect
-                self.app.go_to_scene('NextLevelGroup_%i_%i' % tuple(level[:2]))
-
-        levels = self.app.resman.levels
-        try:
-            # honor the command line switch for starting level
-            idx = levels.index(self.app.start_level)
-            levels = levels[idx:]
-        except ValueError:
-            pass
-
-        itr = groupby(levels, itemgetter(0))
-        return advance()
-
-
-
+        last_group_nr, last_level_nr = None, None
+        for group_nr, level_nr, level_data in sorted(self.app.resman.levels):
+            if last_group_nr is not None and last_group_nr != group_nr:
+                self.app.go_to_scene('NextLevelGroup_%d_%d' % (last_group_nr, last_level_nr))
+            yield level_data
+            last_group_nr = group_nr
+            last_level_nr = level_nr
+        self.app.go_to_scene('Victory')
 
     def process(self):
         self.app.screen.process()
@@ -94,10 +69,10 @@ class Game(Scene):
         if self.app.player.y > len(self.level.rows):
             try:
                 # advance a level and reset
-                self.level_nr = next(self.levels)
+                self.level_info = next(self.levels)
                 self.reset()
             except StopIteration:
-                self.app.go_to_scene('Victory')
+                pass
 
             # TODO: animate level end
 
@@ -109,7 +84,6 @@ class Game(Scene):
             enemy.step()
 
         if self.app.player.health <= 0:
-            # reset player and game
             self.reset(hard=True)
             self.app.go_to_scene('GameOver')
 
@@ -163,7 +137,6 @@ class Game(Scene):
 
 
     def draw(self):
-        # draw queue for back-to-front drawing of enemies
         draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100, 1.0))]
 
         # Fade in enemy sprites coming from the back
@@ -178,13 +151,8 @@ class Game(Scene):
                 if column is None:
                     continue
 
-                x = xidx - 2.0
-                y = yidx
-
                 if yidx == 1 and xidx == self.app.player.dest_x and self.app.player.height < 10:
                     if column.collide(self.app.player):
-                        # lost a life
-                        # reset to beginning of current level
                         self.reset()
                         self.app.go_to_scene('LostLife')
 
@@ -192,28 +160,22 @@ class Game(Scene):
                     if column.name not in self.enemies:
                         self.enemies[column.name] = Enemy(self.app, column.name)
                     enemy = self.enemies[column.name]
-                    draw_queue.append((enemy, (x, 0.0, y - self.time)))
+                    draw_queue.append((enemy, (xidx - 2.0, 0.0, yidx - self.time)))
 
         self.app.screen.before_draw()
-
         backgrounds = self.app.resman.get_background(self.level.background)
         self.app.renderer.draw(backgrounds[int(self.time + self.app.player.y) % len(backgrounds)], (0, 0))
 
         # Draw all enemies (+player), back-to-front for proper stacking order
         for sprite, pos in reversed(draw_queue):
-            opacity = 1.0
-
+            tint = 1., 1., 1.
             if self.level.background == 'surreal':
                 # Special FX for the Surreal level - tint like crazy!
                 tint = [.5+.5*math.sin(self.i*.009), .5+.5*math.sin(.9+self.i*.004), .5+.5*math.sin(4.5+self.i*.2)]
-            else:
-                tint = 1., 1., 1.
 
             # Fade in enemy sprites coming from the back
             opacity = max(0.0, 1.0 - (pos[2] - fade_offset) / fade_width)
-            tint = map(lambda x: x*opacity, tint)
-
-            self.app.screen.draw_sprite(sprite, pos, opacity, tint)
+            self.app.screen.draw_sprite(sprite, pos, opacity, map(lambda x: x*opacity, tint))
 
         self.app.renderer.begin_overlay()
         self.app.screen.draw_stats(self.app.player.coins_collected, self.app.player.health)
