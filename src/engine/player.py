@@ -86,13 +86,6 @@ class Player(Sprite):
             tint = 1, value, value
             yoffset = math.sin(self.blinking*.5) * 5.
 
-        sprite_name = self.current_sprite_name()
-
-        sprite_name = sprite_name.replace('whale', 'whale_%s' % self.dest_x)
-        sprite = self.lookup_sprite(sprite_name)
-
-        w, h = sprite.get_size()
-        center = tuple(float(x) / len(points) for x in map(sum, zip(*points)))
-        center = (center[0] - w / 2 + xoffset, center[1] - h / 2 + yoffset)
-        self.app.renderer.draw(sprite, center, 1., opacity, tint)
+        sprite_name = self.current_sprite_name().replace('whale', 'whale_%s' % self.dest_x)
+        self._draw(sprite_name, points, 1.0, opacity, tint, False)
 

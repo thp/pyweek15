@@ -1,8 +1,4 @@
 def make_sequence(frames):
-    """
-    >>> make_sequence(3)
-    [1, 2, 3, 2]
-    """
     return range(1, frames+1) + range(frames-1, 1, -1)
 
 class Sprite(object):
@@ -27,5 +23,19 @@ class Sprite(object):
     def current_sprite_name(self):
         return self.sprites[self.current_sprite]
 
-    def lookup_sprite(self, name):
-        return self.app.resman.get_sprite(name)
+    def _draw(self, sprite_name, points, max_scale, opacity, tint, align_bottom):
+        sprite = self.app.resman.get_sprite(sprite_name)
+        w, h = sprite.get_size()
+        left = min(point[0] for point in points)
+        right = max(point[0] for point in points)
+        bottom = max(point[1] for point in points)
+        factor = min(max_scale, float(right-left) / float(w))
+
+        x = (right+left)/2 - (w*factor)/2
+        if align_bottom:
+            y = bottom - h*factor
+        else:
+            center = tuple(float(x) / len(points) for x in map(sum, zip(*points)))
+            y = center[1] - h / 2
+
+        self.app.renderer.draw(sprite, (x, y), factor, opacity, tint)
