@@ -41,13 +41,22 @@ class ShaderEffect:
     def uniform(self, name):
         return glGetUniformLocation(self.program, name)
 
+
+def enable_arrays(effect, pairs):
+    effect.use()
+    for attrib, vtxarray in pairs:
+        loc = effect.attrib(attrib)
+        glEnableVertexAttribArray(loc)
+        glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, vtxarray.tostring())
+        yield loc
+
+def disable_arrays(locs):
+    for loc in locs:
+        glDisableVertexAttribArray(loc)
+
 class Framebuffer:
     def __init__(self, width, height):
-        self.texcoords = array.array('f', [0, 0, 0, 1, 1, 0, 1, 1])
-        self.vtxcoords = array.array('f', [-1, -1, -1, 1, 1, -1, 1, 1])
         self.started = time.time()
-        self.width = width
-        self.height = height
         self.framebuffer_id = glGenFramebuffers(1)
         self.texture = Texture(width, height, None)
         self.bind()
@@ -64,19 +73,13 @@ class Framebuffer:
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
     def rerender(self, effect):
-        glBindTexture(GL_TEXTURE_2D, self.texture._texture_id)
-        effect.use()
-        pos = effect.attrib('position')
-        glEnableVertexAttribArray(pos)
-        glVertexAttribPointer(pos, 2, GL_FLOAT, GL_FALSE, 0, self.vtxcoords.tostring())
-        tex = effect.attrib('texcoord')
-        glEnableVertexAttribArray(tex)
-        glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, self.texcoords.tostring())
-        glUniform2f(effect.uniform('dimensions'), self.width, self.height)
+        locs = list(enable_arrays(effect, (('position', array.array('f', [-1, -1, -1, 1, 1, -1, 1, 1])),
+                                           ('texcoord', array.array('f', [0, 0, 0, 1, 1, 0, 1, 1])))))
+        glUniform2f(effect.uniform('dimensions'), self.texture.w, self.texture.h)
         glUniform1f(effect.uniform('time'), time.time() - self.started)
+        glBindTexture(GL_TEXTURE_2D, self.texture._texture_id)
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-        glDisableVertexAttribArray(pos)
-        glDisableVertexAttribArray(tex)
+        disable_arrays(locs)
 
 class Renderer:
     def __init__(self, app):
@@ -118,8 +121,6 @@ class Renderer:
         glClear(GL_COLOR_BUFFER_BIT)
 
     def draw(self, sprite, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
-        self.draw_sprites.use()
-
         if not isinstance(sprite, Texture):
             # Upload dynamically-created sprite to texture memory
             sprite = self.upload_texture(sprite.get_width(), sprite.get_height(), self.app.resman.get_rgba(sprite))
@@ -130,26 +131,13 @@ class Renderer:
         r, g, b = tint
         gr, gg, gb = self.global_tint
 
-        glUniform4f(self.draw_sprites.uniform('color'), r*gr, g*gg, b*gb, opacity)
-
+        vtxdata, texdata = [x, y, x, y+h*scale, x+w*scale, y, x+w*scale, y+h*scale], [0., 1., 0., 0., 1., 1., 1., 0.]
+        locs = list(enable_arrays(self.draw_sprites, (('position', array.array('f', vtxdata)),
+                                                      ('texcoord', array.array('f', texdata)))))
         glBindTexture(GL_TEXTURE_2D, sprite._texture_id)
-
-        vertices = array.array('f', [x, y, x, y+h*scale, x+w*scale, y, x+w*scale, y+h*scale])
-        vertices_data = vertices.tostring()
-        position_loc = self.draw_sprites.attrib('position')
-        glEnableVertexAttribArray(position_loc)
-        glVertexAttribPointer(position_loc, 2, GL_FLOAT, GL_FALSE, 0, vertices_data)
-
-        texcoords = array.array('f', [0., 1., 0., 0., 1., 1., 1., 0.])
-        texcoord_data = texcoords.tostring()
-        texcoord_loc = self.draw_sprites.attrib('texcoord')
-        glEnableVertexAttribArray(texcoord_loc)
-        glVertexAttribPointer(texcoord_loc, 2, GL_FLOAT, GL_FALSE, 0, texcoord_data)
-
+        glUniform4f(self.draw_sprites.uniform('color'), r*gr, g*gg, b*gb, opacity)
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-
-        glDisableVertexAttribArray(texcoord_loc)
-        glDisableVertexAttribArray(position_loc)
+        disable_arrays(locs)
 
         glUseProgram(0)
 
