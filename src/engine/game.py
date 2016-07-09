@@ -29,7 +29,6 @@ class Game(Scene):
         self.boost = False
         self.speedup = 0
         self.camera_y = 0
-        self.app.screen.reset_camera()
         if hard:
             self.levels = self.level_progression()
             self.level_info = next(self.levels)
@@ -47,8 +46,6 @@ class Game(Scene):
         self.app.go_to_scene('Victory')
 
     def process(self):
-        self.app.screen.process()
-
         self.i += 1
 
         step = .01 * self.level.speed
@@ -78,7 +75,7 @@ class Game(Scene):
                 except StopIteration:
                     pass
         else:
-            self.camera_y = self.app.player.y + self.time
+            self.camera_y = max(0, self.app.player.y + self.time)
 
         if self.i % KEYBOARD_REPEAT_MOD == 0:
             next_x = max(MIN_DEST_X, min(MAX_DEST_X, self.app.player.dest_x + self.direction))
@@ -145,7 +142,7 @@ class Game(Scene):
                                          (self.app.player.y + self.time - self.camera_y) + 1.0))]
 
         for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+self.FADE_DISTANCE)):
-            if offset >= len(self.level.rows):
+            if offset >= len(self.level.rows) or offset < 0:
                 break
 
             for xidx, column in enumerate(self.level.rows[offset]):

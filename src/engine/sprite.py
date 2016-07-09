@@ -73,7 +73,7 @@ class Player(Sprite):
 
     def reset(self, hard=False):
         self.x = 2
-        self.y = 0
+        self.y = -5
         self.dest_x = 2
         self.height = 0
         self.vertical_velocity = 0

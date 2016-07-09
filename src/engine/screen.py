@@ -36,31 +36,13 @@ class Screen(object):
 
         pygame.display.set_caption(title)
 
-        self.eye_z_target = -1.0
-        self.eye_y_target = 3.0
-        self.center_y_target = -29.0
-        self.center_z_target = 100.0
-
-        self.eye_z = self.eye_z_target
-        self.eye_y = self.eye_y_target
-        self.center_y = self.center_y_target
-        self.center_z = self.center_z_target
-
+        self.eye_z = -1.0
+        self.eye_y = 3.0
+        self.center_y = -29.0
+        self.center_z = 100.0
         self.fov = 90.0
 
-        self.reset_camera()
         self.before_draw()
-
-    def reset_camera(self):
-        self.eye_z = 0.0
-        self.eye_y = 200.0
-
-    def process(self):
-        alpha = 0.1
-        self.eye_y = self.eye_y * (1.0 - alpha) + self.eye_y_target * alpha
-        self.eye_z = self.eye_z * (1.0 - alpha) + self.eye_z_target * alpha
-        self.center_y = self.center_y * (1.0 - alpha) + self.center_y_target * alpha
-        self.center_z = self.center_z * (1.0 - alpha) + self.center_z_target * alpha
 
     def process_input(self, event):
         if event.type == KEYDOWN:
@@ -95,7 +77,6 @@ class Screen(object):
         # z = 0..10(?)    (depth/distance)
 
         result = self.modelview_projection.map_vec3(Vec3(x, y, z))
-
         return ((0.5 + 0.5 * -result.x) * self.width, (0.5 + 0.5 * -result.y) * self.height)
 
     def draw_text(self, text):
