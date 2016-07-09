@@ -2,57 +2,24 @@ import math
 
 class Vec3(object):
     def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-
-    def __iter__(self):
-        return iter((self.x, self.y, self.z))
-
-    def __mul__(self, f):
-        if isinstance(f, Vec3):
-            return Vec3(self.x * f.x, self.y * f.y, self.z * f.z)
-        else:
-            return Vec3(self.x * f, self.y * f, self.z * f)
-
-    def __add__(self, o):
-        return Vec3(self.x + o.x, self.y + o.y, self.z + o.z)
+        self.x, self.y, self.z = x, y, z
 
     def __sub__(self, o):
         return Vec3(self.x - o.x, self.y - o.y, self.z - o.z)
 
-    def dot(self, o):
-        return self.x * o.x + self.y * o.y + self.z * o.z
-
     def cross(self, o):
         return Vec3(self.y * o.z - self.z * o.y, self.z * o.x - self.x * o.z, self.x * o.y - self.y * o.x)
 
-    def length(self):
-        return math.sqrt(self.dot(self))
-
     def normalized(self):
-        return self / self.length()
-
-    def __div__(self, f):
+        f = math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
         return Vec3(self.x / f, self.y / f, self.z / f)
 
-
 class Matrix4x4(object):
-    def __init__(self, m=None):
-        if m:
-            self.matrix = m
-        else:
-            self.identity()
-
-    def __eq__(self, other):
-        return ((isinstance(self, Matrix4x4), self.matrix) == (isinstance(other, Matrix4x4), other.matrix))
-
-    def identity(self):
-        self.matrix = [1 if x == y else 0 for y in range(4) for x in range(4)]
+    def __init__(self, m):
+        self.matrix = m
 
     def __mul__(self, other):
-        a = self.matrix
-        b = other.matrix
+        a, b = self.matrix, other.matrix
         return Matrix4x4([
             a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12],
             a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13],
@@ -78,10 +45,7 @@ class Matrix4x4(object):
     def map_vec3(self, v3):
         p = (v3.x, v3.y, v3.z, 1.)
         p = [sum(p[row] * self.matrix[i * 4 + row] for row in range(4)) for i, v in enumerate(p)]
-        if p[3] == 0.0:
-            return Vec3(p[0], p[1], p[2])
-        else:
-            return Vec3(p[0] / p[3], p[1] / p[3], p[2] / p[3])
+        return Vec3(p[0] / p[3], p[1] / p[3], p[2] / p[3])
 
     @classmethod
     def perspective(cls, fovy, aspect, zNear, zFar):
