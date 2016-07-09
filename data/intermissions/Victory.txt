@@ -2,5 +2,7 @@ next_scene=Outro
 background=i_surreal
 title=VICTORY
 ---
+(particles=heart_particle:520:90:15:5:30)
+(particles=heart_particle:590:90:15:5:10)
 (creatures=whale_story_heart_mirror victory_submarine)
 a happy ending
