@@ -13,6 +13,10 @@ MIN_DEST_X = 0
 MAX_DEST_X = 4
 
 class Game(Scene):
+    FADE_OFFSET = 3
+    FADE_WIDTH = 10
+    FADE_DISTANCE = int(FADE_OFFSET + FADE_WIDTH + 1)
+
     def __init__(self, app):
         super(Game, self).__init__(app, 'Game')
         self.enemies = {}
@@ -24,6 +28,7 @@ class Game(Scene):
         self.direction = 0
         self.boost = False
         self.speedup = 0
+        self.camera_y = 0
         self.app.screen.reset_camera()
         if hard:
             self.levels = self.level_progression()
@@ -65,14 +70,15 @@ class Game(Scene):
             self.app.player.y += 1
 
         if self.app.player.y > len(self.level.rows):
-            try:
-                # advance a level and reset
-                self.level_info = next(self.levels)
-                self.reset()
-            except StopIteration:
-                pass
-
-            # TODO: animate level end
+            if (self.app.player.y - self.camera_y) > self.FADE_DISTANCE:
+                try:
+                    # advance a level and reset
+                    self.level_info = next(self.levels)
+                    self.reset()
+                except StopIteration:
+                    pass
+        else:
+            self.camera_y = self.app.player.y + self.time
 
         if self.i % KEYBOARD_REPEAT_MOD == 0:
             next_x = max(MIN_DEST_X, min(MAX_DEST_X, self.app.player.dest_x + self.direction))
@@ -135,13 +141,10 @@ class Game(Scene):
 
 
     def draw(self):
-        draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100, 1.0))]
+        draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100,
+                                         (self.app.player.y + self.time - self.camera_y) + 1.0))]
 
-        # Fade in enemy sprites coming from the back
-        fade_offset = 3.0
-        fade_width = 10.0
-        fade_distance = int(fade_offset + fade_width + 1)
-        for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+fade_distance)):
+        for yidx, offset in enumerate(range(self.app.player.y, self.app.player.y+self.FADE_DISTANCE)):
             if offset >= len(self.level.rows):
                 break
 
@@ -172,7 +175,7 @@ class Game(Scene):
                 tint = [.5+.5*math.sin(self.i*.009), .5+.5*math.sin(.9+self.i*.004), .5+.5*math.sin(4.5+self.i*.2)]
 
             # Fade in enemy sprites coming from the back
-            opacity = max(0.0, 1.0 - (pos[2] - fade_offset) / fade_width)
+            opacity = max(0.0, 1.0 - (pos[2] - float(self.FADE_OFFSET)) / float(self.FADE_WIDTH))
             self.app.screen.draw_sprite(sprite, pos, opacity, map(lambda x: x*opacity, tint))
 
         self.app.renderer.begin_overlay()

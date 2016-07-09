@@ -52,8 +52,8 @@ class Screen(object):
         self.before_draw()
 
     def reset_camera(self):
-        self.eye_z = -100.0
-        self.eye_y = 300.0
+        self.eye_z = 0.0
+        self.eye_y = 200.0
 
     def process(self):
         alpha = 0.1

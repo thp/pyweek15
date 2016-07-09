@@ -133,7 +133,7 @@ class Player(Sprite):
 
 
     def draw(self, screen, points, opacity, tint):
-        xoffset, yoffset, opacity = 0., 0., 1.
+        xoffset, yoffset = 0., 0.
         tint = 1., 1., 1.
 
         if self.blinking:
