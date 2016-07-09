@@ -75,10 +75,7 @@ class Player(Sprite):
         if self.height < 0:
             self.can_jump = True
             self.height = 0
-            self.vertical_velocity *= -.5
-            if abs(self.vertical_velocity) < 2:
-                self.vertical_velocity = 0
-                self.height = 0
+            self.vertical_velocity = 0
         self.vertical_velocity -= self.GRAVITY
         if self.blinking:
             self.blinking -= 1
