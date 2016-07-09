@@ -4,8 +4,6 @@ from sprite import Enemy
 
 import math
 
-from pygame.locals import KEYDOWN, KEYUP, K_SPACE, K_LEFT, K_RIGHT, K_UP
-
 class Game(Scene):
     FADE_OFFSET = 3
     FADE_WIDTH = 10
@@ -72,15 +70,15 @@ class Game(Scene):
             self.reset(hard=True)
             self.app.go_to_scene('GameOver')
 
-    def process_input(self, event):
-        if event.type == KEYDOWN:
-            if event.key == K_SPACE:
+    def process_input(self, pressed, key):
+        if pressed:
+            if key == ' ':
                 self.app.player.jump()
-            elif event.key in (K_LEFT, K_RIGHT):
-                self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + (-1 if (event.key == K_LEFT) else 1)))
-            elif event.key == K_UP:
+            elif key in ('left', 'right'):
+                self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + (-1 if (key == 'left') else 1)))
+            elif key == 'up':
                 self.boost = True
-        elif event.type == KEYUP and event.key == K_UP:
+        elif key == 'up':
             self.boost = False
 
     def draw(self):

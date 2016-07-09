@@ -1,5 +1,3 @@
-from pygame.locals import KEYDOWN, K_s
-
 class Scene(object):
     def __init__(self, app, name):
         self.app = app
@@ -29,14 +27,11 @@ class Intermission(Scene):
         else:
             self.line = line
 
-    def process_input(self, event):
-        if self.skipable and event.type == KEYDOWN and event.key == K_s:
+    def process_input(self, pressed, key):
+        if pressed and ((self.skipable and key == 's') or not self.story):
             self.app.go_to_scene(self.next_scene)
-        elif event.type == KEYDOWN:
-            if self.story:
-                self.update()
-            else:
-                self.app.go_to_scene(self.next_scene)
+        elif pressed:
+            self.update()
 
     def draw(self):
         self.app.screen.draw_card(self.title, self.line,

@@ -1,7 +1,7 @@
 import time
 
 import pygame
-from pygame.locals import KEYDOWN, K_ESCAPE, QUIT
+from pygame.locals import KEYDOWN, KEYUP, QUIT, K_ESCAPE, K_SPACE, K_s, K_LEFT, K_RIGHT, K_UP
 
 from resman import ResourceManager
 from sprite import Player
@@ -25,6 +25,8 @@ class TimeAccumulator:
             callback()
 
 class App(object):
+    KEYMAP = {K_SPACE: ' ', K_s: 's', K_LEFT: 'left', K_RIGHT: 'right', K_UP: 'up'}
+
     def __init__(self, title, width, height, fullscreen, entry):
         pygame.init()
         self.display = pygame.display.set_mode((0, 0) if fullscreen else (width, height), pygame.OPENGL |
@@ -65,7 +67,8 @@ class App(object):
                 for event in events:
                     if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == QUIT:
                         self.running = False
-                    self.scene.process_input(event)
+                    elif event.type in (KEYDOWN, KEYUP):
+                        self.scene.process_input((event.type == KEYDOWN), self.KEYMAP.get(event.key, None))
                 self.accumulator.update(self.scene.process)
 
             self.renderer.begin()
