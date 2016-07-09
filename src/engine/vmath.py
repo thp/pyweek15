@@ -1,6 +1,4 @@
 import math
-import numbers
-
 
 class Vec3(object):
     def __init__(self, x, y, z):
@@ -17,30 +15,20 @@ class Vec3(object):
         else:
             return Vec3(self.x * f, self.y * f, self.z * f)
 
-    __rmul__ = __mul__
+    def __add__(self, o):
+        return Vec3(self.x + o.x, self.y + o.y, self.z + o.z)
 
-    def __neg__(self):
-        return self * -1
+    def __sub__(self, o):
+        return Vec3(self.x - o.x, self.y - o.y, self.z - o.z)
 
-    def __add__(self, other):
-        return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+    def dot(self, o):
+        return self.x * o.x + self.y * o.y + self.z * o.z
 
-    def __sub__(self, other):
-        return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
-
-    def dot(self, other):
-        return self.x * other.x + self.y * other.y + self.z * other.z
-
-    def cross(self, other):
-        return Vec3(self.y * other.z - self.z * other.y,
-                    self.z * other.x - self.x * other.z,
-                    self.x * other.y - self.y * other.x)
+    def cross(self, o):
+        return Vec3(self.y * o.z - self.z * o.y, self.z * o.x - self.x * o.z, self.x * o.y - self.y * o.x)
 
     def length(self):
-        return math.sqrt(self.length_squared())
-
-    def length_squared(self):
-        return self.dot(self)
+        return math.sqrt(self.dot(self))
 
     def normalized(self):
         return self / self.length()
@@ -57,15 +45,10 @@ class Matrix4x4(object):
             self.identity()
 
     def __eq__(self, other):
-        return ((isinstance(self, Matrix4x4), self.matrix) ==
-                (isinstance(other, Matrix4x4), other.matrix))
+        return ((isinstance(self, Matrix4x4), self.matrix) == (isinstance(other, Matrix4x4), other.matrix))
 
     def identity(self):
         self.matrix = [1 if x == y else 0 for y in range(4) for x in range(4)]
-
-    def __imul__(self, other):
-        self.matrix = (self * other).matrix
-        return self
 
     def __mul__(self, other):
         a = self.matrix
@@ -92,8 +75,6 @@ class Matrix4x4(object):
             a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15],
         ])
 
-    __rmul__ = __mul__
-
     def map_vec3(self, v3):
         p = (v3.x, v3.y, v3.z, 1.)
         p = [sum(p[row] * self.matrix[i * 4 + row] for row in range(4)) for i, v in enumerate(p)]
@@ -101,15 +82,6 @@ class Matrix4x4(object):
             return Vec3(p[0], p[1], p[2])
         else:
             return Vec3(p[0] / p[3], p[1] / p[3], p[2] / p[3])
-
-    @staticmethod
-    def translation(x, y, z):
-        return Matrix4x4([
-                1, 0, 0, x,
-                0, 1, 0, y,
-                0, 0, 1, z,
-                0, 0, 0, 1,
-        ])
 
     @classmethod
     def perspective(cls, fovy, aspect, zNear, zFar):
@@ -121,15 +93,20 @@ class Matrix4x4(object):
                 0, 0, -1, 0,
         ])
 
-    def lookAt(self, eye, center, up):
+    @classmethod
+    def lookAt(cls, eye, center, up):
         f = (center - eye).normalized()
         UP = up.normalized()
         s = f.cross(UP).normalized()
         u = s.cross(f).normalized()
-        self *= Matrix4x4([
+        return cls([
                 s.x, s.y, s.z, 0,
                 u.x, u.y, u.z, 0,
                 -f.x, -f.y, -f.z, 0,
                 0, 0, 0, 1,
+        ]) * cls([
+                1, 0, 0, -eye.x,
+                0, 1, 0, -eye.y,
+                0, 0, 1, -eye.z,
+                0, 0, 0, 1,
         ])
-        self *= Matrix4x4.translation(-eye.x, -eye.y, -eye.z)

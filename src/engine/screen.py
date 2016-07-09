@@ -84,8 +84,7 @@ class Screen(object):
         center = Vec3(0.0, self.center_y, self.center_z)
         up = Vec3(0.0, 1.0, 0.0)
 
-        modelview = Matrix4x4()
-        modelview.lookAt(eye, center, up)
+        modelview = Matrix4x4.lookAt(eye, center, up)
         self.modelview_projection = projection * modelview
 
     def projection(self, x, y, z):
