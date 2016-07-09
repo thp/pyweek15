@@ -3,8 +3,6 @@ from level import Level
 from sprite import Enemy
 
 import math
-from itertools import *
-from operator import *
 
 from pygame.locals import *
 
