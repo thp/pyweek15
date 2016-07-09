@@ -1,4 +1,4 @@
-from resman import FONT_STD, FONT_SMALL
+from resman import FONT_STD, FONT_SMALL, FONT_BIG
 from vmath import Matrix4x4, Vec3
 
 class Screen(object):
@@ -14,7 +14,7 @@ class Screen(object):
         self.modelview_projection = projection * modelview
 
     def draw_text(self, lines):
-        surfaces = [self.app.resman.render_text(FONT_SMALL, line) for line in lines]
+        surfaces = [self.app.resman.render_text(FONT_BIG, line) for line in lines]
         total_height = (len(surfaces) - 1) * self.SPACING + sum(surface.h for surface in surfaces)
         y = (self.height - total_height) / 2
         for surface in surfaces:
