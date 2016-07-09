@@ -41,8 +41,8 @@ class App(object):
         self.renderer.resize(width, height)
 
         self._scenes = {'Game': Game(self)}
-        for name in self.resman.intermissions.keys():
-            self._scenes[name] = Intermission(self, name)
+        for name, filedata in self.resman.intermissions.items():
+            self._scenes[name] = Intermission(self, name, filedata)
         self._scenes['Game'].reset(hard=True)
         self.go_to_scene(entry)
 

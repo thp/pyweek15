@@ -4,8 +4,9 @@ class Scene(object):
         self.name = name
 
 class Intermission(Scene):
-    def __init__(self, app, name):
+    def __init__(self, app, name, filedata):
         super(Intermission, self).__init__(app, name)
+        self.filedata = filter(None, filedata)
         self.resume()
 
     def resume(self):
@@ -41,7 +42,7 @@ class Intermission(Scene):
         fmt_args = {'player_lives': int(self.app.player.health/3)}
 
         self.story = []
-        for line in filter(None, self.app.resman.intermissions[self.name]):
+        for line in self.filedata:
             if is_header and line == '---':
                 is_header = False
             elif is_header:
