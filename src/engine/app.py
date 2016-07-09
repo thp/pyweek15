@@ -2,8 +2,7 @@ import pygame
 import os
 import time
 
-from resman import ResourceManager
-from audman import AudioManager
+from resman import ResourceManager, AudioManager
 from player import Player
 from screen import Screen
 from scene import Intermission
