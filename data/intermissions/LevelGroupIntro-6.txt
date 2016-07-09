@@ -1,6 +1,6 @@
-next_scene: Game
-background: i_surreal
-title: WHAT A TRIP!
+next_scene=Game
+background=i_surreal
+title=WHAT A TRIP!
 ---
-(creatures: submarine)
+(creatures=submarine)
 almost there

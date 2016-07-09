@@ -1,16 +1,16 @@
-next_scene: Game
-background: i_normal
-skipable: true
-title: A LOVE STORY
+next_scene=Game
+background=i_normal
+skipable=true
+title=A LOVE STORY
 ---
-(creatures: whale_story)
+(creatures=whale_story)
 hi there! what a nice whale you are!
 
-(creatures: submarine)
+(creatures=submarine)
 the moment you saw that lovely creature...
 ... you knew it was love on first sight
 
-(creatures: whale_story_heart)
+(creatures=whale_story_heart)
 at first your advances were met with...
 cold disinterest...
 cold disinterest... and distance
@@ -18,13 +18,13 @@ a whole ocean of distance, in fact
 but that made your resolve only stronger
 across the ocean you would follow!
 
-(creatures: oyster_1_pearl)
+(creatures=oyster_1_pearl)
 maybe a string of pearls would help?
 
-(creatures: fishy_rainbow)
+(creatures=fishy_rainbow)
 the journey is long and hard
 food will sustain you
 
-(creatures: diver)
+(creatures=diver)
 watch out!
 there are many dangers to be avoided

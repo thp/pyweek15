@@ -1,6 +1,6 @@
-next_scene: Outro
-background: i_surreal
-title: VICTORY
+next_scene=Outro
+background=i_surreal
+title=VICTORY
 ---
-(creatures: whale_story_heart_mirror victory_submarine)
+(creatures=whale_story_heart_mirror victory_submarine)
 a happy ending

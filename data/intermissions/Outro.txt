@@ -1,6 +1,6 @@
-next_scene: GoodBye
-background: i_outro
-title: GOOD BYE!
+next_scene=GoodBye
+background=i_outro
+title=GOOD BYE!
 ---
 the team:
 gfx: lobbbe

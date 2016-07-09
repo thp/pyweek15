@@ -20,12 +20,14 @@ class Intermission(Scene):
         pass
 
     def update(self):
-        item = self.story.pop(0)
-        if type(item) is str:
-            self.line = item
-        else:
-            self.creatures = item
+        line = self.story.pop(0)
+        if line.startswith('(') and line.endswith(')'):
+            key, value = line[1:-1].split('=', 1)
+            if key == 'creatures':
+                self.creatures = [self.app.resman.creatures[c] for c in value.split()]
             self.line = self.story.pop(0)
+        else:
+            self.line = line
 
     def process_input(self, event):
         if self.skipable and event.type == KEYDOWN and event.key == K_s:
@@ -42,11 +44,6 @@ class Intermission(Scene):
         if self.skipable:
             self.app.screen.draw_skip()
 
-    def _parse_key_value(self, line):
-        key, value = line.split(':', 1)
-        value = value.strip()
-        return key, value
-
     def _setup(self):
         is_header = True
         fmt_args = {'player_lives': int(self.app.player.health/3)}
@@ -56,7 +53,7 @@ class Intermission(Scene):
             if is_header and line == '---':
                 is_header = False
             elif is_header:
-                key, value = self._parse_key_value(line)
+                key, value = line.split('=', 1)
                 if key == 'next_scene':
                     self.next_scene = value
                 elif key == 'background':
@@ -66,9 +63,4 @@ class Intermission(Scene):
                 elif key == 'title':
                     self.title = value
             else:
-                if line.startswith('(') and line.endswith(')'):
-                    key, value = self._parse_key_value(line[1:-1])
-                    if key == 'creatures':
-                        self.story.append([self.app.resman.creatures[c] for c in value.split()])
-                else:
-                    self.story.append(line.format(**fmt_args))
+                self.story.append(line.format(**fmt_args))

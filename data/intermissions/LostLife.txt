@@ -1,6 +1,6 @@
-next_scene: Game
-background: i_deepsea
-title: YOU LOST A LIFE
+next_scene=Game
+background=i_deepsea
+title=YOU LOST A LIFE
 ---
-(creatures: lost_life_whale)
+(creatures=lost_life_whale)
 be careful! you have only {player_lives} left

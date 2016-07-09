@@ -1,6 +1,6 @@
-next_scene: LevelGroupIntro-1
-background: i_normal
-title: ONE WHALE TRIP
+next_scene=LevelGroupIntro-1
+background=i_normal
+title=ONE WHALE TRIP
 ---
-(creatures: whale_story)
+(creatures=whale_story)
 a love story
