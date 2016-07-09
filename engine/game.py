@@ -21,6 +21,8 @@ class Game(Scene):
         self.boost = False
         self.speedup = 0
         self.camera_y = 0
+        self.done = False
+        self.started = False
         if hard:
             self.levels = self.level_progression()
             self.level_info = next(self.levels)
@@ -41,6 +43,9 @@ class Game(Scene):
         self.app.player.y += int(dy)
 
         if self.app.player.y > len(self.level.rows):
+            if not self.done:
+                self.app.resman.sfx('261597__kwahmah-02__bubbles2')
+                self.done = True
             if (self.app.player.y - self.camera_y) > self.FADE_DISTANCE:
                 try:
                     self.level_info = next(self.levels)
@@ -48,6 +53,9 @@ class Game(Scene):
                 except StopIteration:
                     pass
         else:
+            if not self.started:
+                self.app.resman.sfx('110393__soundscalpel-com__water-splash')
+                self.started = True
             self.camera_y = max(0, self.app.player.y + self.time)
 
         self.app.player.step()

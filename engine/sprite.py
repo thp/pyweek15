@@ -75,7 +75,7 @@ class Player(Sprite):
         if self.can_jump:
             self.vertical_velocity = 15
             self.can_jump = False
-            self.app.resman.sfx("jump")
+            self.app.resman.sfx("255994__webcommando__poolsplash")
 
     def picked_up(self, thingie):
         sfx, coins, lives = self.app.resman.pickups.get(thingie, ('', 0, 0))
@@ -90,7 +90,7 @@ class Player(Sprite):
     def crashed(self):
         if not self.blinking:
             self.health -= 1
-            self.app.resman.sfx("crash")
+            self.app.resman.sfx("37460__funkymuskrat__whale")
             self.blinking = 20
 
         return (self.health % 3 == 0)
