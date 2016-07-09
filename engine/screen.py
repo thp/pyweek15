@@ -14,13 +14,12 @@ class Screen(object):
         self.modelview_projection = projection * modelview
 
     def draw_text(self, lines):
-        spacing = 10
         surfaces = [self.app.resman.render_text(FONT_SMALL, line) for line in lines]
-        total_height = (len(surfaces) - 1) * spacing + sum(surface.h for surface in surfaces)
+        total_height = (len(surfaces) - 1) * self.SPACING + sum(surface.h for surface in surfaces)
         y = (self.height - total_height) / 2
         for surface in surfaces:
             self.app.renderer.draw(surface, ((self.width - surface.w) / 2, y))
-            y += surface.h + spacing
+            y += surface.h + self.SPACING
 
     def projection(self, x, y, z):
         result = self.modelview_projection.map_vec3(Vec3(x, y, z))
@@ -31,20 +30,17 @@ class Screen(object):
         sprite.draw([p(-1, -1, pos), p(1, -1, pos), p(1, 1, pos), p(-1, 1, pos)], opacity, tint)
 
     def draw_stats(self, bonus, health):
-        pos_x, pos_y = self.SPACING, self.SPACING
         icon = self.app.resman.sprites['pearlcount_icon-1']
-        self.app.renderer.draw(icon, (pos_x, pos_y))
+        self.app.renderer.draw(icon, (self.SPACING, self.SPACING))
 
-        pos_x += icon.w + self.SPACING
-        text_surf = self.app.resman.render_text(FONT_STD, '%d' % bonus)
-        self.app.renderer.draw(text_surf, (pos_x, pos_y-3))
+        text = self.app.resman.render_text(FONT_STD, '%d' % bonus)
+        self.app.renderer.draw(text, (self.SPACING * 2 + icon.w, self.SPACING + (icon.h - text.h) / 2))
 
         pos_x, pos_y = self.width, self.SPACING
         while health > 0:
             health, rest = health - 3, min(health, 3)
             sprite = self.app.resman.sprites['whale_ico-%d' % rest]
-            icon_width = sprite.w
-            pos_x -= icon_width + self.SPACING
+            pos_x -= sprite.w + self.SPACING
             self.app.renderer.draw(sprite, (pos_x, pos_y))
 
     def draw_card(self, message, story, background, creatures, skipable):
