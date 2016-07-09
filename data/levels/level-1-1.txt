@@ -1,28 +1,21 @@
-#
-# :enemies:
-# a=seaweed
-# b=seaweed
-# c=seaweed
-#
-# v=shoe
-# w=starfish
-# x=rock_s
-# y=rock_m
-# z=rock_l
-#
-# :pickups:
-# f=fishy_red
-#
-# p=pearl
-#
-# 0=oyster_0_pearl
-# 1=oyster_1_pearl
-# 2=oyster_2_pearl
-# 3=oyster_3_pearl
-#
-# :meta:
-# background=normal
-#
+a=seaweed
+b=seaweed
+c=seaweed
+v=shoe
+w=starfish
+x=rock_s
+y=rock_m
+z=rock_l
+---
+f=fishy_red
+p=pearl
+0=oyster_0_pearl
+1=oyster_1_pearl
+2=oyster_2_pearl
+3=oyster_3_pearl
+---
+background=normal
+---
 
 
 

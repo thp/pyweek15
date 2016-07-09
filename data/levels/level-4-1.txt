@@ -1,28 +1,21 @@
-#
-# :enemies:
-# a=lanternfish
-# b=shell
-#
-# v=shoe
-# w=coral_d
-# x=rock_s
-# y=rock_m
-# z=rock_l
-#
-#
-# :pickups:
-# f=fishy_deepsea
-#
-# p=pearl
-#
-# 0=oyster_0_pearl
-# 1=oyster_1_pearl
-# 2=oyster_2_pearl
-# 3=oyster_3_pearl
-#
-# :meta:
-# background=deepsea
-#
+a=lanternfish
+b=shell
+v=shoe
+w=coral_d
+x=rock_s
+y=rock_m
+z=rock_l
+---
+f=fishy_deepsea
+p=pearl
+0=oyster_0_pearl
+1=oyster_1_pearl
+2=oyster_2_pearl
+3=oyster_3_pearl
+---
+background=deepsea
+---
+
 
 
 

@@ -1,28 +1,22 @@
-#
-# :enemies:
-# a=jellyfish_a
-# b=jellyfish_b
-# c=seaweed
-#
-# v=diver
-# w=coral_a
-# x=starfish
-# y=shoe
-# z=sandboxtoys
-#
-# :pickups:
-# f=fishy_red
-#
-# p=pearl
-#
-# 0=oyster_0_pearl
-# 1=oyster_1_pearl
-# 2=oyster_2_pearl
-# 3=oyster_3_pearl
-#
-# :meta:
-# background=beach
-#
+a=jellyfish_a
+b=jellyfish_b
+c=seaweed
+v=diver
+w=coral_a
+x=starfish
+y=shoe
+z=sandboxtoys
+---
+f=fishy_red
+p=pearl
+0=oyster_0_pearl
+1=oyster_1_pearl
+2=oyster_2_pearl
+3=oyster_3_pearl
+---
+background=beach
+---
+
 
 
 

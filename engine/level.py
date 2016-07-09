@@ -9,12 +9,10 @@ class Item(object):
         elif self.name:
             player.picked_up(self.name)
             self.name = ''
-
         return False
 
-
 class Level(object):
-    ENEMIES, PICKUP, META = range(3)
+    ENEMIES, PICKUP, META, CONTENT = range(4)
 
     def __init__(self, leveldata, width=5):
         self.charmap = {}
@@ -23,22 +21,14 @@ class Level(object):
 
         section = self.ENEMIES
         for line in leveldata:
-            if ':enemies:' in line:
-                section = self.ENEMIES
-            elif ':pickups:' in line:
-                section = self.PICKUP
-            elif ':meta:' in line:
-                section = self.META
-
-            if line.startswith('#'):
-                if '=' in line:
-                    key, value = (x.strip() for x in line[1:].strip().split('=', 1))
-                    if section in (self.ENEMIES, self.PICKUP):
-                        assert key not in self.charmap
-                        self.charmap[key] = (value, section == self.ENEMIES)
-                    elif section == self.META:
-                        if key == 'background':
-                            self.background = value.strip()
+            if line == '---':
+                section += 1
+            elif section < self.CONTENT:
+                key, value = line.split('=', 1)
+                if section in (self.ENEMIES, self.PICKUP):
+                    self.charmap[key] = (value, section == self.ENEMIES)
+                elif section == self.META and key == 'background':
+                    self.background = value.strip()
             else:
                 line = line.rstrip('\n') + (' ' * width)
                 self.rows.append([Item(*self.charmap[line[i]]) if line[i] != ' ' else None for i in range(width)])
