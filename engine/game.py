@@ -71,15 +71,13 @@ class Game(Scene):
             self.app.go_to_scene('GameOver')
 
     def process_input(self, pressed, key):
-        if pressed:
+        if key == 'up':
+            self.boost = pressed
+        elif pressed:
             if key == ' ':
                 self.app.player.jump()
             elif key in ('left', 'right'):
                 self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + (-1 if (key == 'left') else 1)))
-            elif key == 'up':
-                self.boost = True
-        elif key == 'up':
-            self.boost = False
 
     def draw(self):
         draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100,
