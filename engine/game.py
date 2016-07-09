@@ -37,16 +37,7 @@ class Game(Scene):
         self.app.go_to_scene('Victory')
 
     def process(self):
-        if self.boost:
-            if self.speedup < self.MAX_SPEEDUP:
-                self.speedup += 0.1
-            if self.speedup > self.MAX_SPEEDUP:
-                self.speedup = self.MAX_SPEEDUP
-        else:
-            if self.speedup > 0:
-                self.speedup -= 0.2
-            if self.speedup < 0:
-                self.speedup = 0
+        self.speedup = max(0, min(self.MAX_SPEEDUP, self.speedup + (0.1 if self.boost else -0.2)))
 
         self.time += 0.1 * (1 + self.speedup)
         self.time, dy = math.modf(self.time)
