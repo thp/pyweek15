@@ -141,7 +141,7 @@ class Game(Scene):
             opacity = max(0.0, 1.0 - (pos[2] - float(self.FADE_OFFSET)) / float(self.FADE_WIDTH))
             self.app.screen.draw_sprite(sprite, pos, opacity, map(lambda x: x*opacity, tint))
 
-        self.app.renderer.begin_overlay()
+        self.app.renderer.postprocess()
         if self.app.player.y < 0:
             self.app.screen.draw_text(['Get Ready'])
         elif self.app.player.y > len(self.level.rows):

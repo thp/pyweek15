@@ -126,10 +126,6 @@ class Renderer:
         glUniform4f(self.draw_sprites.uniform('color'), r*gr, g*gg, b*gb, opacity)
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
-    def begin_overlay(self):
-        # Force postprocessing NOW, so overlays will be drawn as-is
-        self.postprocess()
-
     def postprocess(self):
         if not self.effect_pipeline:
             return
@@ -137,15 +133,14 @@ class Renderer:
         self.fbs[0].unbind()
 
         a, b = self.fbs
-        for idx, effect in enumerate(self.effect_pipeline):
-            if idx < len(self.effect_pipeline) - 1:
-                b.bind()
+        for idx, effect in enumerate(self.effect_pipeline[:-1]):
+            b.bind()
             glClear(GL_COLOR_BUFFER_BIT)
             a.rerender(effect)
-            if idx < len(self.effect_pipeline) - 1:
-                b.unbind()
+            b.unbind()
             a, b = b, a
-
+        glClear(GL_COLOR_BUFFER_BIT)
+        a.rerender(self.effect_pipeline[-1])
         self.postprocessed = True
 
     def finish(self):
