@@ -76,11 +76,16 @@ class Screen(object):
         result = self.modelview_projection.map_vec3(Vec3(x, y, z))
         return ((0.5 + 0.5 * -result.x) * self.width, (0.5 + 0.5 * -result.y) * self.height)
 
-    def draw_text(self, text):
+    def draw_text(self, lines):
         font = self.app.resman.font(FONT_SMALL)
-        surface = font.render(text, False, pygame.Color('white'), pygame.Color('black'))
-        pos = ((self.width-surface.get_width()) / 2, self.height-surface.get_height())
-        self.app.renderer.draw(surface, pos)
+        spacing = 10
+        surfaces = [font.render(line, True, pygame.Color('white')) for line in lines]
+        total_height = (len(surfaces) - 1) * spacing + sum(surface.get_height() for surface in surfaces)
+        y = (self.height - total_height) / 2
+        for surface in surfaces:
+            pos = ((self.width - surface.get_width()) / 2, y)
+            self.app.renderer.draw(surface, pos)
+            y += surface.get_height() + spacing
 
     def draw_sprite(self, sprite, pos, opacity, tint):
         """Project a sprite onto the screen.

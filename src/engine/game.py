@@ -152,4 +152,14 @@ class Game(Scene):
             self.app.screen.draw_sprite(sprite, pos, opacity, map(lambda x: x*opacity, tint))
 
         self.app.renderer.begin_overlay()
+        if self.app.player.y > len(self.level.rows):
+            self.app.screen.draw_text([
+                'Level clear!',
+                'Collected: ... / ...',
+                'Lives used: ...',
+            ])
+        elif self.app.player.y < 0:
+            self.app.screen.draw_text([
+                'Get Ready',
+            ])
         self.app.screen.draw_stats(self.app.player.coins_collected, self.app.player.health)
