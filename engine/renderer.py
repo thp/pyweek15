@@ -97,15 +97,10 @@ class Renderer:
 
         self.fbs = [Framebuffer(width, height), Framebuffer(width, height)]
 
-        self.draw_sprites = ShaderEffect(self.app.resman.get_shader('draw_sprites.vsh'),
-                                         self.app.resman.get_shader('draw_sprites.fsh'))
-
-        self.blur_effect = ShaderEffect(self.app.resman.get_shader('effect_vertex_shader.vsh'),
-                                        self.app.resman.get_shader('blur_effect.fsh'))
-
-        self.underwater_effect = ShaderEffect(self.app.resman.get_shader('effect_vertex_shader.vsh'),
-                                              self.app.resman.get_shader('underwater_effect.fsh'))
-
+        mkshader = lambda vert, frag: ShaderEffect(self.app.resman.get_shader(vert), self.app.resman.get_shader(frag))
+        self.draw_sprites = mkshader('draw_sprites.vsh', 'draw_sprites.fsh')
+        self.blur_effect = mkshader('effect_vertex_shader.vsh', 'blur_effect.fsh')
+        self.underwater_effect = mkshader('effect_vertex_shader.vsh', 'underwater_effect.fsh')
         self.effect_pipeline = [self.blur_effect, self.underwater_effect]
 
         self.draw_sprites.use()
