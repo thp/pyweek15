@@ -92,24 +92,14 @@ class Player(Sprite):
             self.app.audman.sfx("jump")
 
     def picked_up(self, thingie):
-        if thingie == 'pearl':
-            self.coins_collected += 1
-            self.app.audman.sfx("pearl" + str(int(self.dest_x+1)))
-        elif thingie == 'oyster_1_pearl':
-            self.coins_collected += 1
-            self.app.audman.sfx("pearl")
-        elif thingie == 'oyster_2_pearl':
-            self.coins_collected += 2
-            self.app.audman.sfx("pearl")
-        elif thingie == 'oyster_3_pearl':
-            self.coins_collected += 3
-            self.app.audman.sfx("pearl")
-        elif thingie.startswith("fishy"):
+        sfx, coins, lives = self.app.resman.pickups.get(thingie, ('', 0, 0))
+        if sfx:
+            self.app.audman.sfx(sfx)
+        self.coins_collected += coins
+        if lives != 0:
             # [11:47pm] lobbbe_: what about that: you get your health back to full if you eat a fishy,
             # and if your health is already full - and only then - you get an extra life?
-            self.app.audman.sfx("fishy")
-            lives = int(self.health/3) + 1
-            self.health = min(lives*3, self.MAX_HEALTH)
+            self.health = min((int(self.health/3) + lives)*3, self.MAX_HEALTH)
 
     def crashed(self):
         if not self.blinking:

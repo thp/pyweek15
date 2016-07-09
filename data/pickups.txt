@@ -1,0 +1,9 @@
+# thingie:sfx:coins:lives
+pearl:pearl:1:0
+oyster_0_pearl::0:0
+oyster_1_pearl:pearl:1:0
+oyster_2_pearl:pearl:2:0
+oyster_3_pearl:pearl:3:0
+fishy_red:fishy:0:1
+fishy_rainbow:fishy:0:1
+fishy_deepsea:fishy:0:1

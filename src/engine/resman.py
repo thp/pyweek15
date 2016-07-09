@@ -79,6 +79,9 @@ class ResourceManager():
         for filename in glob.glob(_path('shaders', '*.*')):
             self._shaders[os.path.basename(filename)] = open(filename).read()
 
+        pickup_lines = [line.strip().split(':') for line in open(_path('pickups.txt')) if not line.startswith('#')]
+        self.pickups = {thingie: (sfx, int(coins), int(lives)) for thingie, sfx, coins, lives in pickup_lines}
+
     def get_sprite(self, name):
         return self._surfaces.get(name)
 
