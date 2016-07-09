@@ -5,19 +5,16 @@ class Scene(object):
     def __init__(self, app, name):
         self.app = app
         self.name = name
-        self.next_state = None  # holds None or a string with classname of the place to go
 
     def process(self):
-        return self.next_state
+        pass
 
     def resume(self):
-        """Called form App when being switched to"""
-        self.next_state = None
+        pass
 
     def process_input(self, event):
-        if ((event.type == KEYDOWN and event.key == K_ESCAPE)
-                or event.type == QUIT):
-            self.next_state = "GoodBye"
+        if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == QUIT:
+            self.app.go_to_scene('GoodBye')
 
     def draw(self):
         pass
@@ -50,12 +47,12 @@ class Intermission(Scene):
 
     def process_input(self, event):
         if self.skipable and event.type == KEYDOWN and event.key == K_s:
-            self.next_state = self.next_scene
+            self.app.go_to_scene(self.next_scene)
         elif event.type == KEYDOWN or event.type == MOUSEBUTTONDOWN:
             try:
                 self.update()
             except StopIteration:
-                self.next_state = self.next_scene
+                self.app.go_to_scene(self.next_scene)
 
         super(Intermission, self).process_input(event)
 

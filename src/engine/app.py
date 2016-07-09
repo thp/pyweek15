@@ -17,14 +17,12 @@ class TimeAccumulator:
         self.last_time = time.time()
 
     def update(self, callback):
-        result = None
         now = time.time()
         self.accumulated += (now - self.last_time)
         self.last_time = now
         while self.accumulated > self.step:
             self.accumulated -= self.step
-            result = callback()
-        return result
+            callback()
 
 
 class App(object):
@@ -32,6 +30,7 @@ class App(object):
                  scenes, entry, level_nr="1-1"):
         pygame.init()
 
+        self.running = True
         self._clock = pygame.time.Clock()
         self.fps = 30
 
@@ -67,8 +66,20 @@ class App(object):
     def _get_scene(self, s):
         return self._scenes[s]
 
+    def go_to_scene(self, name):
+        if name == "GoodBye":
+            self.running = False
+            return
+
+        # scene wants to change!
+        self.old_scene = self.scene
+        self.scene_transition = 0.
+        # XXX: Tell the renderer to snapshot old_scene for transition
+        self.scene = self._get_scene(name)
+        self.scene.resume()
+
     def run(self):
-        while True:
+        while self.running:
             self._clock.tick(self.fps)
 
             fading_out = self.old_scene and self.scene_transition < .5
@@ -79,18 +90,7 @@ class App(object):
                     self.scene.process_input(event)
                     self.screen.process_input(event)
 
-                next_scene = self.accumulator.update(self.scene.process)
-
-                if next_scene:
-                    if next_scene == "GoodBye":
-                        break
-                    else:
-                        # scene wants to change!
-                        self.old_scene = self.scene
-                        self.scene_transition = 0.
-                        # XXX: Tell the renderer to snapshot old_scene for transition
-                        self.scene = self._get_scene(next_scene)
-                        self.scene.resume()
+                self.accumulator.update(self.scene.process)
 
             self.renderer.begin()
 

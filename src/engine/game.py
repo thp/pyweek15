@@ -52,7 +52,7 @@ class Game(Scene):
                     #print "next level:", level
                     yield level
                 # XXX ugly, ugly side effect
-                self.next_state = "NextLevelGroup_%i_%i" % tuple(level[:2])
+                self.app.go_to_scene('NextLevelGroup_%i_%i' % tuple(level[:2]))
 
         levels = self.app.resman.levels
         try:
@@ -97,7 +97,7 @@ class Game(Scene):
                 self.level_nr = next(self.levels)
                 self.reset()
             except StopIteration:
-                self.next_state = "Victory"
+                self.app.go_to_scene('Victory')
 
             # TODO: animate level end
 
@@ -111,9 +111,7 @@ class Game(Scene):
         if self.app.player.health <= 0:
             # reset player and game
             self.reset(hard=True)
-            self.next_state = "GameOver"
-
-        return super(Game, self).process()
+            self.app.go_to_scene('GameOver')
 
     def process_input(self, event):
         def go_left():
@@ -188,7 +186,7 @@ class Game(Scene):
                         # lost a life
                         # reset to beginning of current level
                         self.reset()
-                        self.next_state = "LostLife"
+                        self.app.go_to_scene('LostLife')
 
                 if column.name:
                     if column.name not in self.enemies:
