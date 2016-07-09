@@ -1,6 +1,5 @@
 from pygame.locals import KEYDOWN, K_s
 
-
 class Scene(object):
     def __init__(self, app, name):
         self.app = app
@@ -9,29 +8,14 @@ class Scene(object):
     def process(self):
         pass
 
-    def resume(self):
-        pass
-
-    def process_input(self, event):
-        pass
-
-    def draw(self):
-        pass
-
-
 class Intermission(Scene):
     def __init__(self, app, name):
         super(Intermission, self).__init__(app, name)
         self.resume()
 
     def resume(self):
-        super(Intermission, self).resume()
-
         self.creatures = None
-
-        # Set to True in _setup to allow skipping of story
         self.skipable = False
-
         self._setup()
         self.story = iter(self.story)
         self.update()
@@ -66,21 +50,13 @@ class Intermission(Scene):
 
     def _setup(self):
         is_header = True
-
-        fmt_args = {
-            'player_lives': int(self.app.player.health/3),
-        }
+        fmt_args = {'player_lives': int(self.app.player.health/3)}
 
         self.story = []
-        for line in self.app.resman.intermissions[self.name]:
-            if not line:
-                continue
-
+        for line in filter(None, self.app.resman.intermissions[self.name]):
             if is_header and line == '---':
                 is_header = False
-                continue
-
-            if is_header:
+            elif is_header:
                 key, value = self._parse_key_value(line)
                 if key == 'next_scene':
                     self.next_scene = value

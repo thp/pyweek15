@@ -16,6 +16,9 @@ class Game(Scene):
         super(Game, self).__init__(app, 'Game')
         self.enemies = {}
 
+    def resume(self):
+        pass
+
     def reset(self, hard=False):
         self.time = 0.
         self.boost = False
