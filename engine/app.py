@@ -3,7 +3,7 @@ import time
 import pygame
 from pygame.locals import KEYDOWN, K_ESCAPE, QUIT
 
-from resman import ResourceManager, AudioManager
+from resman import ResourceManager
 from sprite import Player
 from screen import Screen
 from scene import Intermission
@@ -37,7 +37,6 @@ class App(object):
         self.accumulator = TimeAccumulator(self.fps)
         self.renderer = Renderer(self)
         self.screen = Screen(self, width, height, dpy_width, dpy_height)
-        self.audman = AudioManager(self)
         self.resman = ResourceManager(self)
         self.player = Player(self)
 

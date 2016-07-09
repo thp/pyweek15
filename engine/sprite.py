@@ -89,12 +89,12 @@ class Player(Sprite):
         if self.can_jump:
             self.vertical_velocity = 15
             self.can_jump = False
-            self.app.audman.sfx("jump")
+            self.app.resman.sfx("jump")
 
     def picked_up(self, thingie):
         sfx, coins, lives = self.app.resman.pickups.get(thingie, ('', 0, 0))
         if sfx:
-            self.app.audman.sfx(sfx)
+            self.app.resman.sfx(sfx)
         self.coins_collected += coins
         if lives != 0:
             # [11:47pm] lobbbe_: what about that: you get your health back to full if you eat a fishy,
@@ -104,7 +104,7 @@ class Player(Sprite):
     def crashed(self):
         if not self.blinking:
             self.health -= 1
-            self.app.audman.sfx("crash")
+            self.app.resman.sfx("crash")
             self.blinking = self.BLINKING_FRAMES
 
         return (self.health % 3 == 0)
