@@ -1,5 +1,4 @@
 import pygame
-import os
 import time
 
 from resman import ResourceManager, AudioManager

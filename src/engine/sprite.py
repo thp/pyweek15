@@ -25,7 +25,7 @@ class Sprite(object):
     def current_sprite_name(self):
         return self.sprites[self.current_sprite]
 
-    def _draw(self, sprite_name, points, max_scale, opacity, tint, align_bottom):
+    def _draw(self, sprite_name, points, max_scale, opacity, tint, align_bottom, yoffset):
         sprite = self.app.resman.get_sprite(sprite_name)
         w, h = sprite.get_size()
         left = min(point[0] for point in points)
@@ -40,7 +40,7 @@ class Sprite(object):
             center = tuple(float(x) / len(points) for x in map(sum, zip(*points)))
             y = center[1] - h / 2
 
-        self.app.renderer.draw(sprite, (x, y), factor, opacity, tint)
+        self.app.renderer.draw(sprite, (x, y + yoffset), factor, opacity, tint)
 
 class Enemy(Sprite):
     def __init__(self, app, name):
@@ -55,7 +55,7 @@ class Enemy(Sprite):
 
     def draw(self, screen, points, opacity, tint):
         sprite_name = self.current_sprite_name()
-        self._draw(sprite_name, points, 4.0, opacity, tint, True)
+        self._draw(sprite_name, points, 4.0, opacity, tint, True, 0.0)
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
@@ -133,13 +133,11 @@ class Player(Sprite):
 
 
     def draw(self, screen, points, opacity, tint):
-        xoffset, yoffset = 0., 0.
         tint = 1., 1., 1.
 
         if self.blinking:
             value = 1. - abs(math.sin(self.blinking*.2))
             tint = 1, value, value
-            yoffset = math.sin(self.blinking*.5) * 5.
 
         sprite_name = self.current_sprite_name().replace('whale', 'whale_%s' % self.dest_x)
-        self._draw(sprite_name, points, 1.0, opacity, tint, False)
+        self._draw(sprite_name, points, 1.0, opacity, tint, False, math.sin(self.blinking*.5) * 5.)

@@ -1,7 +1,6 @@
 import os
 import glob
 import pygame
-import sys
 
 FONT_STD = ("visitor2", 38)
 FONT_SMALL = ("visitor2", 25)

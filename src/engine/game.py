@@ -8,7 +8,6 @@ from pygame.locals import *
 
 MAX_SPEEDUP = 4
 SPEEDUP_STEP = .1
-KEYBOARD_REPEAT_MOD = 7
 MIN_DEST_X = 0
 MAX_DEST_X = 4
 
@@ -76,9 +75,6 @@ class Game(Scene):
                     pass
         else:
             self.camera_y = max(0, self.app.player.y + self.time)
-
-        if self.i % KEYBOARD_REPEAT_MOD == 0:
-            next_x = max(MIN_DEST_X, min(MAX_DEST_X, self.app.player.dest_x + self.direction))
 
         self.app.player.step()
         for enemy in self.enemies.values():
