@@ -88,19 +88,13 @@ class App(object):
             if self.scene_transition >= .95:
                 # Scene transition is done
                 self.old_scene = None
+                self.scene_transition = 1.0
             else:
                 # Push forward the transition
                 self.scene_transition += .05
 
-            if self.old_scene:
-                # Fading in of new scene part
-                brightness = self.scene_transition
-                # XXX: Tell renderer to fade between old_scene and self.scene
-                self.renderer.global_tint = (brightness,)*3
-                self.scene.draw()
-            else:
-                # No transition is in progress - just draw scene
-                self.scene.draw()
+            self.renderer.global_tint = (self.scene_transition,)*3
 
-            self.renderer.global_tint = 1., 1., 1.
+            self.scene.draw()
             self.renderer.finish()
+            pygame.display.flip()

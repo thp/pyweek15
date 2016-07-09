@@ -1,49 +1,31 @@
-import pygame
-
 import time
 import array
 
+import pygame
 from OpenGL.GL import *
 
-class SpriteProxy:
+class SpriteProxy():
     def __init__(self, sprite):
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glActiveTexture(GL_TEXTURE0)
-        texture_id = glGenTextures(1)
-        self._texture_id = texture_id
+        self.sprite = sprite
+        w, h = sprite.get_size()
+        data = pygame.image.tostring(sprite, 'RGBA', 1)
+        self._texture_id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self._texture_id)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        self._sprite = sprite
-        w, h = sprite.get_size()
-        data = pygame.image.tostring(sprite, 'RGBA', 1)
-        glBindTexture(GL_TEXTURE_2D, self._texture_id)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h,
-                0, GL_RGBA, GL_UNSIGNED_BYTE, data)
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
 
     def __del__(self):
-        # Make sure to cleanup GL state to not leak textures
         glDeleteTextures(self._texture_id)
 
     def __getattr__(self, name):
-        return getattr(self._sprite, name)
-
-
-def check_shader_status(shader_id, source):
-    log = glGetShaderInfoLog(shader_id)
-    if log:
-        print 'Shader Info Log:', log
-
-def check_program_status(program_id):
-    log = glGetProgramInfoLog(program_id)
-    if log:
-        print 'Program Info Log:', log
+        return getattr(self.sprite, name)
 
 def build_shader(typ, source):
     shader_id = glCreateShader(typ)
-    glShaderSource(shader_id, source.replace('mediump', ''))
+    glShaderSource(shader_id, source)
     glCompileShader(shader_id)
-    check_shader_status(shader_id, source)
     return shader_id
 
 class ShaderEffect:
@@ -54,7 +36,6 @@ class ShaderEffect:
         glAttachShader(self.program, self.vertex_shader)
         glAttachShader(self.program, self.fragment_shader)
         glLinkProgram(self.program)
-        check_program_status(self.program)
 
     def use(self):
         glUseProgram(self.program)
@@ -65,7 +46,6 @@ class ShaderEffect:
     def uniform(self, name):
         return glGetUniformLocation(self.program, name)
 
-
 class Framebuffer:
     def __init__(self, width, height):
         self.texcoords = array.array('f', [0, 0, 0, 1, 1, 0, 1, 1])
@@ -74,18 +54,14 @@ class Framebuffer:
         self.width = width
         self.height = height
         self.texture_id = glGenTextures(1)
+        self.framebuffer_id = glGenFramebuffers(1)
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
-                0, GL_RGBA, GL_UNSIGNED_BYTE, None)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, None)
         glBindTexture(GL_TEXTURE_2D, 0)
-
-        self.framebuffer_id = glGenFramebuffers(1)
-
         self.bind()
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                GL_TEXTURE_2D, self.texture_id, 0)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.texture_id, 0)
         self.unbind()
 
     def __del__(self):
@@ -101,45 +77,37 @@ class Framebuffer:
     def rerender(self, effect):
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
         effect.use()
-
         pos = effect.attrib('position')
         glEnableVertexAttribArray(pos)
         glVertexAttribPointer(pos, 2, GL_FLOAT, GL_FALSE, 0, self.vtxcoords.tostring())
-
         tex = effect.attrib('texcoord')
         glEnableVertexAttribArray(tex)
         glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, self.texcoords.tostring())
-
         glUniform2f(effect.uniform('dimensions'), self.width, self.height)
         glUniform1f(effect.uniform('time'), time.time() - self.started)
-
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-
         glDisableVertexAttribArray(pos)
         glDisableVertexAttribArray(tex)
 
 class Renderer:
     def __init__(self, app):
         self.app = app
-        self.framebuffer = None
-        self.framebuffer2 = None
+        self.fbs = [None, None]
         self.effect_pipeline = []
         self.postprocessed = False
         self.global_tint = 1., 1., 1.
 
     def setup(self, size):
-        glClearColor(0, 0, 0, 1)
-
         width, height = size
         offset_x, offset_y = self.app.screen.offset
         scale = self.app.screen.scale
 
+        glClearColor(0, 0, 0, 1)
         glViewport(0, 0, width, height)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        glEnable(GL_TEXTURE_2D)
-
-        self.framebuffer = Framebuffer(width, height)
-        self.framebuffer2 = Framebuffer(width, height)
+        self.fbs = [Framebuffer(width, height), Framebuffer(width, height)]
 
         self.draw_sprites = ShaderEffect(self.app.resman.get_shader('draw_sprites.vsh'),
                                          self.app.resman.get_shader('draw_sprites.fsh'))
@@ -156,10 +124,6 @@ class Renderer:
         glUniform2f(self.draw_sprites.uniform('size'), width, height)
         glUniform2f(self.draw_sprites.uniform('offset'), offset_x, offset_y)
         glUniform1f(self.draw_sprites.uniform('scale'), scale)
-        glUseProgram(0)
-
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     def register_sprite(self, name, sprite):
         # Upload the sprite as a texture
@@ -168,13 +132,13 @@ class Renderer:
     def begin(self):
         if self.effect_pipeline:
             self.postprocessed = False
-            self.framebuffer.bind()
+            self.fbs[0].bind()
         glClear(GL_COLOR_BUFFER_BIT)
 
     def draw(self, sprite, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
         self.draw_sprites.use()
 
-        if not hasattr(sprite, '_sprite'):
+        if not isinstance(sprite, SpriteProxy):
             # Upload dynamically-created sprite to texture memory
             sprite = SpriteProxy(sprite)
 
@@ -184,8 +148,7 @@ class Renderer:
         r, g, b = tint
         gr, gg, gb = self.global_tint
 
-        color_loc = self.draw_sprites.uniform('color') # vec4
-        glUniform4f(color_loc, r*gr, g*gg, b*gb, opacity)
+        glUniform4f(self.draw_sprites.uniform('color'), r*gr, g*gg, b*gb, opacity)
 
         glBindTexture(GL_TEXTURE_2D, sprite._texture_id)
 
@@ -216,12 +179,9 @@ class Renderer:
         if not self.effect_pipeline:
             return
 
-        self.framebuffer.unbind()
+        self.fbs[0].unbind()
 
-        # Apply effects by drawing between framebuffers and
-        # finally rendering the last effect to the screen
-        a, b = self.framebuffer, self.framebuffer2
-
+        a, b = self.fbs
         for idx, effect in enumerate(self.effect_pipeline):
             if idx < len(self.effect_pipeline) - 1:
                 b.bind()
@@ -234,8 +194,7 @@ class Renderer:
         self.postprocessed = True
 
     def finish(self):
+        self.global_tint = 1., 1., 1.
+
         if self.effect_pipeline and not self.postprocessed:
             self.postprocess()
-
-        pygame.display.flip()
-
