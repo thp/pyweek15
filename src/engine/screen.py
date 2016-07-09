@@ -4,9 +4,10 @@ from resman import FONT_STD, FONT_SMALL
 from vmath import Matrix4x4, Vec3
 
 import pygame
-from pygame.locals import *
 
 class Screen(object):
+    SPACING = 10
+
     def __init__(self, app, title, width, height, fullscreen=True):
         self.app = app
 
@@ -27,12 +28,8 @@ class Screen(object):
         size = self.display.get_size()
 
         # Scale to fill the screen, with letterboxing
-        self.scale = min(float(size[0]) / float(self.width),
-                         float(size[1]) / float(self.height))
-
-        # Calculate the offset for symmetric letterboxing
-        self.offset = ((size[0] - self.width*self.scale) / 2,
-                       (size[1] - self.height*self.scale) / 2)
+        self.scale = min(float(size[0]) / float(self.width), float(size[1]) / float(self.height))
+        self.offset = ((size[0] - self.width*self.scale) / 2, (size[1] - self.height*self.scale) / 2)
 
         pygame.display.set_caption(title)
 
@@ -51,20 +48,10 @@ class Screen(object):
         modelview = Matrix4x4.lookAt(eye, center, up)
         self.modelview_projection = projection * modelview
 
-    def projection(self, x, y, z):
-        """Project world coordinates onto the screen."""
-
-        # x = -1..+1      (lane)
-        # y = 0..1        (jump height)
-        # z = 0..10(?)    (depth/distance)
-
-        result = self.modelview_projection.map_vec3(Vec3(x, y, z))
-        return ((0.5 + 0.5 * -result.x) * self.width, (0.5 + 0.5 * -result.y) * self.height)
-
     def draw_text(self, lines):
         font = self.app.resman.font(FONT_SMALL)
         spacing = 10
-        surfaces = [font.render(line, True, pygame.Color('white')) for line in lines]
+        surfaces = [font.render(line, True, (255, 255, 255)) for line in lines]
         total_height = (len(surfaces) - 1) * spacing + sum(surface.get_height() for surface in surfaces)
         y = (self.height - total_height) / 2
         for surface in surfaces:
@@ -72,56 +59,50 @@ class Screen(object):
             self.app.renderer.draw(surface, pos)
             y += surface.get_height() + spacing
 
+    def projection(self, x, y, z):
+        # x = -1..+1      (lane)
+        # y = 0..1        (jump height)
+        # z = 0..10(?)    (depth/distance)
+        result = self.modelview_projection.map_vec3(Vec3(x, y, z))
+        return ((0.5 + 0.5 * -result.x) * self.width, (0.5 + 0.5 * -result.y) * self.height)
+
     def draw_sprite(self, sprite, pos, opacity, tint):
-        """Project a sprite onto the screen.
-        Coordinates are given in world coordinates."""
-
         x, y, z = pos
-
         delta = 0.45
-
         points = [
-                self.projection(x-delta, y-delta, z),
-                self.projection(x+delta, y-delta, z),
-                self.projection(x+delta, y+delta, z),
-                self.projection(x-delta, y+delta, z),
+            self.projection(x-delta, y-delta, z),
+            self.projection(x+delta, y-delta, z),
+            self.projection(x+delta, y+delta, z),
+            self.projection(x-delta, y+delta, z),
         ]
-
-        #pygame.draw.polygon(self.display, pygame.Color('blue'), points, 2)
-
-        sprite.draw(self.display, points, opacity, tint)
-
+        sprite.draw(points, opacity, tint)
 
     def draw_stats(self, bonus, health):
-        """Draw bonus and health bar."""
         font = self.app.resman.font(FONT_STD)
-        offset = 10
 
-        # bonus
-        pos_x, pos_y = offset, offset
+        pos_x, pos_y = self.SPACING, self.SPACING
         icon = self.app.resman.get_sprite("pearlcount_icon-1")
-        self.app.renderer.draw(icon, (offset, offset))
+        self.app.renderer.draw(icon, (pos_x, pos_y))
 
-        pos_x += icon.w + offset
+        pos_x += icon.w + self.SPACING
         text_surf = font.render('%d' % bonus, True, (255, 255, 0))
         self.app.renderer.draw(text_surf, (pos_x, pos_y-3))
 
         # health
-        pos_x, pos_y = self.width, offset
+        pos_x, pos_y = self.width, self.SPACING
 
         while health > 0:
             health, rest = health - 3, min(health, 3)
             sprite = self.app.resman.get_sprite("whale_ico-%d" % rest)
             icon_width = sprite.w
-            pos_x -= icon_width + offset
+            pos_x -= icon_width + self.SPACING
             self.app.renderer.draw(sprite, (pos_x, pos_y))
-
 
     def draw_card(self, message, story=None, background=None, creatures=None):
         self.app.renderer.draw(background, (0, 0))
 
         font = self.app.resman.font(FONT_STD)
-        color = pygame.Color('white')
+        color = (255, 255, 255)
 
         # main message
         pos_x = self.width/15
@@ -134,21 +115,19 @@ class Screen(object):
             self.app.renderer.draw(card, (pos_x, self.height/2 + 100))
 
         if creatures:
+            spacing = 20
             width = sum(creature.w for creature in creatures)
-            width += 20 * len(creatures)
+            width += spacing * len(creatures)
 
             pos_x = 3*self.width/4 - width/2
             pos_x = min(pos_x, self.width - width)
             for creature in creatures:
                 pos_y = self.height/3 - creature.h/2
                 self.app.renderer.draw(creature, (pos_x, pos_y))
-                pos_x += creature.w + 20
-
+                pos_x += creature.w + spacing
 
     def draw_skip(self):
         font = self.app.resman.font(FONT_SMALL)
-        text = font.render("[S] ... SKIP INTRO", False, pygame.Color('white'))
-        pos = (self.width - text.get_width() - 10,
-               self.height - text.get_height() - 10)
+        text = font.render("[S] ... SKIP INTRO", False, (255, 255, 255))
+        pos = (self.width - text.get_width() - self.SPACING, self.height - text.get_height() - self.SPACING)
         self.app.renderer.draw(text, pos)
-

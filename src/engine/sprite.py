@@ -53,7 +53,7 @@ class Enemy(Sprite):
     def step(self):
         self.process()
 
-    def draw(self, screen, points, opacity, tint):
+    def draw(self, points, opacity, tint):
         sprite_name = self.current_sprite_name()
         self._draw(sprite_name, points, 4.0, opacity, tint, True, 0.0)
 
@@ -122,7 +122,7 @@ class Player(Sprite):
         self.process()
 
 
-    def draw(self, screen, points, opacity, tint):
+    def draw(self, points, opacity, tint):
         tint = 1., 1., 1.
 
         if self.blinking:

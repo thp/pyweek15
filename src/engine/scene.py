@@ -1,4 +1,4 @@
-from pygame.locals import *
+from pygame.locals import KEYDOWN, MOUSEBUTTONDOWN, K_s
 
 
 class Scene(object):
@@ -13,8 +13,7 @@ class Scene(object):
         pass
 
     def process_input(self, event):
-        if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == QUIT:
-            self.app.go_to_scene('GoodBye')
+        pass
 
     def draw(self):
         pass
@@ -53,9 +52,6 @@ class Intermission(Scene):
                 self.update()
             except StopIteration:
                 self.app.go_to_scene(self.next_scene)
-
-        super(Intermission, self).process_input(event)
-
 
     def draw(self):
         self.app.screen.draw_card(self.title, self.line,

@@ -1,5 +1,7 @@
-import pygame
 import time
+
+import pygame
+from pygame.locals import KEYDOWN, K_ESCAPE, QUIT
 
 from resman import ResourceManager, AudioManager
 from sprite import Player
@@ -62,6 +64,10 @@ class App(object):
             if self.scene_transition == 1.:
                 events = pygame.event.get()
                 for event in events:
+                    if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == QUIT:
+                        self.running = False
+                        break
+
                     self.scene.process_input(event)
 
                 self.accumulator.update(self.scene.process)

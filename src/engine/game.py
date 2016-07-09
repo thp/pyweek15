@@ -4,7 +4,8 @@ from sprite import Enemy
 
 import math
 
-from pygame.locals import *
+from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, KEYDOWN, KEYUP
+from pygame.locals import K_SPACE, K_LEFT, K_RIGHT, K_UP
 
 MAX_SPEEDUP = 4
 SPEEDUP_STEP = .1
@@ -114,7 +115,6 @@ class Game(Scene):
                 self.direction = 0
             elif event.key == K_UP:
                 self.boost = False
-        super(Game, self).process_input(event)
 
     def draw(self):
         draw_queue = [(self.app.player, (self.app.player.x - 2.0, self.app.player.height / 100,
