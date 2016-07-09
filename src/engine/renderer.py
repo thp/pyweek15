@@ -152,14 +152,10 @@ class Renderer:
 
         self.effect_pipeline = [self.blur_effect, self.underwater_effect]
 
-        # Configure constant uniforms of draw_sprites
         self.draw_sprites.use()
-        size_loc = self.draw_sprites.uniform('size') # vec2
-        offset_loc = self.draw_sprites.uniform('offset') # vec2
-        scale_loc = self.draw_sprites.uniform('scale') # float
-        glUniform2f(size_loc, width, height)
-        glUniform2f(offset_loc, offset_x, offset_y)
-        glUniform1f(scale_loc, scale)
+        glUniform2f(self.draw_sprites.uniform('size'), width, height)
+        glUniform2f(self.draw_sprites.uniform('offset'), offset_x, offset_y)
+        glUniform1f(self.draw_sprites.uniform('scale'), scale)
         glUseProgram(0)
 
         glEnable(GL_BLEND)
