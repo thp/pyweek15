@@ -11,8 +11,7 @@ from game import Game
 
 class TimeAccumulator:
     def __init__(self, fps):
-        self.fps = fps
-        self.step = 1. / float(self.fps)
+        self.step = 1. / float(fps)
         self.accumulated = 0
         self.last_time = time.time()
 
@@ -50,7 +49,6 @@ class App(object):
             self._scenes[name] = Intermission(self, name)
 
         self.scene = self._scenes[entry]
-        self.old_scene = None
         self.scene_transition = 0.
 
     def go_to_scene(self, name):
@@ -58,10 +56,7 @@ class App(object):
             self.running = False
             return
 
-        # scene wants to change!
-        self.old_scene = self.scene
         self.scene_transition = 0.
-        # XXX: Tell the renderer to snapshot old_scene for transition
         self.scene = self._scenes[name]
         self.scene.resume()
 
@@ -69,9 +64,7 @@ class App(object):
         while self.running:
             self._clock.tick(self.fps)
 
-            fading_out = self.old_scene and self.scene_transition < .5
-
-            if not fading_out:
+            if self.scene_transition == 1.:
                 events = pygame.event.get()
                 for event in events:
                     self.scene.process_input(event)
@@ -83,7 +76,6 @@ class App(object):
 
             if self.scene_transition >= .95:
                 # Scene transition is done
-                self.old_scene = None
                 self.scene_transition = 1.0
             else:
                 # Push forward the transition
