@@ -7,7 +7,6 @@ from OpenGL.GL import *
 
 class SpriteProxy:
     def __init__(self, sprite):
-        self._texcoords = array.array('f', [0., 1., 0., 0., 1., 1., 1., 0.])
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glActiveTexture(GL_TEXTURE0)
         texture_id = glGenTextures(1)
@@ -69,6 +68,8 @@ class ShaderEffect:
 
 class Framebuffer:
     def __init__(self, width, height):
+        self.texcoords = array.array('f', [0, 0, 0, 1, 1, 0, 1, 1])
+        self.vtxcoords = array.array('f', [-1, -1, -1, 1, 1, -1, 1, 1])
         self.started = time.time()
         self.width = width
         self.height = height
@@ -98,45 +99,24 @@ class Framebuffer:
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
     def rerender(self, effect):
-        # render self.texture_id as full screen quad
-        texcoords = array.array('f', [
-            0, 0,
-            0, 1,
-            1, 0,
-            1, 1,
-        ])
-        vtxcoords = array.array('f', [
-            -1, -1, 0,
-            -1, 1, 0,
-            1, -1, 0,
-            1, 1, 0,
-        ])
-
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
-
         effect.use()
 
-        vtxcoords_s = vtxcoords.tostring()
         pos = effect.attrib('position')
         glEnableVertexAttribArray(pos)
-        glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE, 0, vtxcoords_s)
+        glVertexAttribPointer(pos, 2, GL_FLOAT, GL_FALSE, 0, self.vtxcoords.tostring())
 
-        texcoords_s = texcoords.tostring()
         tex = effect.attrib('texcoord')
         glEnableVertexAttribArray(tex)
-        glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, texcoords_s)
+        glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, self.texcoords.tostring())
 
-        dim = effect.uniform('dimensions')
-        glUniform2f(dim, self.width, self.height)
-
-        tim = effect.uniform('time')
-        glUniform1f(tim, time.time() - self.started)
+        glUniform2f(effect.uniform('dimensions'), self.width, self.height)
+        glUniform1f(effect.uniform('time'), time.time() - self.started)
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
         glDisableVertexAttribArray(pos)
         glDisableVertexAttribArray(tex)
-        glUseProgram(0)
 
 class Renderer:
     def __init__(self, app):
@@ -211,21 +191,16 @@ class Renderer:
         color_loc = self.draw_sprites.uniform('color') # vec4
         glUniform4f(color_loc, r*gr, g*gg, b*gb, opacity)
 
-        vertices = array.array('f', [
-            x, y, 0.,
-            x, y+h*scale, 0.,
-            x+w*scale, y, 0.,
-            x+w*scale, y+h*scale, 0.,
-        ])
-
         glBindTexture(GL_TEXTURE_2D, sprite._texture_id)
 
+        vertices = array.array('f', [x, y, x, y+h*scale, x+w*scale, y, x+w*scale, y+h*scale])
         vertices_data = vertices.tostring()
         position_loc = self.draw_sprites.attrib('position')
         glEnableVertexAttribArray(position_loc)
-        glVertexAttribPointer(position_loc, 3, GL_FLOAT, GL_FALSE, 0, vertices_data)
+        glVertexAttribPointer(position_loc, 2, GL_FLOAT, GL_FALSE, 0, vertices_data)
 
-        texcoord_data = sprite._texcoords.tostring()
+        texcoords = array.array('f', [0., 1., 0., 0., 1., 1., 1., 0.])
+        texcoord_data = texcoords.tostring()
         texcoord_loc = self.draw_sprites.attrib('texcoord')
         glEnableVertexAttribArray(texcoord_loc)
         glVertexAttribPointer(texcoord_loc, 2, GL_FLOAT, GL_FALSE, 0, texcoord_data)
