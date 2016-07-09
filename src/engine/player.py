@@ -1,5 +1,6 @@
-from engine.sprite import Sprite
 import math
+
+from sprite import Sprite
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981

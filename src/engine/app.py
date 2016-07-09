@@ -1,12 +1,13 @@
 import pygame
 import os
+import time
+
 from resman import ResourceManager
 from audman import AudioManager
-from logic.player import Player
+from player import Player
 from screen import Screen
 from scene import Intermission
-from renderer_opengl import Renderer
-import time
+from renderer import Renderer
 
 class TimeAccumulator:
     def __init__(self, fps):

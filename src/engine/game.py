@@ -1,13 +1,11 @@
-
-from engine.scene import Scene
-from logic.level import Level
-from logic.enemy import Enemy
+from scene import Scene
+from level import Level
+from enemy import Enemy
 
 import math
 from itertools import *
 from operator import *
 
-import pygame
 from pygame.locals import *
 
 MAX_SPEEDUP = 4

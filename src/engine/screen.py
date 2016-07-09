@@ -1,10 +1,10 @@
-import pygame
-from resman import FONT_STD, FONT_SMALL
-from pygame.locals import *
-
 import math
 
+from resman import FONT_STD, FONT_SMALL
 from vmath import Matrix4x4, Vec3
+
+import pygame
+from pygame.locals import *
 
 class Screen(object):
     def __init__(self, app, title, width, height, fullscreen=True):

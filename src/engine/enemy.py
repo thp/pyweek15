@@ -1,4 +1,4 @@
-from engine.sprite import Sprite
+from sprite import Sprite
 
 class Enemy(Sprite):
     def __init__(self, app, name):
