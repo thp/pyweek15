@@ -14,9 +14,8 @@ class Screen(object):
         self.modelview_projection = projection * modelview
 
     def draw_text(self, lines):
-        font = self.app.resman.fonts[FONT_SMALL]
         spacing = 10
-        surfaces = [font.render(line, True, (255, 255, 255)) for line in lines]
+        surfaces = [self.app.resman.fonts[FONT_SMALL].render(line, True, (255, 255, 255)) for line in lines]
         total_height = (len(surfaces) - 1) * spacing + sum(surface.get_height() for surface in surfaces)
         y = (self.height - total_height) / 2
         for surface in surfaces:
@@ -29,24 +28,16 @@ class Screen(object):
         return ((0.5 + 0.5 * -result.x) * self.width, (0.5 + 0.5 * -result.y) * self.height)
 
     def draw_sprite(self, sprite, pos, opacity, tint):
-        x, y, z = pos
-        delta = 0.45
-        sprite.draw([
-            self.projection(x-delta, y-delta, z),
-            self.projection(x+delta, y-delta, z),
-            self.projection(x+delta, y+delta, z),
-            self.projection(x-delta, y+delta, z),
-        ], opacity, tint)
+        p = lambda dx, dy, (x, y, z), f=0.45: self.projection(x+dx*f, y+dy*f, z)
+        sprite.draw([p(-1, -1, pos), p(1, -1, pos), p(1, 1, pos), p(-1, 1, pos)], opacity, tint)
 
     def draw_stats(self, bonus, health):
-        font = self.app.resman.fonts[FONT_STD]
-
         pos_x, pos_y = self.SPACING, self.SPACING
         icon = self.app.resman.sprites['pearlcount_icon-1']
         self.app.renderer.draw(icon, (pos_x, pos_y))
 
         pos_x += icon.w + self.SPACING
-        text_surf = font.render('%d' % bonus, True, (255, 255, 0))
+        text_surf = self.app.resman.fonts[FONT_STD].render('%d' % bonus, True, (255, 255, 0))
         self.app.renderer.draw(text_surf, (pos_x, pos_y-3))
 
         pos_x, pos_y = self.width, self.SPACING
@@ -60,13 +51,13 @@ class Screen(object):
     def draw_card(self, message, story=None, background=None, creatures=None):
         self.app.renderer.draw(background, (0, 0))
 
-        font = self.app.resman.fonts[FONT_STD]
         pos_x = self.width/15
-        card = font.render(message, False, (255, 255, 255))
+        card = self.app.resman.fonts[FONT_STD].render(message, False, (255, 255, 255))
         self.app.renderer.draw(card, (pos_x, self.height/2 + 50))
 
         if story:
-            self.app.renderer.draw(font.render(story, False, (255, 255, 255)), (pos_x, self.height/2 + 100))
+            self.app.renderer.draw(self.app.resman.fonts[FONT_STD].render(story, False, (255, 255, 255)),
+                                   (pos_x, self.height/2 + 100))
 
         if creatures:
             width = sum(creature.w for creature in creatures) + self.SPACING * len(creatures)
