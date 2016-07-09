@@ -54,7 +54,7 @@ class Game(Scene):
                     #print "next level:", level
                     yield level
                 # XXX ugly, ugly side effect
-                self.next_state = "NextLevelGroup_%i_%i" % level
+                self.next_state = "NextLevelGroup_%i_%i" % tuple(level[:2])
 
         levels = self.app.resman.levels
         try:
