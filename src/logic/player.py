@@ -1,17 +1,11 @@
 from engine.sprite import Sprite
 import math
-INITIAL_HEALTH = 9
-MAX_HEALTH = 30
-
-def center(points):
-    """Calculate the center of a list of points"""
-    sum_x, sum_y = map(sum, zip(*points))
-    n = len(points)
-    return float(sum_x) / n, float(sum_y) / n
 
 class Player(Sprite):
     GRAVITY = 1.2  # .981
     BLINKING_FRAMES = 20
+    INITIAL_HEALTH = 9
+    MAX_HEALTH = 30
 
     def __init__(self, app):
         self.app = app
@@ -32,8 +26,8 @@ class Player(Sprite):
 
         if hard:
             self.coins_collected = 0
-            self.health = INITIAL_HEALTH
-            self.max_health = MAX_HEALTH
+            self.health = self.INITIAL_HEALTH
+            self.max_health = self.MAX_HEALTH
 
     def jump(self):
         if self.can_jump:
@@ -59,7 +53,7 @@ class Player(Sprite):
             # and if your health is already full - and only then - you get an extra life?
             self.app.audman.sfx("fishy")
             lives = int(self.health/3) + 1
-            self.health = min(lives*3, MAX_HEALTH)
+            self.health = min(lives*3, self.MAX_HEALTH)
 
     def crashed(self):
         if not self.blinking:
@@ -97,7 +91,7 @@ class Player(Sprite):
         sprite = self.lookup_sprite(sprite_name)
 
         w, h = sprite.get_size()
-        coords = center(points)
-        coords = (coords[0] - w / 2 + xoffset, coords[1] - h / 2 + yoffset)
-        self.app.renderer.draw(sprite, coords, 1., opacity, tint)
+        center = tuple(float(x) / len(points) for x in map(sum, zip(*points)))
+        center = (center[0] - w / 2 + xoffset, center[1] - h / 2 + yoffset)
+        self.app.renderer.draw(sprite, center, 1., opacity, tint)
 
