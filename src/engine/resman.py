@@ -76,11 +76,7 @@ class ResourceManager():
 
         for fn in sorted(glob.glob(self._path("levels", "*.txt"))):
             bn, _ = os.path.splitext(os.path.basename(fn))
-            try:
-                _, group, number = bn.split('-')
-            except ValueError:
-                # ignore broken filenames
-                continue
+            _, group, number = bn.split('-')
             self.levels.append((int(group), int(number)))
 
         ## load intermissions
