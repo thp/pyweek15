@@ -1,7 +1,7 @@
 from scene import Scene
 from resman import Level
 from sprite import Enemy
-from porting import sin, modf
+from porting import sin
 
 class Game(Scene):
     FADE_OFFSET = 6
@@ -38,8 +38,10 @@ class Game(Scene):
 
     def process(self):
         self.speedup = max(0, min(4, self.speedup + (0.1 if self.boost else -0.2)))
-        self.time, dy = modf(self.time + 0.1 * (1 + self.speedup))
-        self.app.player.y += int(dy)
+        self.time += 0.1 * (1 + self.speedup)
+        dy = int(self.time)
+        self.app.player.y += dy
+        self.time -= dy
 
         if self.app.player.y > len(self.level.rows):
             if not self.done:
