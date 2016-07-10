@@ -186,6 +186,96 @@ TextureType = {
     .tp_new = Texture_new,
 };
 
+typedef struct {
+    PyObject_HEAD
+
+    GLuint framebuffer_id;
+    PyObject *texture;
+} FramebufferObject;
+
+static void
+Framebuffer_dealloc(FramebufferObject *self)
+{
+    glDeleteFramebuffers(1, &self->framebuffer_id);
+    self->ob_type->tp_free((PyObject *)self);
+}
+
+static PyObject *
+Framebuffer_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
+{
+    FramebufferObject *self = (FramebufferObject *)type->tp_alloc(type, 0);
+
+    if (self != NULL) {
+        self->framebuffer_id = 0;
+        self->texture = NULL;
+    }
+
+    return (PyObject *)self;
+}
+
+static int
+Framebuffer_init(FramebufferObject *self, PyObject *args, PyObject *kwargs)
+{
+    int width, height;
+
+    if (!PyArg_ParseTuple(args, "ii", &width, &height)) {
+        return -1;
+    }
+
+    PyObject *textureArgs = Py_BuildValue("iis", width, height, NULL);
+    self->texture = PyObject_CallObject((PyObject *)&TextureType, textureArgs);
+    Py_DECREF(textureArgs);
+
+    glGenFramebuffers(1, &self->framebuffer_id);
+    glBindFramebuffer(GL_FRAMEBUFFER, self->framebuffer_id);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ((TextureObject *)(self->texture))->texture_id, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    return 0;
+}
+
+static PyObject *
+Framebuffer_bind(FramebufferObject *self)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, self->framebuffer_id);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+Framebuffer_unbind(FramebufferObject *self)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Py_RETURN_NONE;
+}
+
+static PyMemberDef
+Framebuffer_members[] = {
+    {"framebuffer_id", T_INT, offsetof(FramebufferObject, framebuffer_id), 0, "GL framebuffer name"},
+    {"texture", T_OBJECT_EX, offsetof(FramebufferObject, texture), 0, "Texture object"},
+    {NULL}
+};
+
+static PyMethodDef
+Framebuffer_methods[] = {
+    {"bind", (PyCFunction)Framebuffer_bind, METH_NOARGS, "Bind the framebuffer as render target"},
+    {"unbind", (PyCFunction)Framebuffer_unbind, METH_NOARGS, "Unbind the framebuffer as render target"},
+    {NULL}
+};
+
+static PyTypeObject
+FramebufferType = {
+    PyObject_HEAD_INIT(NULL)
+    .tp_name = "core.Framebuffer",
+    .tp_basicsize = sizeof(FramebufferObject),
+    .tp_dealloc = (destructor)Framebuffer_dealloc,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_doc = "GL framebuffer",
+    .tp_methods = Framebuffer_methods,
+    .tp_members = Framebuffer_members,
+    .tp_init = (initproc)Framebuffer_init,
+    .tp_new = Framebuffer_new,
+};
+
 static PyMethodDef CoreMethods[] = {
     {"sin", core_sin, METH_VARARGS, "sine"},
     {"cos", core_cos, METH_VARARGS, "cosine"},
@@ -196,7 +286,7 @@ static PyMethodDef CoreMethods[] = {
     {"draw_init", (PyCFunction)core_draw_init, METH_NOARGS, "init opengl"},
     {"draw_clear", (PyCFunction)core_draw_clear, METH_NOARGS, "clear screen"},
     {"draw_quad", (PyCFunction)core_draw_quad, METH_NOARGS, "draw a quad"},
-    {NULL, NULL, 0, NULL}        /* Sentinel */
+    {NULL, NULL, 0, NULL}
 };
 
 PyMODINIT_FUNC
@@ -204,12 +294,19 @@ initcore(void)
 {
     srand((uint32_t)time(NULL));
 
-    TextureType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&TextureType) < 0)
-        return;
-
     PyObject *m = Py_InitModule("core", CoreMethods);
 
+    TextureType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&TextureType) < 0) {
+        return;
+    }
     Py_INCREF(&TextureType);
     PyModule_AddObject(m, "Texture", (PyObject *)&TextureType);
+
+    FramebufferType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&FramebufferType) < 0) {
+        return;
+    }
+    Py_INCREF(&FramebufferType);
+    PyModule_AddObject(m, "Framebuffer", (PyObject *)&FramebufferType);
 }

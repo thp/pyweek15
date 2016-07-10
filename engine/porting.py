@@ -3,7 +3,8 @@ import pygame
 import os
 import glob
 
-from core import sin, cos, sqrt, time_seconds, randint, randuniform, draw_init, draw_clear, draw_quad, Texture
+from core import sin, cos, sqrt, time_seconds, randint, randuniform
+from core import draw_init, draw_clear, draw_quad, Texture, Framebuffer
 
 from OpenGL.GL import *
 
@@ -84,15 +85,3 @@ class ShaderProgram():
         texture.bind()
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', position).tostring())
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', texcoord).tostring())
-
-class Framebuffer():
-    def __init__(self, width, height):
-        self.framebuffer_id = glGenFramebuffers(1)
-        self.texture = Texture(width, height, None)
-        self.bind()
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.texture.texture_id, 0)
-        self.unbind()
-
-    __del__ = lambda self: glDeleteFramebuffers(self.framebuffer_id)
-    bind = lambda self: glBindFramebuffer(GL_FRAMEBUFFER, self.framebuffer_id)
-    unbind = lambda self: glBindFramebuffer(GL_FRAMEBUFFER, 0)
