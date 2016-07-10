@@ -33,7 +33,7 @@ core_sqrt(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-core_time(PyObject *self, PyObject *args)
+core_time_seconds(PyObject *self, PyObject *args)
 {
     struct timeval tv;
     double result = 0.0;
@@ -47,7 +47,7 @@ static PyMethodDef CoreMethods[] = {
     {"sin", core_sin, METH_VARARGS, "sine"},
     {"cos", core_cos, METH_VARARGS, "cosine"},
     {"sqrt", core_sqrt, METH_VARARGS, "square root"},
-    {"time", core_time, METH_NOARGS, "current time"},
+    {"time_seconds", core_time_seconds, METH_NOARGS, "current time"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
