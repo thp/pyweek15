@@ -1,8 +1,4 @@
-import time
-
-import pygame
-from pygame.locals import KEYDOWN, KEYUP, QUIT, K_ESCAPE, K_SPACE, K_s, K_LEFT, K_RIGHT, K_UP
-
+from porting import time_seconds, next_event, create_window, swap_buffers
 from resman import ResourceManager
 from sprite import Player
 from screen import Screen
@@ -14,10 +10,10 @@ class TimeAccumulator:
     def __init__(self, fps):
         self.step = 1. / float(fps)
         self.accumulated = 0
-        self.last_time = time.time()
+        self.last_time = time_seconds()
 
     def update(self, callback):
-        now = time.time()
+        now = time_seconds()
         self.accumulated += (now - self.last_time)
         self.last_time = now
         while self.accumulated > self.step:
@@ -25,12 +21,9 @@ class TimeAccumulator:
             callback()
 
 class App(object):
-    KEYMAP = {K_SPACE: ' ', K_s: 's', K_LEFT: 'left', K_RIGHT: 'right', K_UP: 'up'}
 
     def __init__(self, title, width, height, entry):
-        pygame.init()
-        self.display = pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
-        pygame.display.set_caption(title)
+        self.display = create_window(width, height, title)
 
         self.running = True
         self.accumulator = TimeAccumulator(30)
@@ -59,16 +52,15 @@ class App(object):
             self.scene_transition += .05
             if self.scene_transition >= .95:
                 self.scene_transition = 1.0
-                events = pygame.event.get()
-                for event in events:
-                    if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == QUIT:
-                        self.running = False
-                    elif event.type in (KEYDOWN, KEYUP):
-                        self.scene.process_input((event.type == KEYDOWN), self.KEYMAP.get(event.key, None))
+                quit, key_event, pressed, key = next_event()
+                if quit or (key_event and pressed and key == 'esc'):
+                    self.running = False
+                elif key_event:
+                    self.scene.process_input(pressed, key)
                 self.accumulator.update(self.scene.process)
 
             self.renderer.begin()
             self.renderer.global_tint = (self.scene_transition,)*3
             self.scene.draw()
             self.renderer.finish()
-            pygame.display.flip()
+            swap_buffers()

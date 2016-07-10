@@ -1,48 +1,47 @@
-import os
-import glob
-import pygame
-from collections import defaultdict
+from porting import load_image, Font, Sound, get_lines, find_files, file_path
 
 FONT_SMALL, FONT_STD, FONT_BIG = FONTS = 25, 38, 90
+
+def bn_ext(filename):
+    pos = filename.rfind('/')
+    return filename[pos+1:] if pos != -1 else filename
+
+def bn(filename):
+    filename = bn_ext(filename)
+    pos = filename.rfind('.')
+    return filename[:pos] if pos != -1 else filename
 
 class ResourceManager():
     def __init__(self, app):
         self.app = app
 
-        bn = lambda fn: os.path.splitext(os.path.basename(fn))[0]
-        path = lambda *args: os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'data', *args)
-        gb = lambda *args: glob.glob(path(*args))
-        img = lambda fn: self.upload_surface(pygame.image.load(fn).convert_alpha())
-        lines = lambda fn: open(fn).read().splitlines()
+        self.sprites = {bn(fn): self.upload_surface(*load_image(fn)) for fn in find_files('sprites', "*.png")}
+        self.creatures = {bn(fn): self.upload_surface(*load_image(fn)) for fn in find_files('creatures', "*.png")}
+        self.fonts = {size: Font(file_path('fonts', 'visitor2.ttf'), size) for size in FONTS}
+        self.intermissions = {bn(fn): get_lines(fn) for fn in find_files('intermissions', '*.txt')}
+        self.shaders = {bn_ext(fn): '\n'.join(get_lines(fn)) for fn in find_files('shaders', '*.*')}
+        self.sounds = {bn(fn): Sound(fn) for fn in find_files('sounds', '*.wav')}
 
-        self.sprites = {bn(fn): img(fn) for fn in gb('sprites', "*.png")}
-        self.creatures = {bn(fn): img(fn) for fn in gb('creatures', "*.png")}
-        self.fonts = {size: pygame.font.Font(path('fonts', 'visitor2.ttf'), size) for size in FONTS}
-        self.intermissions = {bn(fn): lines(fn) for fn in gb('intermissions', '*.txt')}
-        self.shaders = {os.path.basename(fn): open(fn).read() for fn in gb('shaders', '*.*')}
-        self.sounds = {bn(fn): pygame.mixer.Sound(fn) for fn in gb('sounds', '*.wav')}
-
-        self.backgrounds = defaultdict(list)
-        for fn in sorted(gb('backgrounds', "*.jpg")):
-            self.backgrounds[bn(fn).split('-')[0]].append(img(fn))
+        self.backgrounds = {}
+        for fn in sorted(find_files('backgrounds', "*.jpg")):
+            self.backgrounds.setdefault(bn(fn).split('-')[0], []).append(self.upload_surface(*load_image(fn)))
 
         self.levels = []
-        for fn in sorted(gb("levels", "*.txt")):
+        for fn in sorted(find_files("levels", "*.txt")):
             _, group, number = bn(fn).split('-')
-            self.levels.append((int(group), int(number), lines(fn)))
+            self.levels.append((int(group), int(number), get_lines(fn)))
 
-        pickup_lines = [line.split(':') for line in lines(path('pickups.txt')) if not line.startswith('#')]
+        pickup_lines = [line.split(':') for line in get_lines(file_path('pickups.txt')) if not line.startswith('#')]
         self.pickups = {thingie: (sfx, int(coins), int(lives)) for thingie, sfx, coins, lives in pickup_lines}
 
-    def upload_surface(self, surf):
-        return self.app.renderer.upload_texture(surf.get_width(), surf.get_height(),
-                                                pygame.image.tostring(surf, 'RGBA', 1))
+    def upload_surface(self, width, height, rgba):
+        return self.app.renderer.upload_texture(width, height, rgba)
 
     def render_text(self, font, text):
-        return self.upload_surface(self.fonts[font].render(text, True, (255, 255, 255)))
+        return self.app.renderer.upload_texture(*self.fonts[font].render(text))
 
     def sfx(self, name):
-        pygame.mixer.find_channel(True).play(self.sounds[name])
+        self.sounds[name].play()
 
 class Item(object):
     def __init__(self, name, is_enemy):
