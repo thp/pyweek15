@@ -17,7 +17,7 @@ class Renderer():
         self.underwater_effect = mkshader('effect_vertex_shader.vsh', 'underwater_effect.fsh')
         self.effect_pipeline = [self.blur_effect, self.underwater_effect]
 
-        self.draw_sprites.use()
+        self.draw_sprites.bind()
         self.draw_sprites.uniform2f('size', width, height)
 
     def upload_texture(self, width, height, rgba):

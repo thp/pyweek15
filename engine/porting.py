@@ -110,7 +110,7 @@ class ShaderProgram():
         glBindAttribLocation(self.program, 1, 'texcoord')
         glLinkProgram(self.program)
 
-    use = lambda self: glUseProgram(self.program)
+    bind = lambda self: glUseProgram(self.program)
     uniform = lambda self, name: glGetUniformLocation(self.program, name)
     uniform1f = lambda self, name, v0: glUniform1f(self.uniform(name), v0)
     uniform2f = lambda self, name, v0, v1: glUniform2f(self.uniform(name), v0, v1)
@@ -118,7 +118,7 @@ class ShaderProgram():
     __del__ = lambda self: glDeleteProgram(self.program)
 
     def enable_arrays(self, texture, position, texcoord):
-        self.use()
+        self.bind()
         texture.bind()
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', position).tostring())
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', texcoord).tostring())
