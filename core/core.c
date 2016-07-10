@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <Python.h>
 
+#include <OpenGL/GL.h>
+
 static PyObject *
 core_sin(PyObject *self, PyObject *args)
 {
@@ -68,6 +70,34 @@ core_randuniform(PyObject *self, PyObject *args)
     return Py_BuildValue("d", result);
 }
 
+static PyObject *
+core_draw_init(PyObject *self, PyObject *args)
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+core_draw_clear(PyObject *self, PyObject *args)
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+core_draw_quad(PyObject *self, PyObject *args)
+{
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef CoreMethods[] = {
     {"sin", core_sin, METH_VARARGS, "sine"},
     {"cos", core_cos, METH_VARARGS, "cosine"},
@@ -75,6 +105,9 @@ static PyMethodDef CoreMethods[] = {
     {"time_seconds", core_time_seconds, METH_NOARGS, "current time"},
     {"randint", core_randint, METH_VARARGS, "random integer"},
     {"randuniform", core_randuniform, METH_VARARGS, "random uniform"},
+    {"draw_init", core_draw_init, METH_NOARGS, "init opengl"},
+    {"draw_clear", core_draw_clear, METH_NOARGS, "clear screen"},
+    {"draw_quad", core_draw_quad, METH_NOARGS, "draw a quad"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

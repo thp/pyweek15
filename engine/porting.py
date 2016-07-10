@@ -3,7 +3,7 @@ import pygame
 import os
 import glob
 
-from core import sin, cos, sqrt, time_seconds, randint, randuniform
+from core import sin, cos, sqrt, time_seconds, randint, randuniform, draw_init, draw_clear, draw_quad
 
 from OpenGL.GL import *
 
@@ -59,23 +59,6 @@ class Sound():
 
     def play(self):
         pygame.mixer.find_channel(True).play(self._sound)
-
-class Draw():
-    @staticmethod
-    def init():
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glEnableVertexAttribArray(0)
-        glEnableVertexAttribArray(1)
-
-    @staticmethod
-    def clear():
-        glClear(GL_COLOR_BUFFER_BIT)
-
-    @staticmethod
-    def quad():
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
 class Texture():
     def __init__(self, w, h, rgba):

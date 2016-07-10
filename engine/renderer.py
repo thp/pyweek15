@@ -1,4 +1,4 @@
-from porting import time_seconds, Draw, Texture, ShaderProgram, Framebuffer
+from porting import time_seconds, Texture, ShaderProgram, Framebuffer, draw_init, draw_quad, draw_clear
 
 class Renderer():
     def __init__(self, app):
@@ -8,7 +8,7 @@ class Renderer():
         self.started = time_seconds()
 
     def resize(self, width, height):
-        Draw.init()
+        draw_init()
         self.fbs = [Framebuffer(width, height), Framebuffer(width, height)]
 
         mkshader = lambda vert, frag: ShaderProgram(self.app.resman.shaders[vert], self.app.resman.shaders[frag])
@@ -27,7 +27,7 @@ class Renderer():
         if self.effect_pipeline:
             self.postprocessed = False
             self.fbs[0].bind()
-        Draw.clear()
+        draw_clear()
 
     def draw(self, texture, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
         x, y = pos
@@ -37,13 +37,13 @@ class Renderer():
 
         self.draw_sprites.enable_arrays(texture, [x,y,x,y+hs,x+ws,y,x+ws,y+hs], [0,1,0,0,1,1,1,0])
         self.draw_sprites.uniform4f('color', r*gr, g*gg, b*gb, opacity)
-        Draw.quad()
+        draw_quad()
 
     def render_effect(self, effect, fbo):
         effect.enable_arrays(fbo.texture, [-1,-1,-1,1,1,-1,1,1], [0,0,0,1,1,0,1,1])
         effect.uniform2f('dimensions', fbo.texture.w, fbo.texture.h)
         effect.uniform1f('time', time_seconds() - self.started)
-        Draw.quad()
+        draw_quad()
 
     def postprocess(self):
         if self.effect_pipeline and not self.postprocessed:
@@ -51,11 +51,11 @@ class Renderer():
             a, b = self.fbs
             for idx, effect in enumerate(self.effect_pipeline[:-1]):
                 b.bind()
-                Draw.clear()
+                draw_clear()
                 self.render_effect(effect, a)
                 b.unbind()
                 a, b = b, a
-            Draw.clear()
+            draw_clear()
             self.render_effect(self.effect_pipeline[-1], a)
             self.postprocessed = True
 
