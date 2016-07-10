@@ -2,7 +2,7 @@ import pygame
 import os
 import glob
 
-from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image
+from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image, render_text
 from core import draw_init, draw_clear, draw_quad, Texture, Framebuffer, ShaderProgram
 
 from pygame.locals import KEYDOWN, KEYUP, QUIT, K_ESCAPE, K_SPACE, K_s, K_LEFT, K_RIGHT, K_UP
@@ -40,12 +40,14 @@ def find_files(*args):
     return glob.glob(file_path(*args))
 
 class Font():
-    def __init__(self, filename, size):
-        self._font = pygame.font.Font(filename, size)
+    def __init__(self, size):
+        self.size = size
 
     def render(self, text):
-        surf = self._font.render(text, True, (255, 255, 255))
-        return Texture(surf.get_width(), surf.get_height(), pygame.image.tostring(surf, 'RGBA', 0), 4)
+        result = render_text(text)
+        result.w *= self.size
+        result.h *= self.size
+        return result
 
 class Sound():
     def __init__(self, filename):

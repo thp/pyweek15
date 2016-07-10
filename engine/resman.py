@@ -1,6 +1,6 @@
 from porting import load_image, Font, Sound, get_lines, find_files, file_path
 
-FONT_SMALL, FONT_STD, FONT_BIG = FONTS = 25, 38, 90
+FONT_SMALL, FONT_STD, FONT_BIG = FONTS = 1.6, 2.1, 5.6
 
 def bn_ext(filename):
     pos = filename.rfind('/')
@@ -17,7 +17,7 @@ class ResourceManager():
 
         self.sprites = {bn(fn): load_image(fn) for fn in find_files('sprites', "*.png")}
         self.creatures = {bn(fn): load_image(fn) for fn in find_files('creatures', "*.png")}
-        self.fonts = {size: Font(file_path('fonts', 'visitor2.ttf'), size) for size in FONTS}
+        self.fonts = {size: Font(size) for size in FONTS}
         self.intermissions = {bn(fn): get_lines(fn) for fn in find_files('intermissions', '*.txt')}
         self.shaders = {bn_ext(fn): '\n'.join(get_lines(fn)) for fn in find_files('shaders', '*.*')}
         self.sounds = {bn(fn): Sound(fn) for fn in find_files('sounds', '*.wav')}

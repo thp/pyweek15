@@ -11,6 +11,8 @@
 #define STBI_ONLY_JPEG
 #include "stb_image.h"
 
+#include "fontaine.h"
+
 static PyTypeObject TextureType;
 
 static PyObject *
@@ -133,6 +135,38 @@ core_load_image(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *
+core_render_text(PyObject *self, PyObject *args)
+{
+    const char *text;
+    if (!PyArg_ParseTuple(args, "s", &text)) {
+        return NULL;
+    }
+
+    int width, height;
+
+    struct FontaineFont *font = fontaine_new(NULL, NULL, NULL);
+    unsigned char *pixels = fontaine_render(font, text, &width, &height);
+    unsigned char *pixels2 = malloc(width * height * 2);
+    // LUMINANCE_ALPHA format needs 2 bytes per pixels -- use that opportunity to make
+    // the luminance part white (0xFF) and only take the alpha channel from the font
+    for (int i=0; i<width*height; i++) {
+        pixels2[i*2+0] = 0xFF;
+        pixels2[i*2+1] = pixels[i];
+    }
+    fontaine_free_pixels(font, pixels);
+    fontaine_free(font);
+
+    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels2, width * height * 2);
+    free(pixels2);
+
+    PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, 2);
+    PyObject *result = PyObject_CallObject((PyObject *)&TextureType, textureArgs);
+    Py_DECREF(textureArgs);
+
+    return result;
+}
+
 typedef struct {
     PyObject_HEAD
 
@@ -167,20 +201,24 @@ Texture_init(TextureObject *self, PyObject *args, PyObject *kwargs)
 {
     const char *rgba;
     int rgba_len;
-    int components;
+    int comp;
 
-    if (!PyArg_ParseTuple(args, "iiz#i", &self->w, &self->h, &rgba, &rgba_len, &components)) {
+    if (!PyArg_ParseTuple(args, "iiz#i", &self->w, &self->h, &rgba, &rgba_len, &comp)) {
         return -1;
     }
 
-    assert(rgba_len == (self->w * self->h * components));
+    assert(rgba_len == (self->w * self->h * comp));
+
+    GLenum format = (comp == 2) ? GL_LUMINANCE_ALPHA : ((comp == 4) ? GL_RGBA : GL_RGB);
 
     glGenTextures(1, &self->texture_id);
     glBindTexture(GL_TEXTURE_2D, self->texture_id);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, (components == 4) ? GL_RGBA : GL_RGB, self->w, self->h,
-                 0, (components == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, rgba);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (format == GL_LUMINANCE_ALPHA) ? GL_NEAREST : GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (format == GL_LUMINANCE_ALPHA) ? GL_NEAREST : GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, self->w, self->h, 0, format, GL_UNSIGNED_BYTE, rgba);
 
     return 0;
 }
@@ -504,6 +542,7 @@ static PyMethodDef CoreMethods[] = {
     {"draw_clear", (PyCFunction)core_draw_clear, METH_NOARGS, "clear screen"},
     {"draw_quad", (PyCFunction)core_draw_quad, METH_NOARGS, "draw a quad"},
     {"load_image", core_load_image, METH_VARARGS, "Load image data from a file"},
+    {"render_text", core_render_text, METH_VARARGS, "Render text to a texture"},
     {NULL, NULL, 0, NULL}
 };
 
