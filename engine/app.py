@@ -1,4 +1,4 @@
-from porting import time_seconds, next_event, create_window, swap_buffers
+from porting import time_seconds, Window
 from resman import ResourceManager
 from sprite import Player
 from screen import Screen
@@ -23,7 +23,7 @@ class TimeAccumulator:
 class App(object):
 
     def __init__(self, title, width, height, entry):
-        self.display = create_window(width, height, title)
+        self.window = Window(width, height, title)
 
         self.running = True
         self.accumulator = TimeAccumulator(30)
@@ -52,7 +52,7 @@ class App(object):
             self.scene_transition += .05
             if self.scene_transition >= .95:
                 self.scene_transition = 1.0
-                quit, key_event, pressed, key = next_event()
+                quit, key_event, pressed, key = self.window.next_event()
                 if quit or (key_event and pressed and key == 'esc'):
                     self.running = False
                 elif key_event:
@@ -63,4 +63,4 @@ class App(object):
             self.renderer.global_tint = (self.scene_transition,)*3
             self.scene.draw()
             self.renderer.finish()
-            swap_buffers()
+            self.window.swap_buffers()
