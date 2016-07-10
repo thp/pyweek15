@@ -6,6 +6,13 @@
 
 #include <OpenGL/GL.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#define STBI_ONLY_JPEG
+#include "stb_image.h"
+
+static PyTypeObject TextureType;
+
 static PyObject *
 core_sin(PyObject *self, PyObject *args)
 {
@@ -99,6 +106,32 @@ core_draw_quad(PyObject *self)
     Py_RETURN_NONE;
 }
 
+static PyObject *
+core_load_image(PyObject *self, PyObject *args)
+{
+    const char *filename;
+    if (!PyArg_ParseTuple(args, "s", &filename)) {
+        return NULL;
+    }
+
+    FILE *fp = fopen(filename, "rb");
+    fseek(fp, 0, SEEK_END);
+    int len = (int)ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    unsigned char *image_data = malloc(len);
+    fread(image_data, len, 1, fp);
+    int width, height, comp;
+    stbi_uc *pixels = stbi_load_from_memory(image_data, len, &width, &height, &comp, 0);
+    free(image_data);
+    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels, width * height * comp);
+    stbi_image_free(pixels);
+
+    PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, comp);
+    PyObject *result = PyObject_CallObject((PyObject *)&TextureType, textureArgs);
+    Py_DECREF(textureArgs);
+
+    return result;
+}
 
 typedef struct {
     PyObject_HEAD
@@ -134,18 +167,20 @@ Texture_init(TextureObject *self, PyObject *args, PyObject *kwargs)
 {
     const char *rgba;
     int rgba_len;
+    int components;
 
-    if (!PyArg_ParseTuple(args, "iiz#", &self->w, &self->h, &rgba, &rgba_len)) {
+    if (!PyArg_ParseTuple(args, "iiz#i", &self->w, &self->h, &rgba, &rgba_len, &components)) {
         return -1;
     }
 
-    assert(rgba_len == (self->w * self->h * 4));
+    assert(rgba_len == (self->w * self->h * components));
 
     glGenTextures(1, &self->texture_id);
     glBindTexture(GL_TEXTURE_2D, self->texture_id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self->w, self->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+    glTexImage2D(GL_TEXTURE_2D, 0, (components == 4) ? GL_RGBA : GL_RGB, self->w, self->h,
+                 0, (components == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, rgba);
 
     return 0;
 }
@@ -222,7 +257,7 @@ Framebuffer_init(FramebufferObject *self, PyObject *args, PyObject *kwargs)
         return -1;
     }
 
-    PyObject *textureArgs = Py_BuildValue("iis", width, height, NULL);
+    PyObject *textureArgs = Py_BuildValue("iisi", width, height, NULL, 4);
     self->texture = PyObject_CallObject((PyObject *)&TextureType, textureArgs);
     Py_DECREF(textureArgs);
 
@@ -468,6 +503,7 @@ static PyMethodDef CoreMethods[] = {
     {"draw_init", (PyCFunction)core_draw_init, METH_NOARGS, "init opengl"},
     {"draw_clear", (PyCFunction)core_draw_clear, METH_NOARGS, "clear screen"},
     {"draw_quad", (PyCFunction)core_draw_quad, METH_NOARGS, "draw a quad"},
+    {"load_image", core_load_image, METH_VARARGS, "Load image data from a file"},
     {NULL, NULL, 0, NULL}
 };
 

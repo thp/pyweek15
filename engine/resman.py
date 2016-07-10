@@ -15,8 +15,8 @@ class ResourceManager():
     def __init__(self, app):
         self.app = app
 
-        self.sprites = {bn(fn): self.upload_surface(*load_image(fn)) for fn in find_files('sprites', "*.png")}
-        self.creatures = {bn(fn): self.upload_surface(*load_image(fn)) for fn in find_files('creatures', "*.png")}
+        self.sprites = {bn(fn): load_image(fn) for fn in find_files('sprites', "*.png")}
+        self.creatures = {bn(fn): load_image(fn) for fn in find_files('creatures', "*.png")}
         self.fonts = {size: Font(file_path('fonts', 'visitor2.ttf'), size) for size in FONTS}
         self.intermissions = {bn(fn): get_lines(fn) for fn in find_files('intermissions', '*.txt')}
         self.shaders = {bn_ext(fn): '\n'.join(get_lines(fn)) for fn in find_files('shaders', '*.*')}
@@ -24,7 +24,7 @@ class ResourceManager():
 
         self.backgrounds = {}
         for fn in sorted(find_files('backgrounds', "*.jpg")):
-            self.backgrounds.setdefault(bn(fn).split('-')[0], []).append(self.upload_surface(*load_image(fn)))
+            self.backgrounds.setdefault(bn(fn).split('-')[0], []).append(load_image(fn))
 
         self.levels = []
         for fn in sorted(find_files("levels", "*.txt")):
@@ -34,11 +34,8 @@ class ResourceManager():
         pickup_lines = [line.split(':') for line in get_lines(file_path('pickups.txt')) if not line.startswith('#')]
         self.pickups = {thingie: (sfx, int(coins), int(lives)) for thingie, sfx, coins, lives in pickup_lines}
 
-    def upload_surface(self, width, height, rgba):
-        return self.app.renderer.upload_texture(width, height, rgba)
-
     def render_text(self, font, text):
-        return self.app.renderer.upload_texture(*self.fonts[font].render(text))
+        return self.fonts[font].render(text)
 
     def sfx(self, name):
         self.sounds[name].play()

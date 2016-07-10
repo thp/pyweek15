@@ -1,4 +1,4 @@
-from porting import time_seconds, Texture, ShaderProgram, Framebuffer, draw_init, draw_quad, draw_clear
+from porting import time_seconds, ShaderProgram, Framebuffer, draw_init, draw_quad, draw_clear
 
 class Renderer():
     def __init__(self, app):
@@ -20,9 +20,6 @@ class Renderer():
         self.draw_sprites.bind()
         self.draw_sprites.uniform2f('size', width, height)
 
-    def upload_texture(self, width, height, rgba):
-        return Texture(width, height, rgba)
-
     def begin(self):
         if self.effect_pipeline:
             self.postprocessed = False
@@ -35,7 +32,7 @@ class Renderer():
         gr, gg, gb = self.global_tint
         hs, ws = texture.h * scale, texture.w * scale
 
-        self.draw_sprites.enable_arrays(texture, [x,y,x,y+hs,x+ws,y,x+ws,y+hs], [0,1,0,0,1,1,1,0])
+        self.draw_sprites.enable_arrays(texture, [x,y,x,y+hs,x+ws,y,x+ws,y+hs], [0,0,0,1,1,0,1,1])
         self.draw_sprites.uniform4f('color', r*gr, g*gg, b*gb, opacity)
         draw_quad()
 

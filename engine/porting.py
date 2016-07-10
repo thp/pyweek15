@@ -1,9 +1,8 @@
-import array
 import pygame
 import os
 import glob
 
-from core import sin, cos, sqrt, time_seconds, randint, randuniform
+from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image
 from core import draw_init, draw_clear, draw_quad, Texture, Framebuffer, ShaderProgram
 
 from pygame.locals import KEYDOWN, KEYUP, QUIT, K_ESCAPE, K_SPACE, K_s, K_LEFT, K_RIGHT, K_UP
@@ -31,10 +30,6 @@ def next_event():
 
     return False, False, None, None
 
-def load_image(filename):
-    surf = pygame.image.load(filename).convert_alpha()
-    return (surf.get_width(), surf.get_height(), pygame.image.tostring(surf, 'RGBA', 1))
-
 def get_lines(filename):
     return open(filename).read().splitlines()
 
@@ -50,7 +45,7 @@ class Font():
 
     def render(self, text):
         surf = self._font.render(text, True, (255, 255, 255))
-        return (surf.get_width(), surf.get_height(), pygame.image.tostring(surf, 'RGBA', 1))
+        return Texture(surf.get_width(), surf.get_height(), pygame.image.tostring(surf, 'RGBA', 0), 4)
 
 class Sound():
     def __init__(self, filename):
