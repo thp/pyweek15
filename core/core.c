@@ -4,6 +4,8 @@
 #include <Python.h>
 #include "structmember.h"
 
+#include <SDL.h>
+
 #include <OpenGL/GL.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -531,6 +533,121 @@ ShaderProgramType = {
     .tp_new = ShaderProgram_new,
 };
 
+typedef struct {
+    PyObject_HEAD
+
+    SDL_Surface *window;
+} WindowObject;
+
+static void
+Window_dealloc(WindowObject *self)
+{
+    SDL_Quit();
+    self->ob_type->tp_free((PyObject *)self);
+}
+
+static PyObject *
+Window_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
+{
+    WindowObject *self = (WindowObject *)type->tp_alloc(type, 0);
+
+    if (self != NULL) {
+        self->window = NULL;
+    }
+
+    return (PyObject *)self;
+}
+
+static int
+Window_init(WindowObject *self, PyObject *args, PyObject *kwargs)
+{
+    int width, height;
+    const char *title;
+
+    if (!PyArg_ParseTuple(args, "iis", &width, &height, &title)) {
+        return -1;
+    }
+
+    SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO);
+
+    self->window = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
+    SDL_WM_SetCaption(title, title);
+
+    return 0;
+}
+
+static PyObject *
+Window_swap_buffers(WindowObject *self)
+{
+    SDL_GL_SwapBuffers();
+
+    Py_RETURN_NONE;
+}
+
+static const char *
+keysym_from_sdl_event(SDL_Event *e)
+{
+    switch (e->key.keysym.sym) {
+        case SDLK_ESCAPE: return "esc";
+        case SDLK_SPACE:  return " ";
+        case SDLK_s:      return "s";
+        case SDLK_LEFT:   return "left";
+        case SDLK_RIGHT:  return "right";
+        case SDLK_UP:     return "up";
+        default:          break;
+    }
+
+    return "";
+}
+
+static PyObject *
+Window_next_event(WindowObject *self)
+{
+    // (quit, is_key_event, pressed, keyval)
+
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        switch (e.type) {
+            case SDL_QUIT:
+                return Py_BuildValue("OOOO", Py_True, Py_False, Py_None, Py_None);
+            case SDL_KEYDOWN:
+                return Py_BuildValue("OOON", Py_False, Py_True, Py_True, PyString_FromString(keysym_from_sdl_event(&e)));
+            case SDL_KEYUP:
+                return Py_BuildValue("OOON", Py_False, Py_True, Py_False, PyString_FromString(keysym_from_sdl_event(&e)));
+            default:
+                break;
+        }
+    }
+
+    return Py_BuildValue("OOOO", Py_False, Py_False, Py_None, Py_None);
+}
+
+static PyMemberDef
+Window_members[] = {
+    {NULL}
+};
+
+static PyMethodDef
+Window_methods[] = {
+    {"swap_buffers", (PyCFunction)Window_swap_buffers, METH_NOARGS, "Display rendering result"},
+    {"next_event", (PyCFunction)Window_next_event, METH_NOARGS, "Get next event from queue"},
+    {NULL}
+};
+
+static PyTypeObject
+WindowType = {
+    PyObject_HEAD_INIT(NULL)
+    .tp_name = "core.Window",
+    .tp_basicsize = sizeof(WindowObject),
+    .tp_dealloc = (destructor)Window_dealloc,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_doc = "Platform window",
+    .tp_methods = Window_methods,
+    .tp_members = Window_members,
+    .tp_init = (initproc)Window_init,
+    .tp_new = Window_new,
+};
+
 static PyMethodDef CoreMethods[] = {
     {"sin", core_sin, METH_VARARGS, "sine"},
     {"cos", core_cos, METH_VARARGS, "cosine"},
@@ -573,4 +690,32 @@ initcore(void)
     }
     Py_INCREF(&ShaderProgramType);
     PyModule_AddObject(m, "ShaderProgram", (PyObject *)&ShaderProgramType);
+
+    WindowType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&WindowType) < 0) {
+        return;
+    }
+    Py_INCREF(&WindowType);
+    PyModule_AddObject(m, "Window", (PyObject *)&WindowType);
 }
+
+// class Window():
+//     def __init__(self, width, height, title):
+//         pygame.init()
+//         self.display = pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
+//         pygame.display.set_caption(title)
+//
+//     def swap_buffers(self):
+//         pygame.display.flip()
+//
+//     def next_event(self):
+//         events = pygame.event.get()
+//         for event in events:
+//             if event.type == QUIT:
+//                 return True, False, None, None
+//             elif event.type == KEYDOWN:
+//                 return False, True, True, KEYMAP.get(event.key, None)
+//             elif event.type == KEYUP:
+//                 return False, True, False, KEYMAP.get(event.key, None)
+//
+//         return False, False, None, None
