@@ -64,15 +64,15 @@ class Texture():
     def __init__(self, w, h, rgba):
         self.w = w
         self.h = h
-        self._texture_id = glGenTextures(1)
+        self.texture_id = glGenTextures(1)
         self.bind()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.w, self.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba)
 
-    bind = lambda self: glBindTexture(GL_TEXTURE_2D, self._texture_id)
+    bind = lambda self: glBindTexture(GL_TEXTURE_2D, self.texture_id)
 
-    __del__ = lambda self: glDeleteTextures(self._texture_id)
+    __del__ = lambda self: glDeleteTextures(self.texture_id)
 
 class ShaderProgram():
     def __init__(self, vertex_shader, fragment_shader):
@@ -104,7 +104,7 @@ class Framebuffer():
         self.framebuffer_id = glGenFramebuffers(1)
         self.texture = Texture(width, height, None)
         self.bind()
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.texture._texture_id, 0)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.texture.texture_id, 0)
         self.unbind()
 
     __del__ = lambda self: glDeleteFramebuffers(self.framebuffer_id)
