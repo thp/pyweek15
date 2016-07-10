@@ -184,13 +184,13 @@ core_list_files(PyObject *self, PyObject *args)
     PyObject *list = PyList_New(0);
 
     DIR *dir = opendir(dirname);
-    const char *ext2;
+    char *ext2;
     asprintf(&ext2, ".%s", extension);
 
     struct dirent *ent;
     while ((ent = readdir(dir)) != NULL) {
         if (strstr(ent->d_name, ext2) == ent->d_name + strlen(ent->d_name) - strlen(ext2)) {
-            const char *tmp;
+            char *tmp;
             asprintf(&tmp, "%s/%s", dirname, ent->d_name);
             PyObject *str = PyString_FromString(tmp);
             PyList_Append(list, str);
