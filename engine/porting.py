@@ -1,8 +1,7 @@
-import pygame
 import os
 import glob
 
-from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image, render_text, Window
+from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image, render_text, Window, Sound
 from core import draw_init, draw_clear, draw_quad, Texture, Framebuffer, ShaderProgram
 
 def get_lines(filename):
@@ -23,11 +22,3 @@ class Font():
         result.w *= self.size
         result.h *= self.size
         return result
-
-pygame.init()
-class Sound():
-    def __init__(self, filename):
-        self._sound = pygame.mixer.Sound(filename)
-
-    def play(self):
-        pygame.mixer.find_channel(True).play(self._sound)

@@ -5,6 +5,7 @@
 #include "structmember.h"
 
 #include <SDL.h>
+#include <SDL_mixer.h>
 
 #include <OpenGL/GL.h>
 
@@ -573,6 +574,9 @@ Window_init(WindowObject *self, PyObject *args, PyObject *kwargs)
     self->window = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
     SDL_WM_SetCaption(title, title);
 
+    Mix_Init(0);
+    Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, AUDIO_S16LSB, 2, 1024);
+
     return 0;
 }
 
@@ -648,6 +652,78 @@ WindowType = {
     .tp_new = Window_new,
 };
 
+typedef struct {
+    PyObject_HEAD
+
+    Mix_Chunk *chunk;
+} SoundObject;
+
+static void
+Sound_dealloc(SoundObject *self)
+{
+    Mix_FreeChunk(self->chunk);
+    self->ob_type->tp_free((PyObject *)self);
+}
+
+static PyObject *
+Sound_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
+{
+    SoundObject *self = (SoundObject *)type->tp_alloc(type, 0);
+
+    if (self != NULL) {
+        self->chunk = NULL;
+    }
+
+    return (PyObject *)self;
+}
+
+static int
+Sound_init(SoundObject *self, PyObject *args, PyObject *kwargs)
+{
+    const char *filename;
+
+    if (!PyArg_ParseTuple(args, "s", &filename)) {
+        return -1;
+    }
+
+    self->chunk = Mix_LoadWAV(filename);
+
+    return 0;
+}
+
+static PyObject *
+Sound_play(SoundObject *self)
+{
+    Mix_PlayChannel(-1, self->chunk, 0);
+
+    Py_RETURN_NONE;
+}
+
+static PyMemberDef
+Sound_members[] = {
+    {NULL}
+};
+
+static PyMethodDef
+Sound_methods[] = {
+    {"play", (PyCFunction)Sound_play, METH_NOARGS, "Play the sound effect"},
+    {NULL}
+};
+
+static PyTypeObject
+SoundType = {
+    PyObject_HEAD_INIT(NULL)
+    .tp_name = "core.Sound",
+    .tp_basicsize = sizeof(SoundObject),
+    .tp_dealloc = (destructor)Sound_dealloc,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_doc = "Sound effect",
+    .tp_methods = Sound_methods,
+    .tp_members = Sound_members,
+    .tp_init = (initproc)Sound_init,
+    .tp_new = Sound_new,
+};
+
 static PyMethodDef CoreMethods[] = {
     {"sin", core_sin, METH_VARARGS, "sine"},
     {"cos", core_cos, METH_VARARGS, "cosine"},
@@ -697,25 +773,11 @@ initcore(void)
     }
     Py_INCREF(&WindowType);
     PyModule_AddObject(m, "Window", (PyObject *)&WindowType);
-}
 
-// class Window():
-//     def __init__(self, width, height, title):
-//         pygame.init()
-//         self.display = pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
-//         pygame.display.set_caption(title)
-//
-//     def swap_buffers(self):
-//         pygame.display.flip()
-//
-//     def next_event(self):
-//         events = pygame.event.get()
-//         for event in events:
-//             if event.type == QUIT:
-//                 return True, False, None, None
-//             elif event.type == KEYDOWN:
-//                 return False, True, True, KEYMAP.get(event.key, None)
-//             elif event.type == KEYUP:
-//                 return False, True, False, KEYMAP.get(event.key, None)
-//
-//         return False, False, None, None
+    SoundType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&SoundType) < 0) {
+        return;
+    }
+    Py_INCREF(&SoundType);
+    PyModule_AddObject(m, "Sound", (PyObject *)&SoundType);
+}

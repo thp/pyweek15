@@ -1,4 +1,4 @@
-SDL_FLAGS := $(shell sdl-config --cflags --libs)
+SDL_FLAGS := $(shell sdl-config --cflags --libs) -lSDL_mixer
 PYTHON_FLAGS := $(shell /usr/bin/python-config --cflags --libs)
 OPENGL_FLAGS := -framework OpenGL
 SHLIB_FLAGS := -shared -fPIC
