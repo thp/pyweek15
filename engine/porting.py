@@ -1,22 +1,15 @@
-import random
 import array
 import pygame
 import os
 import glob
 
-from core import sin, cos, sqrt, time_seconds
+from core import sin, cos, sqrt, time_seconds, randint, randuniform
 
 from OpenGL.GL import *
 
 from pygame.locals import KEYDOWN, KEYUP, QUIT, K_ESCAPE, K_SPACE, K_s, K_LEFT, K_RIGHT, K_UP
 
 KEYMAP = {K_ESCAPE: 'esc', K_SPACE: ' ', K_s: 's', K_LEFT: 'left', K_RIGHT: 'right', K_UP: 'up'}
-
-def randint(a, b):
-    return random.randint(a, b)
-
-def randuniform(a, b):
-    return random.uniform(a, b)
 
 def create_window(width, height, title):
     pygame.init()
