@@ -1,6 +1,8 @@
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <dirent.h>
 #include <Python.h>
 #include "structmember.h"
 
@@ -168,6 +170,39 @@ core_render_text(PyObject *self, PyObject *args)
     Py_DECREF(textureArgs);
 
     return result;
+}
+
+static PyObject *
+core_list_files(PyObject *self, PyObject *args)
+{
+    const char *dirname;
+    const char *extension;
+    if (!PyArg_ParseTuple(args, "ss", &dirname, &extension)) {
+        return NULL;
+    }
+
+    PyObject *list = PyList_New(0);
+
+    DIR *dir = opendir(dirname);
+    const char *ext2;
+    asprintf(&ext2, ".%s", extension);
+
+    struct dirent *ent;
+    while ((ent = readdir(dir)) != NULL) {
+        if (strstr(ent->d_name, ext2) == ent->d_name + strlen(ent->d_name) - strlen(ext2)) {
+            const char *tmp;
+            asprintf(&tmp, "%s/%s", dirname, ent->d_name);
+            PyObject *str = PyString_FromString(tmp);
+            PyList_Append(list, str);
+            Py_DECREF(str);
+            free(tmp);
+        }
+    }
+    closedir(dir);
+
+    free(ext2);
+
+    return list;
 }
 
 typedef struct {
@@ -736,6 +771,7 @@ static PyMethodDef CoreMethods[] = {
     {"draw_quad", (PyCFunction)core_draw_quad, METH_NOARGS, "draw a quad"},
     {"load_image", core_load_image, METH_VARARGS, "Load image data from a file"},
     {"render_text", core_render_text, METH_VARARGS, "Render text to a texture"},
+    {"list_files", core_list_files, METH_VARARGS, "List files in a directory by extension"},
     {NULL, NULL, 0, NULL}
 };
 

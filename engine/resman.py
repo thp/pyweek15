@@ -15,19 +15,20 @@ class ResourceManager():
     def __init__(self, app):
         self.app = app
 
-        self.sprites = {bn(fn): load_image(fn) for fn in find_files('sprites', "*.png")}
-        self.creatures = {bn(fn): load_image(fn) for fn in find_files('creatures', "*.png")}
+        self.sprites = {bn(fn): load_image(fn) for fn in find_files('sprites', 'png')}
+        self.creatures = {bn(fn): load_image(fn) for fn in find_files('creatures', 'png')}
         self.fonts = {size: Font(size) for size in FONTS}
-        self.intermissions = {bn(fn): get_lines(fn) for fn in find_files('intermissions', '*.txt')}
-        self.shaders = {bn_ext(fn): '\n'.join(get_lines(fn)) for fn in find_files('shaders', '*.*')}
-        self.sounds = {bn(fn): Sound(fn) for fn in find_files('sounds', '*.wav')}
+        self.intermissions = {bn(fn): get_lines(fn) for fn in find_files('intermissions', 'txt')}
+        self.shaders = {bn_ext(fn): '\n'.join(get_lines(fn))
+                        for fn in find_files('shaders', 'fsh') + find_files('shaders', 'vsh')}
+        self.sounds = {bn(fn): Sound(fn) for fn in find_files('sounds', 'wav')}
 
         self.backgrounds = {}
-        for fn in sorted(find_files('backgrounds', "*.jpg")):
+        for fn in sorted(find_files('backgrounds', 'jpg')):
             self.backgrounds.setdefault(bn(fn).split('-')[0], []).append(load_image(fn))
 
         self.levels = []
-        for fn in sorted(find_files("levels", "*.txt")):
+        for fn in sorted(find_files("levels", 'txt')):
             _, group, number = bn(fn).split('-')
             self.levels.append((int(group), int(number), get_lines(fn)))
 

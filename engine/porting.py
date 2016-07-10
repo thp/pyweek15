@@ -1,17 +1,14 @@
-import os
-import glob
-
-from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image, render_text, Window, Sound
+from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image, render_text, Window, Sound, list_files
 from core import draw_init, draw_clear, draw_quad, Texture, Framebuffer, ShaderProgram
 
 def get_lines(filename):
     return open(filename).read().splitlines()
 
 def file_path(*args):
-    return os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'data', *args)
+    return '/'.join(('/'.join(__file__.split('/')[:-1]), '..', 'data') + args)
 
-def find_files(*args):
-    return glob.glob(file_path(*args))
+def find_files(parent, extension):
+    return list_files(file_path(parent), extension)
 
 class Font():
     def __init__(self, size):
