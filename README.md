@@ -2,10 +2,6 @@ One Whale Trip
 ==============
 Our repo needs a readme, right?!
 
-Requirements
-------------
-* pygame
-
 License
 -------
 
