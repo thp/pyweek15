@@ -276,6 +276,188 @@ FramebufferType = {
     .tp_new = Framebuffer_new,
 };
 
+typedef struct {
+    PyObject_HEAD
+
+    GLuint program_id;
+    float *vertex_buffer;
+} ShaderProgramObject;
+
+static void
+ShaderProgram_dealloc(ShaderProgramObject *self)
+{
+    free(self->vertex_buffer);
+    glDeleteProgram(self->program_id);
+    self->ob_type->tp_free((PyObject *)self);
+}
+
+static PyObject *
+ShaderProgram_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
+{
+    ShaderProgramObject *self = (ShaderProgramObject *)type->tp_alloc(type, 0);
+
+    if (self != NULL) {
+        self->program_id = 0;
+        self->vertex_buffer = NULL;
+    }
+
+    return (PyObject *)self;
+}
+
+static int
+ShaderProgram_init(ShaderProgramObject *self, PyObject *args, PyObject *kwargs)
+{
+    const char *vertex_shader_src;
+    const char *fragment_shader_src;
+
+    if (!PyArg_ParseTuple(args, "ss", &vertex_shader_src, &fragment_shader_src)) {
+        return -1;
+    }
+
+    self->program_id = glCreateProgram();
+
+    GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader_id, 1, &vertex_shader_src, NULL);
+    glCompileShader(vertex_shader_id);
+    glAttachShader(self->program_id, vertex_shader_id);
+    glDeleteShader(vertex_shader_id);
+
+    GLuint fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment_shader_id, 1, &fragment_shader_src, NULL);
+    glCompileShader(fragment_shader_id);
+    glAttachShader(self->program_id, fragment_shader_id);
+    glDeleteShader(fragment_shader_id);
+
+    glBindAttribLocation(self->program_id, 0, "position");
+    glBindAttribLocation(self->program_id, 1, "texcoord");
+
+    glLinkProgram(self->program_id);
+
+    return 0;
+}
+
+static PyObject *
+ShaderProgram_bind(ShaderProgramObject *self)
+{
+    glUseProgram(self->program_id);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+ShaderProgram_uniform1f(ShaderProgramObject *self, PyObject *args)
+{
+    const char *name;
+    float v0;
+    if (!PyArg_ParseTuple(args, "sf", &name, &v0)) {
+        return NULL;
+    }
+
+    glUniform1f(glGetUniformLocation(self->program_id, name), v0);
+
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+ShaderProgram_uniform2f(ShaderProgramObject *self, PyObject *args)
+{
+    const char *name;
+    float v0, v1;
+    if (!PyArg_ParseTuple(args, "sff", &name, &v0, &v1)) {
+        return NULL;
+    }
+
+    glUniform2f(glGetUniformLocation(self->program_id, name), v0, v1);
+
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+ShaderProgram_uniform4f(ShaderProgramObject *self, PyObject *args)
+{
+    const char *name;
+    float v0, v1, v2, v3;
+    if (!PyArg_ParseTuple(args, "sffff", &name, &v0, &v1, &v2, &v3)) {
+        return NULL;
+    }
+
+    glUniform4f(glGetUniformLocation(self->program_id, name), v0, v1, v2, v3);
+
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+ShaderProgram_enable_arrays(ShaderProgramObject *self, PyObject *args)
+{
+    TextureObject *texture;
+    PyObject *position;
+    PyObject *texcoord;
+    if (!PyArg_ParseTuple(args, "OOO", (PyObject **)&texture, &position, &texcoord)) {
+        return NULL;
+    }
+
+    if (!PyList_Check(position)) {
+        return NULL;
+    }
+
+    if (!PyList_Check(texcoord)) {
+        return NULL;
+    }
+
+    ShaderProgram_bind(self);
+    Texture_bind(texture);
+
+    Py_ssize_t position_len = PyList_Size(position);
+    Py_ssize_t texcoord_len = PyList_Size(texcoord);
+
+    if (position_len != texcoord_len) {
+        return NULL;
+    }
+
+    free(self->vertex_buffer);
+    self->vertex_buffer = malloc(sizeof(float) * (position_len + texcoord_len));
+    for (int i=0; i<position_len / 2; i++) {
+        self->vertex_buffer[i*4+0] = PyFloat_AsDouble(PyList_GET_ITEM(position, i*2+0));
+        self->vertex_buffer[i*4+1] = PyFloat_AsDouble(PyList_GET_ITEM(position, i*2+1));
+        self->vertex_buffer[i*4+2] = PyFloat_AsDouble(PyList_GET_ITEM(texcoord, i*2+0));
+        self->vertex_buffer[i*4+3] = PyFloat_AsDouble(PyList_GET_ITEM(texcoord, i*2+1));
+    }
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &self->vertex_buffer[0]);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &self->vertex_buffer[2]);
+
+    Py_RETURN_NONE;
+}
+
+static PyMemberDef
+ShaderProgram_members[] = {
+    {"program_id", T_INT, offsetof(ShaderProgramObject, program_id), 0, "GL program name"},
+    {NULL}
+};
+
+static PyMethodDef
+ShaderProgram_methods[] = {
+    {"bind", (PyCFunction)ShaderProgram_bind, METH_NOARGS, "Use the shader program for rendering"},
+    {"uniform1f", (PyCFunction)ShaderProgram_uniform1f, METH_VARARGS, "Set float uniform"},
+    {"uniform2f", (PyCFunction)ShaderProgram_uniform2f, METH_VARARGS, "Set vec2 uniform"},
+    {"uniform4f", (PyCFunction)ShaderProgram_uniform4f, METH_VARARGS, "Set vec4 uniform"},
+    {"enable_arrays", (PyCFunction)ShaderProgram_enable_arrays, METH_VARARGS, "Set array pointers"},
+    {NULL}
+};
+
+static PyTypeObject
+ShaderProgramType = {
+    PyObject_HEAD_INIT(NULL)
+    .tp_name = "core.ShaderProgram",
+    .tp_basicsize = sizeof(ShaderProgramObject),
+    .tp_dealloc = (destructor)ShaderProgram_dealloc,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_doc = "GL framebuffer",
+    .tp_methods = ShaderProgram_methods,
+    .tp_members = ShaderProgram_members,
+    .tp_init = (initproc)ShaderProgram_init,
+    .tp_new = ShaderProgram_new,
+};
+
 static PyMethodDef CoreMethods[] = {
     {"sin", core_sin, METH_VARARGS, "sine"},
     {"cos", core_cos, METH_VARARGS, "cosine"},
@@ -309,4 +491,11 @@ initcore(void)
     }
     Py_INCREF(&FramebufferType);
     PyModule_AddObject(m, "Framebuffer", (PyObject *)&FramebufferType);
+
+    ShaderProgramType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&ShaderProgramType) < 0) {
+        return;
+    }
+    Py_INCREF(&ShaderProgramType);
+    PyModule_AddObject(m, "ShaderProgram", (PyObject *)&ShaderProgramType);
 }

@@ -4,9 +4,7 @@ import os
 import glob
 
 from core import sin, cos, sqrt, time_seconds, randint, randuniform
-from core import draw_init, draw_clear, draw_quad, Texture, Framebuffer
-
-from OpenGL.GL import *
+from core import draw_init, draw_clear, draw_quad, Texture, Framebuffer, ShaderProgram
 
 from pygame.locals import KEYDOWN, KEYUP, QUIT, K_ESCAPE, K_SPACE, K_s, K_LEFT, K_RIGHT, K_UP
 
@@ -60,28 +58,3 @@ class Sound():
 
     def play(self):
         pygame.mixer.find_channel(True).play(self._sound)
-
-class ShaderProgram():
-    def __init__(self, vertex_shader, fragment_shader):
-        self.program = glCreateProgram()
-        for shader_type, shader_src in ((GL_VERTEX_SHADER, vertex_shader), (GL_FRAGMENT_SHADER, fragment_shader)):
-            shader_id = glCreateShader(shader_type)
-            glShaderSource(shader_id, shader_src)
-            glCompileShader(shader_id)
-            glAttachShader(self.program, shader_id)
-        glBindAttribLocation(self.program, 0, 'position')
-        glBindAttribLocation(self.program, 1, 'texcoord')
-        glLinkProgram(self.program)
-
-    bind = lambda self: glUseProgram(self.program)
-    uniform = lambda self, name: glGetUniformLocation(self.program, name)
-    uniform1f = lambda self, name, v0: glUniform1f(self.uniform(name), v0)
-    uniform2f = lambda self, name, v0, v1: glUniform2f(self.uniform(name), v0, v1)
-    uniform4f = lambda self, name, v0, v1, v2, v3: glUniform4f(self.uniform(name), v0, v1, v2, v3)
-    __del__ = lambda self: glDeleteProgram(self.program)
-
-    def enable_arrays(self, texture, position, texcoord):
-        self.bind()
-        texture.bind()
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', position).tostring())
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, array.array('f', texcoord).tostring())
