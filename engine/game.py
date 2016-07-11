@@ -1,7 +1,7 @@
 from scene import Scene
 from resman import Level
 from sprite import Enemy
-from core import sin
+from core import math
 
 class Game(Scene):
     FADE_OFFSET = 6
@@ -100,7 +100,7 @@ class Game(Scene):
             tint = 1., 1., 1.
             if self.level.background == 'surreal':
                 # Special FX for the Surreal level - tint like crazy!
-                tint = [.5+.5*sin(a+now*b) for a, b in ((0,4.5),(.9,2.0),(4.5,9.5))]
+                tint = [.5+.5*math.sin(a+now*b) for a, b in ((0,4.5),(.9,2.0),(4.5,9.5))]
 
             # Fade in enemy sprites coming from the back
             opacity = min(1.0, max(0.0, 1.0 - (pos[2] - float(self.FADE_OFFSET)) / float(self.FADE_WIDTH)))

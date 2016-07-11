@@ -8,13 +8,11 @@
 #include "core_font.h"
 #include "core_opengl.h"
 
+#include "core_time.h"
+#include "core_math.h"
+#include "core_random.h"
+
 static PyMethodDef CoreMethods[] = {
-    {"sin", core_sin, METH_VARARGS, "sine"},
-    {"cos", core_cos, METH_VARARGS, "cosine"},
-    {"sqrt", core_sqrt, METH_VARARGS, "square root"},
-    {"time_seconds", (PyCFunction)core_time_seconds, METH_NOARGS, "current time"},
-    {"randint", core_randint, METH_VARARGS, "random integer"},
-    {"randuniform", core_randuniform, METH_VARARGS, "random uniform"},
     {"draw_init", (PyCFunction)core_draw_init, METH_NOARGS, "init opengl"},
     {"load_image", core_load_image, METH_VARARGS, "Load image data from a file"},
     {"list_files", core_list_files, METH_VARARGS, "List files in a directory by extension"},
@@ -41,4 +39,8 @@ initcore(void)
     INIT_TYPE(Window);
     INIT_TYPE(Sound);
     INIT_TYPE(Font);
+
+    INIT_TYPE(time);
+    INIT_TYPE(math);
+    INIT_TYPE(random);
 }

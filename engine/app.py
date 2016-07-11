@@ -1,4 +1,4 @@
-from core import time_seconds, Window
+from core import time, Window
 from resman import ResourceManager
 from sprite import Player
 from screen import Screen
@@ -10,10 +10,10 @@ class TimeAccumulator:
     def __init__(self, fps):
         self.step = 1. / float(fps)
         self.accumulated = 0
-        self.last_time = time_seconds()
+        self.last_time = time.time()
 
     def update(self, callback):
-        now = time_seconds()
+        now = time.time()
         self.accumulated += (now - self.last_time)
         self.last_time = now
         while self.accumulated > self.step:

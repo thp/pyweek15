@@ -1,4 +1,4 @@
-from core import randint, randuniform
+from core import random
 
 class Scene(object):
     def __init__(self, app, name):
@@ -7,15 +7,15 @@ class Scene(object):
 
 class Particle(object):
     def __init__(self, sprite, x, y, sx, sy):
-        self.spawn = (x + randint(-sx, sx), y + randint(-sy, sy))
+        self.spawn = (x + random.randint(-sx, sx), y + random.randint(-sy, sy))
         self.x, self.y = self.spawn
-        self.dy = -randuniform(0.5, 3.0)
+        self.dy = -random.uniform(0.5, 3.0)
         self.sprite = sprite
         self.opacity = 1.0
 
     def step(self):
         self.y += self.dy
-        self.x += randint(-2, +2) / 10.0
+        self.x += random.randint(-2, +2) / 10.0
         self.opacity *= 0.97
         if self.y < -self.sprite.h:
             self.x, self.y = self.spawn

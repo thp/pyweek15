@@ -1,11 +1,11 @@
-from core import time_seconds, ShaderProgram, Framebuffer, draw_init
+from core import time, ShaderProgram, Framebuffer, draw_init
 
 class Renderer():
     def __init__(self, app):
         self.app = app
         self.postprocessed = False
         self.global_tint = 1., 1., 1.
-        self.started = time_seconds()
+        self.started = time.time()
 
     def resize(self, width, height):
         self.width = width
@@ -36,7 +36,7 @@ class Renderer():
 
     def render_effect(self, effect, fbo):
         effect.draw_quad(fbo.texture, [-1,-1,-1,1,1,-1,1,1], {
-            'time': time_seconds() - self.started,
+            'time': time.time() - self.started,
             'size': (fbo.texture.w, fbo.texture.h),
         })
 

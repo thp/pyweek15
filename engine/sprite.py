@@ -1,4 +1,4 @@
-from core import sin
+from core import math
 
 class Sprite(object):
     def init(self, basename, frames, duration=.2):
@@ -110,8 +110,8 @@ class Player(Sprite):
     def draw(self, points, opacity, tint):
         tint = 1., 1., 1.
         if self.blinking:
-            value = 1. - abs(sin(self.blinking*.2))
+            value = 1. - abs(math.sin(self.blinking*.2))
             tint = 1, value, value
 
         sprite_name = self.current_sprite_name().replace('whale', 'whale_%s' % self.dest_x)
-        self._draw(sprite_name, points, 1.0, opacity, tint, False, sin(self.blinking*.5) * 5.)
+        self._draw(sprite_name, points, 1.0, opacity, tint, False, math.sin(self.blinking*.5) * 5.)

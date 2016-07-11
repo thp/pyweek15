@@ -1,4 +1,4 @@
-from core import cos, sin, sqrt
+from core import math
 
 class Vec3(object):
     def __init__(self, x, y, z):
@@ -11,7 +11,7 @@ class Vec3(object):
         return Vec3(self.y * o.z - self.z * o.y, self.z * o.x - self.x * o.z, self.x * o.y - self.y * o.x)
 
     def normalized(self):
-        f = sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+        f = math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
         return Vec3(self.x / f, self.y / f, self.z / f)
 
 class Matrix4x4(object):
@@ -49,7 +49,7 @@ class Matrix4x4(object):
 
     @classmethod
     def perspective(cls, fovy, aspect, zNear, zFar):
-        f = cos(fovy / 2) / sin(fovy / 2)
+        f = math.cos(fovy / 2) / math.sin(fovy / 2)
         return cls([
                 f / aspect, 0, 0, 0,
                 0, f, 0, 0,
