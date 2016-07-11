@@ -18,6 +18,22 @@
 
 #include "fontaine.h"
 
+#define DEFINE_TYPE(name) \
+    static PyTypeObject \
+    name##Type = { \
+        PyObject_HEAD_INIT(NULL) \
+        .tp_name = "core." #name, \
+        .tp_basicsize = sizeof(name##Object), \
+        .tp_dealloc = (destructor)name##_dealloc, \
+        .tp_flags = Py_TPFLAGS_DEFAULT, \
+        .tp_doc = #name, \
+        .tp_methods = name##_methods, \
+        .tp_members = name##_members, \
+        .tp_init = (initproc)name##_init, \
+        .tp_new = name##_new, \
+    }
+
+
 static PyTypeObject TextureType;
 
 static PyObject *
@@ -283,19 +299,7 @@ Texture_methods[] = {
     {NULL}
 };
 
-static PyTypeObject
-TextureType = {
-    PyObject_HEAD_INIT(NULL)
-    .tp_name = "core.Texture",
-    .tp_basicsize = sizeof(TextureObject),
-    .tp_dealloc = (destructor)Texture_dealloc,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_doc = "GL texture",
-    .tp_methods = Texture_methods,
-    .tp_members = Texture_members,
-    .tp_init = (initproc)Texture_init,
-    .tp_new = Texture_new,
-};
+DEFINE_TYPE(Texture);
 
 typedef struct {
     PyObject_HEAD
@@ -373,19 +377,7 @@ Framebuffer_methods[] = {
     {NULL}
 };
 
-static PyTypeObject
-FramebufferType = {
-    PyObject_HEAD_INIT(NULL)
-    .tp_name = "core.Framebuffer",
-    .tp_basicsize = sizeof(FramebufferObject),
-    .tp_dealloc = (destructor)Framebuffer_dealloc,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_doc = "GL framebuffer",
-    .tp_methods = Framebuffer_methods,
-    .tp_members = Framebuffer_members,
-    .tp_init = (initproc)Framebuffer_init,
-    .tp_new = Framebuffer_new,
-};
+DEFINE_TYPE(Framebuffer);
 
 typedef struct {
     PyObject_HEAD
@@ -555,19 +547,7 @@ ShaderProgram_methods[] = {
     {NULL}
 };
 
-static PyTypeObject
-ShaderProgramType = {
-    PyObject_HEAD_INIT(NULL)
-    .tp_name = "core.ShaderProgram",
-    .tp_basicsize = sizeof(ShaderProgramObject),
-    .tp_dealloc = (destructor)ShaderProgram_dealloc,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_doc = "GL framebuffer",
-    .tp_methods = ShaderProgram_methods,
-    .tp_members = ShaderProgram_members,
-    .tp_init = (initproc)ShaderProgram_init,
-    .tp_new = ShaderProgram_new,
-};
+DEFINE_TYPE(ShaderProgram);
 
 typedef struct {
     PyObject_HEAD
@@ -673,19 +653,7 @@ Window_methods[] = {
     {NULL}
 };
 
-static PyTypeObject
-WindowType = {
-    PyObject_HEAD_INIT(NULL)
-    .tp_name = "core.Window",
-    .tp_basicsize = sizeof(WindowObject),
-    .tp_dealloc = (destructor)Window_dealloc,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_doc = "Platform window",
-    .tp_methods = Window_methods,
-    .tp_members = Window_members,
-    .tp_init = (initproc)Window_init,
-    .tp_new = Window_new,
-};
+DEFINE_TYPE(Window);
 
 typedef struct {
     PyObject_HEAD
@@ -745,19 +713,7 @@ Sound_methods[] = {
     {NULL}
 };
 
-static PyTypeObject
-SoundType = {
-    PyObject_HEAD_INIT(NULL)
-    .tp_name = "core.Sound",
-    .tp_basicsize = sizeof(SoundObject),
-    .tp_dealloc = (destructor)Sound_dealloc,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_doc = "Sound effect",
-    .tp_methods = Sound_methods,
-    .tp_members = Sound_members,
-    .tp_init = (initproc)Sound_init,
-    .tp_new = Sound_new,
-};
+DEFINE_TYPE(Sound);
 
 static PyMethodDef CoreMethods[] = {
     {"sin", core_sin, METH_VARARGS, "sine"},
@@ -775,6 +731,12 @@ static PyMethodDef CoreMethods[] = {
     {NULL, NULL, 0, NULL}
 };
 
+#define INIT_TYPE(name) \
+    name##Type.tp_new = PyType_GenericNew; \
+    PyType_Ready(&name##Type); \
+    Py_INCREF(&name##Type); \
+    PyModule_AddObject(m, #name, (PyObject *)&name##Type)
+
 PyMODINIT_FUNC
 initcore(void)
 {
@@ -782,38 +744,9 @@ initcore(void)
 
     PyObject *m = Py_InitModule("core", CoreMethods);
 
-    TextureType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&TextureType) < 0) {
-        return;
-    }
-    Py_INCREF(&TextureType);
-    PyModule_AddObject(m, "Texture", (PyObject *)&TextureType);
-
-    FramebufferType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&FramebufferType) < 0) {
-        return;
-    }
-    Py_INCREF(&FramebufferType);
-    PyModule_AddObject(m, "Framebuffer", (PyObject *)&FramebufferType);
-
-    ShaderProgramType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&ShaderProgramType) < 0) {
-        return;
-    }
-    Py_INCREF(&ShaderProgramType);
-    PyModule_AddObject(m, "ShaderProgram", (PyObject *)&ShaderProgramType);
-
-    WindowType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&WindowType) < 0) {
-        return;
-    }
-    Py_INCREF(&WindowType);
-    PyModule_AddObject(m, "Window", (PyObject *)&WindowType);
-
-    SoundType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&SoundType) < 0) {
-        return;
-    }
-    Py_INCREF(&SoundType);
-    PyModule_AddObject(m, "Sound", (PyObject *)&SoundType);
+    INIT_TYPE(Texture);
+    INIT_TYPE(Framebuffer);
+    INIT_TYPE(ShaderProgram);
+    INIT_TYPE(Window);
+    INIT_TYPE(Sound);
 }
