@@ -32,12 +32,12 @@ class Renderer():
         gr, gg, gb = self.global_tint
         hs, ws = texture.h * scale, texture.w * scale
 
-        self.draw_sprites.enable_arrays(texture, [x,y,x,y+hs,x+ws,y,x+ws,y+hs], [0,0,0,1,1,0,1,1])
+        self.draw_sprites.enable_arrays(texture, [x,y,x,y+hs,x+ws,y,x+ws,y+hs])
         self.draw_sprites.uniform4f('color', r*gr, g*gg, b*gb, opacity)
         draw_quad()
 
     def render_effect(self, effect, fbo):
-        effect.enable_arrays(fbo.texture, [-1,-1,-1,1,1,-1,1,1], [0,0,0,1,1,0,1,1])
+        effect.enable_arrays(fbo.texture, [-1,-1,-1,1,1,-1,1,1])
         effect.uniform2f('dimensions', fbo.texture.w, fbo.texture.h)
         effect.uniform1f('time', time_seconds() - self.started)
         draw_quad()

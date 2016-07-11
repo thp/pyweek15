@@ -436,6 +436,9 @@ ShaderProgram_init(ShaderProgramObject *self, PyObject *args, PyObject *kwargs)
 
     glLinkProgram(self->program_id);
 
+    // 2 component position, 2 component texture coordinate, 4 vertices
+    self->vertex_buffer = malloc(sizeof(float) * 2 * 2 * 4);
+
     return 0;
 }
 
@@ -493,8 +496,7 @@ ShaderProgram_enable_arrays(ShaderProgramObject *self, PyObject *args)
 {
     TextureObject *texture;
     PyObject *position;
-    PyObject *texcoord;
-    if (!PyArg_ParseTuple(args, "OOO", (PyObject **)&texture, &position, &texcoord)) {
+    if (!PyArg_ParseTuple(args, "OO", (PyObject **)&texture, &position)) {
         return NULL;
     }
 
@@ -502,27 +504,19 @@ ShaderProgram_enable_arrays(ShaderProgramObject *self, PyObject *args)
         return NULL;
     }
 
-    if (!PyList_Check(texcoord)) {
-        return NULL;
-    }
-
     ShaderProgram_bind(self);
     Texture_bind(texture);
 
-    Py_ssize_t position_len = PyList_Size(position);
-    Py_ssize_t texcoord_len = PyList_Size(texcoord);
-
-    if (position_len != texcoord_len) {
+    if (PyList_Size(position) != (2 * 4)) {
         return NULL;
     }
 
-    free(self->vertex_buffer);
-    self->vertex_buffer = malloc(sizeof(float) * (position_len + texcoord_len));
-    for (int i=0; i<position_len / 2; i++) {
+    float texcoord[] = { 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, };
+    for (int i=0; i<4; i++) {
         self->vertex_buffer[i*4+0] = PyFloat_AsDouble(PyList_GET_ITEM(position, i*2+0));
         self->vertex_buffer[i*4+1] = PyFloat_AsDouble(PyList_GET_ITEM(position, i*2+1));
-        self->vertex_buffer[i*4+2] = PyFloat_AsDouble(PyList_GET_ITEM(texcoord, i*2+0));
-        self->vertex_buffer[i*4+3] = PyFloat_AsDouble(PyList_GET_ITEM(texcoord, i*2+1));
+        self->vertex_buffer[i*4+2] = texcoord[i*2+0];
+        self->vertex_buffer[i*4+3] = texcoord[i*2+1];
     }
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &self->vertex_buffer[0]);
