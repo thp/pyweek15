@@ -1,4 +1,4 @@
-from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image, render_text, Window, Sound, list_files
+from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image, Window, Sound, Font, list_files
 from core import draw_init, Texture, Framebuffer, ShaderProgram
 
 def get_lines(filename):
@@ -9,13 +9,3 @@ def file_path(*args):
 
 def find_files(parent, extension):
     return list_files(file_path(parent), extension)
-
-class Font():
-    def __init__(self, size):
-        self.size = size
-
-    def render(self, text):
-        result = render_text(text)
-        result.w *= self.size
-        result.h *= self.size
-        return result

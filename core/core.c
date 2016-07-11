@@ -141,38 +141,6 @@ core_load_image(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-core_render_text(PyObject *self, PyObject *args)
-{
-    const char *text;
-    if (!PyArg_ParseTuple(args, "s", &text)) {
-        return NULL;
-    }
-
-    int width, height;
-
-    struct FontaineFont *font = fontaine_new(NULL, NULL, NULL);
-    unsigned char *pixels = fontaine_render(font, text, &width, &height);
-    unsigned char *pixels2 = malloc(width * height * 2);
-    // LUMINANCE_ALPHA format needs 2 bytes per pixels -- use that opportunity to make
-    // the luminance part white (0xFF) and only take the alpha channel from the font
-    for (int i=0; i<width*height; i++) {
-        pixels2[i*2+0] = 0xFF;
-        pixels2[i*2+1] = pixels[i];
-    }
-    fontaine_free_pixels(font, pixels);
-    fontaine_free(font);
-
-    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels2, width * height * 2);
-    free(pixels2);
-
-    PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, 2);
-    PyObject *result = PyObject_CallObject((PyObject *)&TextureType, textureArgs);
-    Py_DECREF(textureArgs);
-
-    return result;
-}
-
-static PyObject *
 core_list_files(PyObject *self, PyObject *args)
 {
     const char *dirname;
@@ -691,6 +659,92 @@ Sound_methods[] = {
 
 DEFINE_TYPE(Sound);
 
+typedef struct {
+    PyObject_HEAD
+
+    struct FontaineFont *font;
+    float size;
+} FontObject;
+
+static void
+Font_dealloc(FontObject *self)
+{
+    fontaine_free(self->font);
+    self->ob_type->tp_free((PyObject *)self);
+}
+
+static PyObject *
+Font_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
+{
+    FontObject *self = (FontObject *)type->tp_alloc(type, 0);
+
+    if (self != NULL) {
+        self->font = NULL;
+        self->size = 1.f;
+    }
+
+    return (PyObject *)self;
+}
+
+static int
+Font_init(FontObject *self, PyObject *args, PyObject *kwargs)
+{
+    if (!PyArg_ParseTuple(args, "f", &self->size)) {
+        return -1;
+    }
+
+    self->font = fontaine_new(NULL, NULL, NULL);
+
+    return 0;
+}
+
+static PyObject *
+Font_render(FontObject *self, PyObject *args)
+{
+    const char *text;
+    if (!PyArg_ParseTuple(args, "s", &text)) {
+        return NULL;
+    }
+
+    int width, height;
+
+    unsigned char *pixels = fontaine_render(self->font, text, &width, &height);
+    unsigned char *pixels2 = malloc(width * height * 2);
+    // LUMINANCE_ALPHA format needs 2 bytes per pixels -- use that opportunity to make
+    // the luminance part white (0xFF) and only take the alpha channel from the font
+    for (int i=0; i<width*height; i++) {
+        pixels2[i*2+0] = 0xFF;
+        pixels2[i*2+1] = pixels[i];
+    }
+    fontaine_free_pixels(self->font, pixels);
+
+    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels2, width * height * 2);
+    free(pixels2);
+
+    PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, 2);
+    TextureObject *result = (TextureObject *)PyObject_CallObject((PyObject *)&TextureType, textureArgs);
+    Py_DECREF(textureArgs);
+
+    result->w *= self->size;
+    result->h *= self->size;
+
+    return (PyObject *)result;
+}
+
+static PyMemberDef
+Font_members[] = {
+    {"size", T_FLOAT, offsetof(FontObject, size), 0, "scaling factor"},
+    {NULL}
+};
+
+static PyMethodDef
+Font_methods[] = {
+    {"render", (PyCFunction)Font_render, METH_VARARGS, "Render text to a texture"},
+    {NULL}
+};
+
+DEFINE_TYPE(Font);
+
 static PyMethodDef CoreMethods[] = {
     {"sin", core_sin, METH_VARARGS, "sine"},
     {"cos", core_cos, METH_VARARGS, "cosine"},
@@ -700,7 +754,6 @@ static PyMethodDef CoreMethods[] = {
     {"randuniform", core_randuniform, METH_VARARGS, "random uniform"},
     {"draw_init", (PyCFunction)core_draw_init, METH_NOARGS, "init opengl"},
     {"load_image", core_load_image, METH_VARARGS, "Load image data from a file"},
-    {"render_text", core_render_text, METH_VARARGS, "Render text to a texture"},
     {"list_files", core_list_files, METH_VARARGS, "List files in a directory by extension"},
     {NULL, NULL, 0, NULL}
 };
@@ -723,4 +776,5 @@ initcore(void)
     INIT_TYPE(ShaderProgram);
     INIT_TYPE(Window);
     INIT_TYPE(Sound);
+    INIT_TYPE(Font);
 }
