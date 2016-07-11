@@ -1,4 +1,4 @@
-from porting import time_seconds, ShaderProgram, Framebuffer, draw_init, draw_quad, draw_clear
+from porting import time_seconds, ShaderProgram, Framebuffer, draw_init
 
 class Renderer():
     def __init__(self, app):
@@ -8,6 +8,8 @@ class Renderer():
         self.started = time_seconds()
 
     def resize(self, width, height):
+        self.width = width
+        self.height = height
         draw_init()
         self.fbs = [Framebuffer(width, height), Framebuffer(width, height)]
 
@@ -17,30 +19,26 @@ class Renderer():
         self.underwater_effect = mkshader('effect_vertex_shader.vsh', 'underwater_effect.fsh')
         self.effect_pipeline = [self.blur_effect, self.underwater_effect]
 
-        self.draw_sprites.bind()
-        self.draw_sprites.uniform2f('size', width, height)
-
     def begin(self):
         if self.effect_pipeline:
             self.postprocessed = False
             self.fbs[0].bind()
-        draw_clear()
 
     def draw(self, texture, pos, scale=1., opacity=1., tint=(1., 1., 1.)):
         x, y = pos
         r, g, b = tint
         gr, gg, gb = self.global_tint
         hs, ws = texture.h * scale, texture.w * scale
-
-        self.draw_sprites.enable_arrays(texture, [x,y,x,y+hs,x+ws,y,x+ws,y+hs])
-        self.draw_sprites.uniform4f('color', r*gr, g*gg, b*gb, opacity)
-        draw_quad()
+        self.draw_sprites.draw_quad(texture, [x,y,x,y+hs,x+ws,y,x+ws,y+hs], {
+            'color': (r*gr, g*gg, b*gb, opacity),
+            'size': (self.width, self.height),
+        })
 
     def render_effect(self, effect, fbo):
-        effect.enable_arrays(fbo.texture, [-1,-1,-1,1,1,-1,1,1])
-        effect.uniform2f('dimensions', fbo.texture.w, fbo.texture.h)
-        effect.uniform1f('time', time_seconds() - self.started)
-        draw_quad()
+        effect.draw_quad(fbo.texture, [-1,-1,-1,1,1,-1,1,1], {
+            'time': time_seconds() - self.started,
+            'size': (fbo.texture.w, fbo.texture.h),
+        })
 
     def postprocess(self):
         if self.effect_pipeline and not self.postprocessed:
@@ -48,11 +46,9 @@ class Renderer():
             a, b = self.fbs
             for idx, effect in enumerate(self.effect_pipeline[:-1]):
                 b.bind()
-                draw_clear()
                 self.render_effect(effect, a)
                 b.unbind()
                 a, b = b, a
-            draw_clear()
             self.render_effect(self.effect_pipeline[-1], a)
             self.postprocessed = True
 

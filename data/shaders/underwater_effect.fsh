@@ -1,5 +1,5 @@
 uniform sampler2D sampler;
-uniform vec2 dimensions;
+uniform vec2 size;
 uniform float time;
 
 varying vec2 tex;
@@ -7,7 +7,7 @@ varying vec2 tex;
 void main()
 {
     // Shift texture lookup sideways depending on Y coordinate + time
-    vec2 pos = tex + vec2(6.0*sin(pow(tex.y, 2.0)*20.0+time)/dimensions.x, 0.0);
+    vec2 pos = tex + vec2(6.0*sin(pow(tex.y, 2.0)*20.0+time)/size.x, 0.0);
     vec4 color = texture2D(sampler, pos);
 
     // Vignette effect (brightest at center, darker towards edges)

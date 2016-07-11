@@ -114,22 +114,6 @@ core_draw_init(PyObject *self)
 }
 
 static PyObject *
-core_draw_clear(PyObject *self)
-{
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    Py_RETURN_NONE;
-}
-
-static PyObject *
-core_draw_quad(PyObject *self)
-{
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-    Py_RETURN_NONE;
-}
-
-static PyObject *
 core_load_image(PyObject *self, PyObject *args)
 {
     const char *filename;
@@ -450,65 +434,64 @@ ShaderProgram_bind(ShaderProgramObject *self)
 }
 
 static PyObject *
-ShaderProgram_uniform1f(ShaderProgramObject *self, PyObject *args)
-{
-    const char *name;
-    float v0;
-    if (!PyArg_ParseTuple(args, "sf", &name, &v0)) {
-        return NULL;
-    }
-
-    glUniform1f(glGetUniformLocation(self->program_id, name), v0);
-
-    Py_RETURN_NONE;
-}
-
-static PyObject *
-ShaderProgram_uniform2f(ShaderProgramObject *self, PyObject *args)
-{
-    const char *name;
-    float v0, v1;
-    if (!PyArg_ParseTuple(args, "sff", &name, &v0, &v1)) {
-        return NULL;
-    }
-
-    glUniform2f(glGetUniformLocation(self->program_id, name), v0, v1);
-
-    Py_RETURN_NONE;
-}
-
-static PyObject *
-ShaderProgram_uniform4f(ShaderProgramObject *self, PyObject *args)
-{
-    const char *name;
-    float v0, v1, v2, v3;
-    if (!PyArg_ParseTuple(args, "sffff", &name, &v0, &v1, &v2, &v3)) {
-        return NULL;
-    }
-
-    glUniform4f(glGetUniformLocation(self->program_id, name), v0, v1, v2, v3);
-
-    Py_RETURN_NONE;
-}
-
-static PyObject *
-ShaderProgram_enable_arrays(ShaderProgramObject *self, PyObject *args)
+ShaderProgram_draw_quad(ShaderProgramObject *self, PyObject *args)
 {
     TextureObject *texture;
     PyObject *position;
-    if (!PyArg_ParseTuple(args, "OO", (PyObject **)&texture, &position)) {
+    PyObject *uniforms;
+    if (!PyArg_ParseTuple(args, "OOO", (PyObject **)&texture, &position, &uniforms)) {
         return NULL;
     }
 
-    if (!PyList_Check(position)) {
+    if (!PyList_Check(position) || PyList_Size(position) != (2 * 4)) {
+        return NULL;
+    }
+
+    if (!PyDict_Check(uniforms)) {
         return NULL;
     }
 
     ShaderProgram_bind(self);
     Texture_bind(texture);
 
-    if (PyList_Size(position) != (2 * 4)) {
-        return NULL;
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
+    while (PyDict_Next(uniforms, &pos, &key, &value)) {
+        if (!PyString_Check(key)) {
+            return NULL;
+        }
+
+        const char *name = PyString_AsString(key);
+        int location = glGetUniformLocation(self->program_id, name);
+
+        if (PyNumber_Check(value)) {
+            PyObject *vo = PyNumber_Float(value);
+            glUniform1f(location, PyFloat_AsDouble(vo));
+            Py_DECREF(vo);
+        } else if (PyTuple_Check(value)) {
+            size_t comp = PyTuple_GET_SIZE(value);
+            float v[comp];
+            for (int i=0; i<comp; i++) {
+                PyObject *item = PyTuple_GET_ITEM(value, i);
+                if (!PyNumber_Check(item)) {
+                    return NULL;
+                }
+
+                PyObject *vo = PyNumber_Float(item);
+                v[i] = PyFloat_AsDouble(vo);
+                Py_DECREF(vo);
+            }
+
+            switch (comp) {
+                case 1: glUniform1f(location, v[0]); break;
+                case 2: glUniform2f(location, v[0], v[1]); break;
+                case 3: glUniform3f(location, v[0], v[1], v[2]); break;
+                case 4: glUniform4f(location, v[0], v[1], v[2], v[3]); break;
+                default: return NULL;
+            }
+        } else {
+            return NULL;
+        }
     }
 
     float texcoord[] = { 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, };
@@ -522,6 +505,8 @@ ShaderProgram_enable_arrays(ShaderProgramObject *self, PyObject *args)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &self->vertex_buffer[0]);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &self->vertex_buffer[2]);
 
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
     Py_RETURN_NONE;
 }
 
@@ -534,10 +519,7 @@ ShaderProgram_members[] = {
 static PyMethodDef
 ShaderProgram_methods[] = {
     {"bind", (PyCFunction)ShaderProgram_bind, METH_NOARGS, "Use the shader program for rendering"},
-    {"uniform1f", (PyCFunction)ShaderProgram_uniform1f, METH_VARARGS, "Set float uniform"},
-    {"uniform2f", (PyCFunction)ShaderProgram_uniform2f, METH_VARARGS, "Set vec2 uniform"},
-    {"uniform4f", (PyCFunction)ShaderProgram_uniform4f, METH_VARARGS, "Set vec4 uniform"},
-    {"enable_arrays", (PyCFunction)ShaderProgram_enable_arrays, METH_VARARGS, "Set array pointers"},
+    {"draw_quad", (PyCFunction)ShaderProgram_draw_quad, METH_VARARGS, "Draw a textured quad"},
     {NULL}
 };
 
@@ -717,8 +699,6 @@ static PyMethodDef CoreMethods[] = {
     {"randint", core_randint, METH_VARARGS, "random integer"},
     {"randuniform", core_randuniform, METH_VARARGS, "random uniform"},
     {"draw_init", (PyCFunction)core_draw_init, METH_NOARGS, "init opengl"},
-    {"draw_clear", (PyCFunction)core_draw_clear, METH_NOARGS, "clear screen"},
-    {"draw_quad", (PyCFunction)core_draw_quad, METH_NOARGS, "draw a quad"},
     {"load_image", core_load_image, METH_VARARGS, "Load image data from a file"},
     {"render_text", core_render_text, METH_VARARGS, "Render text to a texture"},
     {"list_files", core_list_files, METH_VARARGS, "List files in a directory by extension"},

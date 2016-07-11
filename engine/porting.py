@@ -1,5 +1,5 @@
 from core import sin, cos, sqrt, time_seconds, randint, randuniform, load_image, render_text, Window, Sound, list_files
-from core import draw_init, draw_clear, draw_quad, Texture, Framebuffer, ShaderProgram
+from core import draw_init, Texture, Framebuffer, ShaderProgram
 
 def get_lines(filename):
     return open(filename).read().splitlines()
