@@ -5,8 +5,30 @@
 #define STBI_ONLY_JPEG
 #include "stb_image.h"
 
+typedef struct {
+    PyObject_HEAD
+} ImageObject;
+
+static void
+Image_dealloc(ImageObject *self)
+{
+    self->ob_type->tp_free((PyObject *)self);
+}
+
 static PyObject *
-core_load_image(PyObject *self, PyObject *args)
+Image_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
+{
+    return type->tp_alloc(type, 0);
+}
+
+static int
+Image_init(ImageObject *self, PyObject *args, PyObject *kwargs)
+{
+    return 0;
+}
+
+static PyObject *
+Image_load(PyObject *self, PyObject *args)
 {
     const char *filename;
     if (!PyArg_ParseTuple(args, "s", &filename)) {
@@ -28,3 +50,16 @@ core_load_image(PyObject *self, PyObject *args)
 
     return result;
 }
+
+static PyMemberDef
+Image_members[] = {
+    {NULL}
+};
+
+static PyMethodDef
+Image_methods[] = {
+    {"load", Image_load, METH_VARARGS | METH_STATIC, "Load image data from a file"},
+    {NULL}
+};
+
+DEFINE_TYPE(Image);

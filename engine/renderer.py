@@ -1,4 +1,4 @@
-from core import time, ShaderProgram, Framebuffer, draw_init
+from core import time, ShaderProgram, Framebuffer
 
 class Renderer():
     def __init__(self, app):
@@ -10,7 +10,6 @@ class Renderer():
     def resize(self, width, height):
         self.width = width
         self.height = height
-        draw_init()
         self.fbs = [Framebuffer(width, height), Framebuffer(width, height)]
 
         mkshader = lambda vert, frag: ShaderProgram(self.app.resman.shaders[vert], self.app.resman.shaders[frag])

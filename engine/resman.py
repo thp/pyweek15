@@ -1,4 +1,4 @@
-from core import load_image, Font, Sound, read_file, list_files
+from core import Image, Font, Sound, VFS
 
 FONT_SMALL, FONT_STD, FONT_BIG = FONTS = 1.6, 2.1, 5.6
 
@@ -12,17 +12,17 @@ def bn(filename):
     return filename[:pos] if pos != -1 else filename
 
 def get_lines(filename):
-    return read_file(filename).splitlines()
+    return VFS.read_file(filename).splitlines()
 
 def find_files(parent, extensions):
-    return [filename for filename in list_files(parent) if any(filename.endswith(ext) for ext in extensions)]
+    return [filename for filename in VFS.list_files(parent) if any(filename.endswith(ext) for ext in extensions)]
 
 class ResourceManager():
     def __init__(self, app):
         self.app = app
 
-        self.sprites = {bn(fn): load_image(fn) for fn in find_files('sprites', ('.png',))}
-        self.creatures = {bn(fn): load_image(fn) for fn in find_files('creatures', ('.png',))}
+        self.sprites = {bn(fn): Image.load(fn) for fn in find_files('sprites', ('.png',))}
+        self.creatures = {bn(fn): Image.load(fn) for fn in find_files('creatures', ('.png',))}
         self.intermissions = {bn(fn): get_lines(fn) for fn in find_files('intermissions', ('.txt',))}
         self.shaders = {bn_ext(fn): '\n'.join(get_lines(fn)) for fn in find_files('shaders', ('.fsh', '.vsh'))}
         self.sounds = {bn(fn): Sound(fn) for fn in find_files('sounds', ('.wav',))}
@@ -30,7 +30,7 @@ class ResourceManager():
 
         self.backgrounds = {}
         for fn in sorted(find_files('backgrounds', ('.jpg',))):
-            self.backgrounds.setdefault(bn(fn).split('-')[0], []).append(load_image(fn))
+            self.backgrounds.setdefault(bn(fn).split('-')[0], []).append(Image.load(fn))
 
         self.levels = []
         for fn in sorted(find_files("levels", ('.txt',))):

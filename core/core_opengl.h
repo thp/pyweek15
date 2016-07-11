@@ -2,16 +2,14 @@
 
 #include <OpenGL/GL.h>
 
-static PyObject *
-core_draw_init(PyObject *self)
+static void
+draw_init()
 {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-
-    Py_RETURN_NONE;
 }
 
 typedef struct {

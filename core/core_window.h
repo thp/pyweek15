@@ -42,6 +42,8 @@ Window_init(WindowObject *self, PyObject *args, PyObject *kwargs)
     self->window = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
     SDL_WM_SetCaption(title, title);
 
+    draw_init();
+
     return 0;
 }
 

@@ -28,3 +28,6 @@ list_files(const char *dirname, int *count);
 
 static void
 list_files_free(char **result, int count);
+
+static void
+draw_init();

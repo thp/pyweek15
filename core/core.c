@@ -1,22 +1,17 @@
 #include "core_common.h"
 
-#include "core_util.h"
 #include "core_image.h"
 #include "core_fileio.h"
 #include "core_window.h"
 #include "core_sound.h"
 #include "core_font.h"
 #include "core_opengl.h"
-
+#include "core_vfs.h"
 #include "core_time.h"
 #include "core_math.h"
 #include "core_random.h"
 
 static PyMethodDef CoreMethods[] = {
-    {"draw_init", (PyCFunction)core_draw_init, METH_NOARGS, "init opengl"},
-    {"load_image", core_load_image, METH_VARARGS, "Load image data from a file"},
-    {"list_files", core_list_files, METH_VARARGS, "List files in a directory by extension"},
-    {"read_file", core_read_file, METH_VARARGS, "Read a file and return its data as str"},
     {NULL, NULL, 0, NULL}
 };
 
@@ -39,6 +34,8 @@ initcore(void)
     INIT_TYPE(Window);
     INIT_TYPE(Sound);
     INIT_TYPE(Font);
+    INIT_TYPE(VFS);
+    INIT_TYPE(Image);
 
     INIT_TYPE(time);
     INIT_TYPE(math);
