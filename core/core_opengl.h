@@ -306,6 +306,7 @@ ShaderProgram_draw_quad(ShaderProgramObject *self, PyObject *args)
     float fx = (float)(texture->texture->width) / (float)(texture->texture->pow2_w);
     float fy = (float)(texture->texture->height) / (float)(texture->texture->pow2_h);
 
+    // https://github.com/xerpi/sf2dlib/pull/37
     sf2d_draw_quad_uv_blend(texture->texture, left, top, right, bottom, 0.f, 0.f, fx, fy,
                             RGBA8((int)(r*255), (int)(g*255), (int)(b*255), (int)(a*255)));
 
