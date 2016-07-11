@@ -31,3 +31,6 @@ list_files_free(char **result, int count);
 
 static void
 draw_init();
+
+static void
+sound_init();

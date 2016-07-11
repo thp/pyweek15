@@ -9,6 +9,13 @@ typedef struct {
 } SoundObject;
 
 static void
+sound_init()
+{
+        Mix_Init(0);
+        Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, AUDIO_S16LSB, 2, 1024);
+}
+
+static void
 Sound_dealloc(SoundObject *self)
 {
     Mix_FreeChunk(self->chunk);
@@ -33,13 +40,6 @@ Sound_init(SoundObject *self, PyObject *args, PyObject *kwargs)
     const char *filename;
     if (!PyArg_ParseTuple(args, "s", &filename)) {
         return -1;
-    }
-
-    static int sound_inited = 0;
-    if (!sound_inited) {
-        Mix_Init(0);
-        Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, AUDIO_S16LSB, 2, 1024);
-        sound_inited = 1;
     }
 
     int len;

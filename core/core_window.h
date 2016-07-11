@@ -43,6 +43,7 @@ Window_init(WindowObject *self, PyObject *args, PyObject *kwargs)
     SDL_WM_SetCaption(title, title);
 
     draw_init();
+    sound_init();
 
     return 0;
 }
