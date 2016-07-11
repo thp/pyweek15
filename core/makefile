@@ -7,3 +7,6 @@ FLAGS := $(SDL_FLAGS) $(PYTHON_FLAGS) $(OPENGL_FLAGS) $(SHLIB_FLAGS)
 
 all:
 	gcc $(FLAGS) -o core.so core.c
+
+clean:
+	rm -rf core.so core.so.dSYM
