@@ -45,7 +45,7 @@ env CFLAGS="-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft -fomit-frame-
     CONFIG_SITE=config.site \
     ./configure --without-doc-strings --without-threads --disable-shared --host=arm-none-eabi --build=`./config.guess`
 
-# Workaround for Parser/pgen becoming out of dat
+# Workaround for http://bugs.python.org/issue27490
 make libpython2.7.a || true
 touch Parser/pgen
 
