@@ -52,7 +52,9 @@ Texture_init(TextureObject *self, PyObject *args, PyObject *kwargs)
         return -1;
     }
 
-    assert(rgba_len == (self->w * self->h * comp));
+    if (rgba_len != 0 && rgba_len != (self->w * self->h * comp)) {
+        return -1;
+    }
 
     GLenum format = (comp == 2) ? GL_LUMINANCE_ALPHA : ((comp == 4) ? GL_RGBA : GL_RGB);
 

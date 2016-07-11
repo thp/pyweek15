@@ -1,4 +1,2 @@
-# -*- makefile -*-
 zipimport zipimport.c
 zlib zlibmodule.c -lz
-core core.c -lSDL -lSDLmain -lSDL_mixer -L/usr/local/lib -I/usr/local/include/SDL -I../../core -framework OpenGL -Wl,-framework,Cocoa

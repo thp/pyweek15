@@ -1,3 +1,5 @@
+#include "core.h"
+
 #include "core_common.h"
 
 #include "core_image.h"
@@ -11,10 +13,6 @@
 #include "core_math.h"
 #include "core_random.h"
 
-static PyMethodDef CoreMethods[] = {
-    {NULL, NULL, 0, NULL}
-};
-
 #define INIT_TYPE(name) \
     name##Type.tp_new = PyType_GenericNew; \
     PyType_Ready(&name##Type); \
@@ -24,7 +22,7 @@ static PyMethodDef CoreMethods[] = {
 PyMODINIT_FUNC
 initcore(void)
 {
-    PyObject *m = Py_InitModule("core", CoreMethods);
+    PyObject *m = Py_InitModule("core", NULL);
 
     INIT_TYPE(Texture);
     INIT_TYPE(Framebuffer);

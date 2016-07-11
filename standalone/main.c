@@ -1,5 +1,7 @@
-#include "Python.h"
+#include "core.h"
+
 #include <SDL.h>
+#include <Python.h>
 
 int
 main(int argc, char **argv)
@@ -9,11 +11,14 @@ main(int argc, char **argv)
 
     Py_Initialize();
 
+    initcore();
+
     PyObject *sys = PyImport_ImportModule("sys");
     if (sys) {
         PyObject *path = PyObject_GetAttrString(sys, "path");
         if (path) {
-            PyObject *self = PyString_FromString(argv[0]);
+            //PyObject *self = PyString_FromString(argv[0]);
+            PyObject *self = PyString_FromString("onewhaletrip.zip");
             PyList_Insert(path, 0, self);
             Py_DECREF(self);
             Py_DECREF(path);
