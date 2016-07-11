@@ -8,7 +8,7 @@ static char *
 resolve_file_path(const char *filename)
 {
     char *result;
-    asprintf(&result, "data/%s", filename);
+    asprintf(&result, "sdmc:/onewhaletrip/data/%s", filename);
     return result;
 }
 

@@ -1,0 +1,7 @@
+for file in **/*.png; do convert $file -resize '50%x50%' $file; done
+for file in **/*.jpg; do convert $file -resize '50%x50%' $file; done
+
+cd data/sounds
+for file in *; do sox $file -b 16 -c 1 -r 22050 -t raw ../$file; done
+mv ../*.wav .
+

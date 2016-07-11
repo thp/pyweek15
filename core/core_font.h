@@ -52,19 +52,20 @@ Font_render(FontObject *self, PyObject *args)
     int width, height;
 
     unsigned char *pixels = fontaine_render(self->font, text, &width, &height);
-    unsigned char *pixels2 = malloc(width * height * 2);
-    // LUMINANCE_ALPHA format needs 2 bytes per pixels -- use that opportunity to make
-    // the luminance part white (0xFF) and only take the alpha channel from the font
+    unsigned char *pixels4 = malloc(width * height * 4);
+    int offset = 0;
     for (int i=0; i<width*height; i++) {
-        pixels2[i*2+0] = 0xFF;
-        pixels2[i*2+1] = pixels[i];
+        pixels4[offset++] = 0xff;
+        pixels4[offset++] = 0xff;
+        pixels4[offset++] = 0xff;
+        pixels4[offset++] = pixels[i];
     }
     fontaine_free_pixels(self->font, pixels);
 
-    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels2, width * height * 2);
-    free(pixels2);
+    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels4, width * height * 4);
+    free(pixels4);
 
-    PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, 2);
+    PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, 4);
     PyObject *result = PyObject_CallObject((PyObject *)&TextureType, textureArgs);
     Py_DECREF(textureArgs);
 
@@ -73,7 +74,7 @@ Font_render(FontObject *self, PyObject *args)
         PyObject *attr = PyObject_GetAttrString(result, attrs[i]);
         if (PyNumber_Check(attr)) {
             PyObject *old_value = PyNumber_Float(attr);
-            PyObject *new_value = PyFloat_FromDouble(PyFloat_AsDouble(old_value) * self->size);
+            PyObject *new_value = PyFloat_FromDouble(PyFloat_AsDouble(old_value) * self->size / 2.f);
             PyObject_SetAttrString(result, attrs[i], new_value);
             Py_DECREF(old_value);
             Py_DECREF(new_value);

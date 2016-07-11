@@ -1,8 +1,5 @@
 #include "core.h"
 
-#include <SDL.h>
-#include <Python.h>
-
 int
 main(int argc, char **argv)
 {
