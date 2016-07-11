@@ -7,6 +7,16 @@ typedef struct {
 } randomObject;
 
 static void
+random_request_seed()
+{
+    static int inited = 0;
+    if (!inited) {
+        srand((uint32_t)time(NULL));
+        inited = 1;
+    }
+}
+
+static void
 random_dealloc(randomObject *self)
 {
     self->ob_type->tp_free((PyObject *)self);
@@ -32,6 +42,7 @@ random_randint(PyObject *self, PyObject *args)
         return NULL;
     }
 
+    random_request_seed();
     long long result = a + (b - a) * (long long)rand() / (long long)RAND_MAX;
     return Py_BuildValue("L", result);
 }
@@ -44,6 +55,7 @@ random_uniform(PyObject *self, PyObject *args)
         return NULL;
     }
 
+    random_request_seed();
     double result = a + (b - a) * (double)rand() / (double)RAND_MAX;
     return Py_BuildValue("d", result);
 }

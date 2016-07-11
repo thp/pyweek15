@@ -24,8 +24,6 @@ static PyMethodDef CoreMethods[] = {
 PyMODINIT_FUNC
 initcore(void)
 {
-    srand((uint32_t)time(NULL));
-
     PyObject *m = Py_InitModule("core", CoreMethods);
 
     INIT_TYPE(Texture);
