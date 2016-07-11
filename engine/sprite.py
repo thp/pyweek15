@@ -1,4 +1,4 @@
-from porting import sin
+from core import sin
 
 class Sprite(object):
     def init(self, basename, frames, duration=.2):

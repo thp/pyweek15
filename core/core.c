@@ -36,6 +36,76 @@
 
 static PyTypeObject TextureType;
 
+static char *
+resolve_file_path(const char *filename)
+{
+    char *result;
+    asprintf(&result, "data/%s", filename);
+    return result;
+}
+
+static char **
+list_files(const char *dirname, int *count)
+{
+    char *path = resolve_file_path(dirname);
+    DIR *dir = opendir(path);
+    free(path);
+
+    int used = 0;
+    int size = 16;
+
+    char **result = malloc(sizeof(char *) * size);
+
+    struct dirent *ent;
+    while ((ent = readdir(dir)) != NULL) {
+        if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0) {
+            continue;
+        }
+
+        if (used == size) {
+            size += size;
+            result = realloc(result, sizeof(char *) * size);
+        }
+
+        asprintf(&result[used++], "%s/%s", dirname, ent->d_name);
+    }
+
+    closedir(dir);
+
+    *count = used;
+    return result;
+}
+
+void
+list_files_free(char **result, int count)
+{
+    for (int i=0; i<count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+static char *
+read_file(const char *filename, int *length)
+{
+    char *path = resolve_file_path(filename);
+    FILE *fp = fopen(path, "rb");
+    free(path);
+
+    fseek(fp, 0, SEEK_END);
+    int len = (int)ftell(fp);
+
+    char *buf = malloc(len);
+    fseek(fp, 0, SEEK_SET);
+    fread(buf, len, 1, fp);
+
+    fclose(fp);
+
+    *length = len;
+    return buf;
+}
+
+
 static PyObject *
 core_sin(PyObject *self, PyObject *args)
 {
@@ -121,15 +191,12 @@ core_load_image(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    FILE *fp = fopen(filename, "rb");
-    fseek(fp, 0, SEEK_END);
-    int len = (int)ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-    unsigned char *image_data = malloc(len);
-    fread(image_data, len, 1, fp);
+    int len;
+    unsigned char *buf = (unsigned char *)read_file(filename, &len);
+
     int width, height, comp;
-    stbi_uc *pixels = stbi_load_from_memory(image_data, len, &width, &height, &comp, 0);
-    free(image_data);
+    stbi_uc *pixels = stbi_load_from_memory(buf, len, &width, &height, &comp, 0);
+    free(buf);
     PyObject *rgba = PyString_FromStringAndSize((const char *)pixels, width * height * comp);
     stbi_image_free(pixels);
 
@@ -144,33 +211,35 @@ static PyObject *
 core_list_files(PyObject *self, PyObject *args)
 {
     const char *dirname;
-    const char *extension;
-    if (!PyArg_ParseTuple(args, "ss", &dirname, &extension)) {
+    if (!PyArg_ParseTuple(args, "s", &dirname)) {
         return NULL;
     }
 
-    PyObject *list = PyList_New(0);
-
-    DIR *dir = opendir(dirname);
-    char *ext2;
-    asprintf(&ext2, ".%s", extension);
-
-    struct dirent *ent;
-    while ((ent = readdir(dir)) != NULL) {
-        if (strstr(ent->d_name, ext2) == ent->d_name + strlen(ent->d_name) - strlen(ext2)) {
-            char *tmp;
-            asprintf(&tmp, "%s/%s", dirname, ent->d_name);
-            PyObject *str = PyString_FromString(tmp);
-            PyList_Append(list, str);
-            Py_DECREF(str);
-            free(tmp);
-        }
+    int count;
+    char **filenames = list_files(dirname, &count);
+    PyObject *list = PyList_New(count);
+    for (int i=0; i<count; i++) {
+        PyList_SET_ITEM(list, i, PyString_FromString(filenames[i]));
     }
-    closedir(dir);
-
-    free(ext2);
+    list_files_free(filenames, count);
 
     return list;
+}
+
+static PyObject *
+core_read_file(PyObject *self, PyObject *args)
+{
+    const char *filename;
+    if (!PyArg_ParseTuple(args, "s", &filename)) {
+        return NULL;
+    }
+
+    int len;
+    char *buf = read_file(filename, &len);
+    PyObject *contents = PyString_FromStringAndSize(buf, len);
+    free(buf);
+
+    return contents;
 }
 
 typedef struct {
@@ -628,12 +697,14 @@ static int
 Sound_init(SoundObject *self, PyObject *args, PyObject *kwargs)
 {
     const char *filename;
-
     if (!PyArg_ParseTuple(args, "s", &filename)) {
         return -1;
     }
 
-    self->chunk = Mix_LoadWAV(filename);
+    int len;
+    char *buf = read_file(filename, &len);
+    self->chunk = Mix_LoadWAV_RW(SDL_RWFromConstMem(buf, len), 1);
+    free(buf);
 
     return 0;
 }
@@ -755,6 +826,7 @@ static PyMethodDef CoreMethods[] = {
     {"draw_init", (PyCFunction)core_draw_init, METH_NOARGS, "init opengl"},
     {"load_image", core_load_image, METH_VARARGS, "Load image data from a file"},
     {"list_files", core_list_files, METH_VARARGS, "List files in a directory by extension"},
+    {"read_file", core_read_file, METH_VARARGS, "Read a file and return its data as str"},
     {NULL, NULL, 0, NULL}
 };
 

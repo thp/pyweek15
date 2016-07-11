@@ -1,7 +1,7 @@
 from scene import Scene
 from resman import Level
 from sprite import Enemy
-from porting import sin
+from core import sin
 
 class Game(Scene):
     FADE_OFFSET = 6

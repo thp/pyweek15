@@ -1,4 +1,4 @@
-from porting import cos, sin, sqrt
+from core import cos, sin, sqrt
 
 class Vec3(object):
     def __init__(self, x, y, z):

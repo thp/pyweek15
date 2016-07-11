@@ -1,4 +1,4 @@
-from porting import randint, randuniform
+from core import randint, randuniform
 
 class Scene(object):
     def __init__(self, app, name):

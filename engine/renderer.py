@@ -1,4 +1,4 @@
-from porting import time_seconds, ShaderProgram, Framebuffer, draw_init
+from core import time_seconds, ShaderProgram, Framebuffer, draw_init
 
 class Renderer():
     def __init__(self, app):

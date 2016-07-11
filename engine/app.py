@@ -1,4 +1,4 @@
-from porting import time_seconds, Window
+from core import time_seconds, Window
 from resman import ResourceManager
 from sprite import Player
 from screen import Screen
