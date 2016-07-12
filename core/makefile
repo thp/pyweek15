@@ -1,7 +1,12 @@
 include core.mk
 
-all:
-	gcc -shared -fPIC $(CORE_FLAGS) $(PYTHON_FLAGS) -o core.so core.c
+MODULE := core.so
+MODULE_SRC := core.c
+
+all: $(MODULE)
+
+$(MODULE): $(MODULE_SRC)
+	$(CC) -o $@ -shared -fPIC $(CORE_FLAGS) $(PYTHON_FLAGS) $^
 
 clean:
-	rm -rf core.so core.so.dSYM
+	rm -rf $(MODULE) $(MODULE).dSYM
