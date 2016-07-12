@@ -5,13 +5,17 @@
 typedef struct {
     PyObject_HEAD
 
-    SDL_Surface *window;
+    SDL_Window *window;
+    SDL_GLContext gl_context;
 } WindowObject;
 
 static void
 Window_dealloc(WindowObject *self)
 {
+    SDL_GL_DeleteContext(self->gl_context);
+    SDL_DestroyWindow(self->window);
     SDL_Quit();
+
     self->ob_type->tp_free((PyObject *)self);
 }
 
@@ -22,6 +26,7 @@ Window_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 
     if (self != NULL) {
         self->window = NULL;
+        memset(&self->gl_context, 0, sizeof(self->gl_context));
     }
 
     return (PyObject *)self;
@@ -39,8 +44,13 @@ Window_init(WindowObject *self, PyObject *args, PyObject *kwargs)
 
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO);
 
-    self->window = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
-    SDL_WM_SetCaption(title, title);
+    self->window = SDL_CreateWindow(title,
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            width, height,
+            SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+
+    self->gl_context = SDL_GL_CreateContext(self->window);
 
     draw_init();
     sound_init();
@@ -51,7 +61,7 @@ Window_init(WindowObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 Window_swap_buffers(WindowObject *self)
 {
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(self->window);
 
     Py_RETURN_NONE;
 }
