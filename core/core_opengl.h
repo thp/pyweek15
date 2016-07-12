@@ -1,5 +1,10 @@
 #include "core_common.h"
 
+// List of textures to keep around until the end of the frame,
+// so that the GPU has time to read and render texture data
+static PyObject *
+keep_textures = NULL;
+
 static void
 draw_init()
 {
@@ -144,6 +149,8 @@ Framebuffer_unbind(FramebufferObject *self)
 static PyObject *
 Framebuffer_begin(FramebufferObject *self)
 {
+    Py_XDECREF(keep_textures);
+    keep_textures = PyList_New(0);
     sf2d_start_frame(GFX_TOP, GFX_LEFT);
     Py_RETURN_NONE;
 }
@@ -152,6 +159,8 @@ static PyObject *
 Framebuffer_finish(FramebufferObject *self)
 {
     sf2d_end_frame();
+    Py_XDECREF(keep_textures);
+    keep_textures = NULL;
     Py_RETURN_NONE;
 }
 
@@ -239,6 +248,10 @@ ShaderProgram_draw_quad(ShaderProgramObject *self, PyObject *args)
 
     ShaderProgram_bind(self);
     Texture_bind(texture);
+
+    if (keep_textures) {
+        PyList_Append(keep_textures, (PyObject *)texture);
+    }
 
     float r = 1.f;
     float g = 1.f;
