@@ -52,20 +52,30 @@ Font_render(FontObject *self, PyObject *args)
     int width, height;
 
     unsigned char *pixels = fontaine_render(self->font, text, &width, &height);
-    unsigned char *pixels4 = malloc(width * height * 4);
-    int offset = 0;
+
+#if defined(CORE_FORCE_RGBA_TEXTURES)
+    int comp = 4;
+#else
+    int comp = 2;
+#endif /* defined(CORE_FORCE_RGBA_TEXTURES) */
+
+    int pixels_rgba_len = width * height * comp;
+    unsigned char *pixels_rgba = malloc(pixels_rgba_len);
+    unsigned char *dst = pixels_rgba;
     for (int i=0; i<width*height; i++) {
-        pixels4[offset++] = 0xff;
-        pixels4[offset++] = 0xff;
-        pixels4[offset++] = 0xff;
-        pixels4[offset++] = pixels[i];
+        if (comp == 4) {
+            *dst++ = 0xff;
+            *dst++ = 0xff;
+        }
+        *dst++ = 0xff;
+        *dst++ = pixels[i];
     }
     fontaine_free_pixels(self->font, pixels);
 
-    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels4, width * height * 4);
-    free(pixels4);
+    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels_rgba, pixels_rgba_len);
+    free(pixels_rgba);
 
-    PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, 4);
+    PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, comp);
     PyObject *result = PyObject_CallObject((PyObject *)&TextureType, textureArgs);
     Py_DECREF(textureArgs);
 
@@ -74,7 +84,7 @@ Font_render(FontObject *self, PyObject *args)
         PyObject *attr = PyObject_GetAttrString(result, attrs[i]);
         if (PyNumber_Check(attr)) {
             PyObject *old_value = PyNumber_Float(attr);
-            PyObject *new_value = PyFloat_FromDouble(PyFloat_AsDouble(old_value) * self->size / 2.f);
+            PyObject *new_value = PyFloat_FromDouble(PyFloat_AsDouble(old_value) * self->size / (float)CORE_TEXTURE_FACTOR);
             PyObject_SetAttrString(result, attrs[i], new_value);
             Py_DECREF(old_value);
             Py_DECREF(new_value);

@@ -1,24 +1,22 @@
 #include "core_common.h"
 
-#include <SDL_mixer.h>
-
 typedef struct {
     PyObject_HEAD
 
-    Mix_Chunk *chunk;
+    char *chunk;
+    int len;
 } SoundObject;
 
 static void
 sound_init()
 {
-        Mix_Init(0);
-        Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, AUDIO_S16LSB, 2, 1024);
+    csndInit();
 }
 
 static void
 Sound_dealloc(SoundObject *self)
 {
-    Mix_FreeChunk(self->chunk);
+    if (self->chunk) linearFree(self->chunk);
     self->ob_type->tp_free((PyObject *)self);
 }
 
@@ -29,6 +27,7 @@ Sound_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 
     if (self != NULL) {
         self->chunk = NULL;
+        self->len = 0;
     }
 
     return (PyObject *)self;
@@ -44,8 +43,12 @@ Sound_init(SoundObject *self, PyObject *args, PyObject *kwargs)
 
     int len;
     char *buf = read_file(filename, &len);
-    self->chunk = Mix_LoadWAV_RW(SDL_RWFromConstMem(buf, len), 1);
+    self->chunk = linearAlloc(len);
+    self->len = len;
+    memcpy(self->chunk, buf, self->len);
     free(buf);
+
+    GSPGPU_FlushDataCache(self->chunk, self->len);
 
     return 0;
 }
@@ -53,7 +56,14 @@ Sound_init(SoundObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 Sound_play(SoundObject *self)
 {
-    Mix_PlayChannel(-1, self->chunk, 0);
+    static int last_channel = 0;
+
+    int channel = 8 + (last_channel++) % 4;
+    int samplerate = 22050;
+
+    CSND_SetPlayState(channel, 0);
+    CSND_UpdateInfo(0);
+    csndPlaySound(channel, SOUND_ONE_SHOT | SOUND_FORMAT_16BIT, samplerate, 0.5, 0.0, (u32 *)self->chunk, NULL, self->len);
 
     Py_RETURN_NONE;
 }

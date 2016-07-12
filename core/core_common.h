@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include "structmember.h"
+#include "core_config.h"
 
 #define DEFINE_TYPE(name) \
     static PyTypeObject \

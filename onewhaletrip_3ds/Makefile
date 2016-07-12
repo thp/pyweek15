@@ -29,9 +29,9 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source ../core
+SOURCES		:=	source
 DATA		:=	data
-INCLUDES	:=	include Python-2.7.12/Include Python-2.7.12 ../core
+INCLUDES	:=	include Python-2.7.12/Include Python-2.7.12
 #ROMFS		:=	romfs
 
 #---------------------------------------------------------------------------------

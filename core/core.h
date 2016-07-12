@@ -1,7 +1,8 @@
 #pragma once
+
 #include <Python.h>
-#include <3ds.h>
-#include <sf2d.h>
+
+#include "core_config.h"
 
 PyMODINIT_FUNC
 initcore(void);

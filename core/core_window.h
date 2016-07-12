@@ -1,20 +1,30 @@
 #include "core_common.h"
 
+#include <SDL.h>
+
 typedef struct {
     PyObject_HEAD
+
+    SDL_Surface *window;
 } WindowObject;
 
 static void
 Window_dealloc(WindowObject *self)
 {
-    sf2d_fini();
+    SDL_Quit();
     self->ob_type->tp_free((PyObject *)self);
 }
 
 static PyObject *
 Window_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
-    return type->tp_alloc(type, 0);
+    WindowObject *self = (WindowObject *)type->tp_alloc(type, 0);
+
+    if (self != NULL) {
+        self->window = NULL;
+    }
+
+    return (PyObject *)self;
 }
 
 static int
@@ -27,9 +37,10 @@ Window_init(WindowObject *self, PyObject *args, PyObject *kwargs)
         return -1;
     }
 
-    sf2d_init();
-    sf2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0xFF));
-    sf2d_set_3D(0);
+    SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO);
+
+    self->window = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
+    SDL_WM_SetCaption(title, title);
 
     draw_init();
     sound_init();
@@ -40,9 +51,25 @@ Window_init(WindowObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 Window_swap_buffers(WindowObject *self)
 {
-    sf2d_swapbuffers();
+    SDL_GL_SwapBuffers();
 
     Py_RETURN_NONE;
+}
+
+static const char *
+keysym_from_sdl_event(SDL_Event *e)
+{
+    switch (e->key.keysym.sym) {
+        case SDLK_ESCAPE: return "esc";
+        case SDLK_SPACE:  return " ";
+        case SDLK_s:      return "s";
+        case SDLK_LEFT:   return "left";
+        case SDLK_RIGHT:  return "right";
+        case SDLK_UP:     return "up";
+        default:          break;
+    }
+
+    return "";
 }
 
 static PyObject *
@@ -50,38 +77,17 @@ Window_next_event(WindowObject *self)
 {
     // (quit, is_key_event, pressed, keyval)
 
-    if (!aptMainLoop()) {
-        return Py_BuildValue("OOOO", Py_True, Py_False, Py_None, Py_None);
-    }
-
-    hidScanInput();
-
-    u32 kDown = hidKeysDown();
-    u32 kUp = hidKeysUp();
-
-    if (kDown & KEY_START) {
-        // Exit the game with START
-        return Py_BuildValue("OOOO", Py_True, Py_False, Py_None, Py_None);
-    }
-
-    struct {
-        uint32_t hid_key;
-        const char *game_key;
-    } mapping[] = {
-        { KEY_UP, "up" },
-        { KEY_LEFT, "left" },
-        { KEY_RIGHT, "right" },
-        { KEY_A, " " },
-        { KEY_B, "s" },
-        { KEY_START, "esc" },
-    };
-
-    // We just check out the first key that we find and ignore the rest
-    for (int i=0; i<sizeof(mapping)/sizeof(mapping[0]); i++) {
-        if (kDown & mapping[i].hid_key) {
-            return Py_BuildValue("OOON", Py_False, Py_True, Py_True, PyString_FromString(mapping[i].game_key));
-        } else if (kUp & mapping[i].hid_key) {
-            return Py_BuildValue("OOON", Py_False, Py_True, Py_False, PyString_FromString(mapping[i].game_key));
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        switch (e.type) {
+            case SDL_QUIT:
+                return Py_BuildValue("OOOO", Py_True, Py_False, Py_None, Py_None);
+            case SDL_KEYDOWN:
+                return Py_BuildValue("OOON", Py_False, Py_True, Py_True, PyString_FromString(keysym_from_sdl_event(&e)));
+            case SDL_KEYUP:
+                return Py_BuildValue("OOON", Py_False, Py_True, Py_False, PyString_FromString(keysym_from_sdl_event(&e)));
+            default:
+                break;
         }
     }
 

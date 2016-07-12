@@ -38,11 +38,17 @@ Image_load(PyObject *self, PyObject *args)
     int len;
     unsigned char *buf = (unsigned char *)read_file(filename, &len);
 
-    printf("%s\n", filename);
+#if defined(CORE_FORCE_RGBA_TEXTURES)
+    int reqcomp = 4;
+#else
+    int reqcomp = 0;
+#endif /* defined(CORE_FORCE_RGBA_TEXTURES) */
 
     int width, height, comp;
-    stbi_uc *pixels = stbi_load_from_memory(buf, len, &width, &height, &comp, 4);
-    comp = 4;
+    stbi_uc *pixels = stbi_load_from_memory(buf, len, &width, &height, &comp, reqcomp);
+    if (reqcomp != 0) {
+        comp = reqcomp;
+    }
     free(buf);
     PyObject *rgba = PyString_FromStringAndSize((const char *)pixels, width * height * comp);
     stbi_image_free(pixels);
