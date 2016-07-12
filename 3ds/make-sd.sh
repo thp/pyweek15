@@ -2,7 +2,7 @@
 
 APP="onewhaletrip_3ds"
 DATADIR="onewhaletrip"
-OUTDIR="sdcontent"
+OUTDIR="onewhaletrip-3dsx"
 
 FILES="$APP.3dsx $APP.smdh"
 OUTPUT="$OUTDIR.zip"
@@ -22,6 +22,7 @@ find $OUTDIR/$DATADIR/data -name '*.wav' -print | while read file; do
     mv $file.raw $file
 done
 make $FILES
+cp ../README.md $OUTDIR/$DATADIR/
 cp $FILES $OUTDIR/3ds/$APP/
 (cd $OUTDIR && zip -r ../$OUTDIR *)
 rm -rvf $VIRTUAL_SDMC/$DATADIR $VIRTUAL_SDMC/3ds/$APP
