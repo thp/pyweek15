@@ -164,6 +164,12 @@ Framebuffer_finish(FramebufferObject *self)
     Py_RETURN_NONE;
 }
 
+static PyObject *
+Framebuffer_supported(FramebufferObject *self)
+{
+    Py_RETURN_FALSE;
+}
+
 static PyMemberDef
 Framebuffer_members[] = {
     {"texture", T_OBJECT_EX, offsetof(FramebufferObject, texture), 0, "Texture object"},
@@ -176,6 +182,7 @@ Framebuffer_methods[] = {
     {"unbind", (PyCFunction)Framebuffer_unbind, METH_NOARGS, "Unbind the framebuffer as render target"},
     {"begin", (PyCFunction)Framebuffer_begin, METH_NOARGS | METH_STATIC, "Rendering of frame begins"},
     {"finish", (PyCFunction)Framebuffer_finish, METH_NOARGS | METH_STATIC, "Rendering of frame ends"},
+    {"supported", (PyCFunction)Framebuffer_supported, METH_NOARGS | METH_STATIC, "True if we support FBOs and shaders"},
     {NULL}
 };
 

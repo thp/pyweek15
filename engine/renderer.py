@@ -10,13 +10,17 @@ class Renderer():
     def resize(self, width, height):
         self.width = width
         self.height = height
-        self.fbs = []#Framebuffer(width, height), Framebuffer(width, height)]
+        self.fbs = []
 
         mkshader = lambda vert, frag: ShaderProgram(self.app.resman.shaders[vert], self.app.resman.shaders[frag])
         self.draw_sprites = mkshader('draw_sprites.vsh', 'draw_sprites.fsh')
-        #self.blur_effect = mkshader('effect_vertex_shader.vsh', 'blur_effect.fsh')
-        #self.underwater_effect = mkshader('effect_vertex_shader.vsh', 'underwater_effect.fsh')
-        self.effect_pipeline = []#self.blur_effect, self.underwater_effect]
+        self.effect_pipeline = []
+
+        if Framebuffer.supported():
+            self.fbs = [Framebuffer(width, height), Framebuffer(width, height)]
+            self.blur_effect = mkshader('effect_vertex_shader.vsh', 'blur_effect.fsh')
+            self.underwater_effect = mkshader('effect_vertex_shader.vsh', 'underwater_effect.fsh')
+            self.effect_pipeline.extend([self.blur_effect, self.underwater_effect])
 
     def begin(self):
         Framebuffer.begin()
