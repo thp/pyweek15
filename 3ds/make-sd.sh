@@ -21,7 +21,7 @@ find $OUTDIR/$DATADIR/data -name '*.wav' -print | while read file; do
     sox $file -b 16 -c 1 -r 22050 -t raw $file.raw
     mv $file.raw $file
 done
-make $FILES
+make
 cp ../README.md $OUTDIR/$DATADIR/
 cp $FILES $OUTDIR/3ds/$APP/
 (cd $OUTDIR && zip -r ../$OUTDIR *)

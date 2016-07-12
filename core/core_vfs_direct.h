@@ -4,16 +4,8 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-static char *
-resolve_file_path(const char *filename)
-{
-    char *result;
-    asprintf(&result, "%s%s", CORE_DATA_ROOT, filename);
-    return result;
-}
-
 static char **
-list_files(const char *dirname, int *count)
+list_files_direct(const char *dirname, int *count)
 {
     char *path = resolve_file_path(dirname);
     DIR *dir = opendir(path);
@@ -44,17 +36,8 @@ list_files(const char *dirname, int *count)
     return result;
 }
 
-static void
-list_files_free(char **result, int count)
-{
-    for (int i=0; i<count; i++) {
-        free(result[i]);
-    }
-    free(result);
-}
-
 static char *
-read_file(const char *filename, int *length)
+read_file_direct(const char *filename, int *length)
 {
     char *path = resolve_file_path(filename);
     FILE *fp = fopen(path, "rb");

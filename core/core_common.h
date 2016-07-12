@@ -22,13 +22,13 @@
 static PyTypeObject TextureType;
 
 static char *
-read_file(const char *filename, int *length);
+vfs_read_file(const char *filename, int *length);
 
 static char **
-list_files(const char *dirname, int *count);
+vfs_list_files(const char *dirname, int *count);
 
 static void
-list_files_free(char **result, int count);
+vfs_list_files_free(char **result, int count);
 
 static void
 draw_init();

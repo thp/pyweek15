@@ -1,7 +1,9 @@
 include core.mk
 
 MODULE := core.so
-MODULE_SRC := core.c
+MODULE_SRC := core.c junzip.c
+
+CORE_FLAGS += -lz
 
 all: $(MODULE)
 

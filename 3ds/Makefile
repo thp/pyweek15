@@ -41,16 +41,17 @@ ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
 CFLAGS	:=	-g -Wall -O2 -mword-relocations -Wno-strict-aliasing \
 			-fomit-frame-pointer -ffunction-sections \
-			$(ARCH)
+			$(ARCH) -I$(DEVKITPRO)/portlibs/armv6k/include
 
 CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) \
+		-L$(DEVKITPRO)/portlibs/armv6k/lib
 
-LIBS	:= -lsf2d $(TOPDIR)/Python-2.7.12/libpython2.7.a -lctru -lm
+LIBS	:= -lsf2d $(TOPDIR)/Python-2.7.12/libpython2.7.a -lctru -lm -lz
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

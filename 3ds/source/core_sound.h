@@ -42,7 +42,7 @@ Sound_init(SoundObject *self, PyObject *args, PyObject *kwargs)
     }
 
     int len;
-    char *buf = read_file(filename, &len);
+    char *buf = vfs_read_file(filename, &len);
     self->chunk = linearAlloc(len);
     self->len = len;
     memcpy(self->chunk, buf, self->len);

@@ -43,7 +43,7 @@ Sound_init(SoundObject *self, PyObject *args, PyObject *kwargs)
     }
 
     int len;
-    char *buf = read_file(filename, &len);
+    char *buf = vfs_read_file(filename, &len);
     self->chunk = Mix_LoadWAV_RW(SDL_RWFromConstMem(buf, len), 1);
     free(buf);
 

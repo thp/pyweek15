@@ -36,7 +36,7 @@ Image_load(PyObject *self, PyObject *args)
     }
 
     int len;
-    unsigned char *buf = (unsigned char *)read_file(filename, &len);
+    unsigned char *buf = (unsigned char *)vfs_read_file(filename, &len);
 
 #if defined(CORE_FORCE_RGBA_TEXTURES)
     int reqcomp = 4;

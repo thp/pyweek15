@@ -1,5 +1,5 @@
 TARGET := onewhaletrip
-TARGET_SRC := main.c ../core/core.c
+TARGET_SRC := main.c ../core/core.c ../core/junzip.c
 
 PYTHON_MAJOR := 2.7
 PYTHON_VERSION := 2.7.12
@@ -38,12 +38,22 @@ $(SDL2_STATIC):
 $(TARGET): $(TARGET_SRC) $(PYTHON_STATIC) $(SDL2_STATIC) $(SDL2_MIXER_STATIC)
 	gcc -o $@ $^ $(CORE_FLAGS) -I../core
 	strip $@
-	#upx $@
+	upx $@
 	rm -f $(TARGET).zip
 	(cd .. && zip -r standalone/$(TARGET) data engine/*.py)
+	cat $(TARGET).zip >>$@
+	rm -f $(TARGET).zip
+
+osx-bundle: $(TARGET)
+	mkdir -p "One Whale Trip.app/Contents/MacOS" "One Whale Trip.app/Contents/Resources"
+	cp ../assets/icon.icns "One Whale Trip.app/Contents/Resources/OneWhaleTrip.icns"
+	cp $(TARGET) "One Whale Trip.app/Contents/MacOS/OneWhaleTrip"
+	cp ../assets/Info.plist "One Whale Trip.app/Contents"
 
 clean:
 	rm -f $(TARGET) $(TARGET).zip
 
 distclean: clean
 	rm -rf $(PYTHON_BUILD) $(PYTHON_SOURCE)
+
+.PHONY: all osx-bundle clean distclean
