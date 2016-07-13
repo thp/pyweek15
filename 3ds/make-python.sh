@@ -42,11 +42,8 @@ rm -f Modules/Setup Modules/Setup.dist
 touch Modules/Setup.dist
 
 env CFLAGS="-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft -fomit-frame-pointer -ffunction-sections -DARM11 -D_3DS" \
+    LDFLAGS="-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft" \
     CONFIG_SITE=config.site \
     ./configure --without-doc-strings --without-threads --disable-shared --host=arm-none-eabi --build=`./config.guess`
-
-# Workaround for http://bugs.python.org/issue27490
-make libpython2.7.a || true
-touch Parser/pgen
 
 make libpython2.7.a
