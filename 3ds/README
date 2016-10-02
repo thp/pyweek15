@@ -1,0 +1,16 @@
+Conversion from 3dsx to cia contributed by zoogie_gba @ reddit.
+
+Directions:
+ - 3dsx: copy the 3ds and onewhaletrip folder to the root of the sd
+ - cia: copy the cia and onewhaletrip folder to root of sd and
+         install the cia with FBI/devmenu
+
+Known Issues:
+
+ - rather sluggish on old3ds (cia/3dsx) and new3ds (just 3dsx).
+ - pressing home on new3ds cia version hangs. use start to exit.
+ - slow boot up
+
+The cxitool can be compiled from:
+
+ https://github.com/devkitPro/3dstools/tree/cxi-stuff
