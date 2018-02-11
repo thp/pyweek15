@@ -1,0 +1,18 @@
+android/obj
+android/libs
+android/build
+android/Python-3\.6\.4
+android/\.gradle
+android/\.classpath
+android/\.project
+standalone/sdl2-install
+standalone/Python-3\.6\.4
+standalone/SDL2-2\.0\.4
+standalone/SDL2_mixer-2\.0\.1
+standalone/One Whale Trip\.app
+standalone/.*\.py
+standalone/onewhaletrip
+core/core\.so.*
+__pycache__
+.*\.pyc
+\.DS_Store
