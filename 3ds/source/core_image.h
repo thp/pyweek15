@@ -1,1 +1,0 @@
-../../core/core_image.h

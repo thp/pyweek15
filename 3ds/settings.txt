@@ -1,4 +1,0 @@
-#couldn't ignore new3ds cia speed up because the game is pretty choppy on old3ds and new3ds 3dsx version
-
-General:
-     NewSpeedup    : true
