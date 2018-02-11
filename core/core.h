@@ -5,4 +5,4 @@
 #include "core_config.h"
 
 PyMODINIT_FUNC
-initcore(void);
+PyInit_core(void);

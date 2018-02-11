@@ -20,10 +20,22 @@
     Py_INCREF(&name##Type); \
     PyModule_AddObject(m, #name, (PyObject *)&name##Type)
 
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "core",
+    NULL,
+    0,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+
 PyMODINIT_FUNC
-initcore(void)
+PyInit_core(void)
 {
-    PyObject *m = Py_InitModule("core", NULL);
+    PyObject *m = PyModule_Create(&moduledef);
 
     INIT_TYPE(Texture);
     INIT_TYPE(Framebuffer);
@@ -37,4 +49,6 @@ initcore(void)
     INIT_TYPE(time);
     INIT_TYPE(math);
     INIT_TYPE(random);
+
+    return m;
 }

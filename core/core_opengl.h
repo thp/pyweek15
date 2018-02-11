@@ -1,6 +1,6 @@
 #include "core_common.h"
 
-#include <OpenGL/GL.h>
+#include "core_opengl_platform.h"
 
 static void
 draw_init()
@@ -24,7 +24,7 @@ static void
 Texture_dealloc(TextureObject *self)
 {
     glDeleteTextures(1, &self->texture_id);
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
@@ -105,7 +105,7 @@ static void
 Framebuffer_dealloc(FramebufferObject *self)
 {
     glDeleteFramebuffers(1, &self->framebuffer_id);
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
@@ -130,7 +130,7 @@ Framebuffer_init(FramebufferObject *self, PyObject *args, PyObject *kwargs)
         return -1;
     }
 
-    PyObject *textureArgs = Py_BuildValue("iisi", width, height, NULL, 4);
+    PyObject *textureArgs = Py_BuildValue("iisi", width, height, NULL, 3);
     self->texture = PyObject_CallObject((PyObject *)&TextureType, textureArgs);
     Py_DECREF(textureArgs);
 
@@ -205,7 +205,7 @@ ShaderProgram_dealloc(ShaderProgramObject *self)
 {
     free(self->vertex_buffer);
     glDeleteProgram(self->program_id);
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
@@ -287,11 +287,11 @@ ShaderProgram_draw_quad(ShaderProgramObject *self, PyObject *args)
     PyObject *key, *value;
     Py_ssize_t pos = 0;
     while (PyDict_Next(uniforms, &pos, &key, &value)) {
-        if (!PyString_Check(key)) {
+        if (!PyUnicode_Check(key)) {
             return NULL;
         }
 
-        const char *name = PyString_AsString(key);
+        const char *name = PyUnicode_AsUTF8(key);
         int location = glGetUniformLocation(self->program_id, name);
 
         if (PyNumber_Check(value)) {

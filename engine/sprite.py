@@ -6,7 +6,7 @@ class Sprite(object):
 
         self.sprites = [basename]
         if frames != 0:
-            self.sprites = ['%s-%d' % (basename, x) for x in range(1, frames+1) + range(frames-1, 1, -1)]
+            self.sprites = ['%s-%d' % (basename, x) for x in list(range(1, frames+1)) + list(range(frames-1, 1, -1))]
 
         self.frames_per_sprite = int(duration / self.app.accumulator.step)
         self.current_sprite = 0

@@ -1,6 +1,6 @@
-from scene import Scene
-from resman import Level
-from sprite import Enemy
+from .scene import Scene
+from .resman import Level
+from .sprite import Enemy
 from core import math
 
 class Game(Scene):
@@ -13,7 +13,13 @@ class Game(Scene):
         self.enemies = {}
 
     def resume(self):
-        pass
+        self.app.screen.set_buttons(['left', 'right', None, 'swim', 'jump'], self.on_button_pressed)
+
+    def on_button_pressed(self, pressed, button):
+        self.process_input(pressed, {
+            'jump': ' ',
+            'swim': 'up',
+        }.get(button, button))
 
     def reset(self, hard=False):
         self.time = 0.
@@ -75,6 +81,9 @@ class Game(Scene):
         elif pressed and key in ('left', 'right'):
             self.app.player.dest_x = max(0, min(4, self.app.player.dest_x + (-1 if (key == 'left') else 1)))
 
+    def process_touch(self, event, x, y, finger):
+        self.app.screen.process_touch(event, x, y, finger)
+
     def draw(self):
         now, height = self.app.player.y + self.time, self.app.player.height / 100
         draw_queue = [(self.app.player, (self.app.player.x - 2.0, height, now - self.camera_y + 1.0))]
@@ -112,3 +121,4 @@ class Game(Scene):
         elif self.app.player.y > len(self.level.rows):
             self.app.screen.draw_text(['Level clear'])
         self.app.screen.draw_stats(self.app.player.coins_collected, self.app.player.health)
+        self.app.screen.draw_buttons(False)

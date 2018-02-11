@@ -19,7 +19,7 @@ random_request_seed()
 static void
 random_dealloc(randomObject *self)
 {
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *

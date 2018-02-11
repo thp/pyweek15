@@ -31,7 +31,7 @@ static void
 vfs_list_files_free(char **result, int count);
 
 static void
-draw_init();
+draw_init(void);
 
 static void
-sound_init();
+sound_init(void);

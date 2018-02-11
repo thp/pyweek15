@@ -1,4 +1,11 @@
-from app import App
+from .app import App
+
+
+def frames():
+    app = App('One Whale Trip', 800, 480, 'Start')
+    yield from app.run()
+
 
 def main():
-    App('One Whale Trip', 800, 480, 'Start').run()
+    for _ in frames():
+        ...

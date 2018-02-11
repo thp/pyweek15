@@ -12,7 +12,7 @@ typedef struct {
 static void
 Image_dealloc(ImageObject *self)
 {
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
@@ -50,7 +50,7 @@ Image_load(PyObject *self, PyObject *args)
         comp = reqcomp;
     }
     free(buf);
-    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels, width * height * comp);
+    PyObject *rgba = PyBytes_FromStringAndSize((const char *)pixels, width * height * comp);
     stbi_image_free(pixels);
 
     PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, comp);

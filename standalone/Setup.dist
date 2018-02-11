@@ -1,2 +1,11 @@
 zipimport zipimport.c
 zlib zlibmodule.c -lz
+_signal signalmodule.c
+posix posixmodule.c
+faulthandler faulthandler.c
+_tracemalloc _tracemalloc.c hashtable.c
+_codecs _codecsmodule.c		# access to the builtin codecs and codec registry
+_weakref _weakref.c		# weak references
+_collections _collectionsmodule.c # Container types
+_io -I$(srcdir)/Modules/_io _io/_iomodule.c _io/iobase.c _io/fileio.c _io/bytesio.c _io/bufferedio.c _io/textio.c _io/stringio.c
+_codecs _codecsmodule.c		# access to the builtin codecs and codec registry

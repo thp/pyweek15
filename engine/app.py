@@ -1,10 +1,10 @@
 from core import time, Window
-from resman import ResourceManager
-from sprite import Player
-from screen import Screen
-from scene import Intermission
-from renderer import Renderer
-from game import Game
+from .resman import ResourceManager
+from .sprite import Player
+from .screen import Screen
+from .scene import Intermission
+from .renderer import Renderer
+from .game import Game
 
 class TimeAccumulator:
     def __init__(self, fps):
@@ -52,11 +52,21 @@ class App(object):
             self.scene_transition += .05
             if self.scene_transition >= .95:
                 self.scene_transition = 1.0
-                quit, key_event, pressed, key = self.window.next_event()
-                if quit or (key_event and pressed and key == 'esc'):
+                event, args = self.window.next_event()
+                if event == 0:
+                    ...  # No event
+                elif event == 1:
                     self.running = False
-                elif key_event:
-                    self.scene.process_input(pressed, key)
+                elif event == 2:
+                    self.screen.touch = False
+                    pressed, key = args
+                    if pressed and key == 'esc':
+                        self.running = False
+                    else:
+                        self.scene.process_input(pressed, key)
+                elif event == 3:
+                    event, x, y, finger = args
+                    self.scene.process_touch(event, x, y, finger)
                 self.accumulator.update(self.scene.process)
 
             self.renderer.begin()
@@ -64,3 +74,4 @@ class App(object):
             self.scene.draw()
             self.renderer.finish()
             self.window.swap_buffers()
+            yield

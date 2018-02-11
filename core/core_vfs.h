@@ -61,7 +61,7 @@ typedef struct {
 static void
 VFS_dealloc(VFSObject *self)
 {
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
@@ -88,7 +88,7 @@ VFS_list_files(PyObject *self, PyObject *args)
     char **filenames = vfs_list_files(dirname, &count);
     PyObject *list = PyList_New(count);
     for (int i=0; i<count; i++) {
-        PyList_SET_ITEM(list, i, PyString_FromString(filenames[i]));
+        PyList_SET_ITEM(list, i, PyUnicode_FromString(filenames[i]));
     }
     vfs_list_files_free(filenames, count);
 
@@ -105,7 +105,7 @@ VFS_read_file(PyObject *self, PyObject *args)
 
     int len;
     char *buf = vfs_read_file(filename, &len);
-    PyObject *contents = PyString_FromStringAndSize(buf, len);
+    PyObject *contents = PyUnicode_FromStringAndSize(buf, len);
     free(buf);
 
     return contents;

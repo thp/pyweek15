@@ -6,25 +6,11 @@ main(int argc, char **argv)
     Py_FrozenFlag = 1;
     Py_NoSiteFlag = 1;
 
+    setenv("PYTHONPATH", argv[0], 1);
+
+    PyImport_AppendInittab("core", PyInit_core);
+
     Py_Initialize();
-
-    initcore();
-
-    PyObject *sys = PyImport_ImportModule("sys");
-    if (sys) {
-        PyObject *path = PyObject_GetAttrString(sys, "path");
-        if (path) {
-            PyObject *self = PyString_FromString(argv[0]);
-            PyList_Insert(path, 0, self);
-            Py_DECREF(path);
-            Py_DECREF(self);
-        } else {
-            PyErr_Print();
-        }
-    } else {
-        PyErr_Print();
-    }
-    Py_XDECREF(sys);
 
     PyObject *core = PyImport_ImportModule("core");
     if (core) {
@@ -43,7 +29,15 @@ main(int argc, char **argv)
 
     PyObject *engine = PyImport_ImportModule("engine");
     if (engine) {
-        PyObject_CallMethod(engine, "main", NULL);
+        PyObject *iter = PyObject_CallMethod(engine, "frames", NULL);
+        while (iter != NULL) {
+            PyObject *o = PyIter_Next(iter);
+            if (o == NULL) {
+                break;
+            }
+            Py_XDECREF(o);
+        }
+        Py_XDECREF(iter);
     } else {
         PyErr_Print();
     }

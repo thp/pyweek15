@@ -22,6 +22,7 @@ class ResourceManager():
         self.app = app
 
         self.sprites = {bn(fn): Image.load(fn) for fn in find_files('sprites', ('.png',))}
+        self.buttons = {bn(fn): Image.load(fn) for fn in find_files('buttons', ('.png',))}
         self.creatures = {bn(fn): Image.load(fn) for fn in find_files('creatures', ('.png',))}
         self.intermissions = {bn(fn): get_lines(fn) for fn in find_files('intermissions', ('.txt',))}
         self.shaders = {bn_ext(fn): '\n'.join(get_lines(fn)) for fn in find_files('shaders', ('.fsh', '.vsh'))}

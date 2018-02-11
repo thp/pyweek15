@@ -40,7 +40,7 @@ class Renderer():
 
     def render_effect(self, effect, fbo):
         effect.draw_quad(fbo.texture, [-1,-1,-1,1,1,-1,1,1], {
-            'time': time.time() - self.started,
+            'time': (time.time() - self.started) % 20,
             'size': (fbo.texture.w, fbo.texture.h),
         })
 

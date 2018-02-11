@@ -24,7 +24,7 @@ class Particle(object):
 class Intermission(Scene):
     def __init__(self, app, name, filedata):
         super(Intermission, self).__init__(app, name)
-        self.filedata = filter(None, filedata)
+        self.filedata = list(filter(None, filedata))
         self.resume()
 
     def resume(self):
@@ -32,6 +32,7 @@ class Intermission(Scene):
         self.particles = []
         self.skipable = False
         self._setup()
+        self.app.screen.set_buttons([None, 'skip'], self.do_skip)
         self.update()
 
     def process(self):
@@ -61,11 +62,24 @@ class Intermission(Scene):
         elif pressed:
             self.update()
 
+    def process_touch(self, event, x, y, finger):
+        self._skipped = False
+        self.app.screen.process_touch(event, x, y, finger)
+        if event == 2 and not self._skipped:
+            self.process_input(True, ' ')
+            self.process_input(False, ' ')
+
+    def do_skip(self, pressed, button):
+        self.process_input(pressed, 's')
+        self._skipped = True
+
     def draw(self):
         self.app.screen.draw_card(self.title, self.line, self.background, self.creatures, self.skipable)
         self.app.renderer.postprocess()
         for particle in self.particles:
             self.app.renderer.draw(particle.sprite, (particle.x, particle.y), particle.opacity, particle.opacity)
+        if self.skipable:
+            self.app.screen.draw_buttons(True)
 
     def _setup(self):
         is_header = True

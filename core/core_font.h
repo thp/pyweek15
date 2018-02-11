@@ -13,7 +13,7 @@ static void
 Font_dealloc(FontObject *self)
 {
     fontaine_free(self->font);
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
@@ -72,7 +72,7 @@ Font_render(FontObject *self, PyObject *args)
     }
     fontaine_free_pixels(self->font, pixels);
 
-    PyObject *rgba = PyString_FromStringAndSize((const char *)pixels_rgba, pixels_rgba_len);
+    PyObject *rgba = PyBytes_FromStringAndSize((const char *)pixels_rgba, pixels_rgba_len);
     free(pixels_rgba);
 
     PyObject *textureArgs = Py_BuildValue("iiNi", width, height, rgba, comp);

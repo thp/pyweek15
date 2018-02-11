@@ -16,7 +16,7 @@ Window_dealloc(WindowObject *self)
     SDL_DestroyWindow(self->window);
     SDL_Quit();
 
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
@@ -85,23 +85,32 @@ keysym_from_sdl_event(SDL_Event *e)
 static PyObject *
 Window_next_event(WindowObject *self)
 {
-    // (quit, is_key_event, pressed, keyval)
+    // (event_type, value)
 
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         switch (e.type) {
             case SDL_QUIT:
-                return Py_BuildValue("OOOO", Py_True, Py_False, Py_None, Py_None);
+                return Py_BuildValue("i(O)", 1, Py_None);
             case SDL_KEYDOWN:
-                return Py_BuildValue("OOON", Py_False, Py_True, Py_True, PyString_FromString(keysym_from_sdl_event(&e)));
+                return Py_BuildValue("i(ON)", 2, Py_True, PyUnicode_FromString(keysym_from_sdl_event(&e)));
             case SDL_KEYUP:
-                return Py_BuildValue("OOON", Py_False, Py_True, Py_False, PyString_FromString(keysym_from_sdl_event(&e)));
+                return Py_BuildValue("i(ON)", 2, Py_False, PyUnicode_FromString(keysym_from_sdl_event(&e)));
+            case SDL_MOUSEBUTTONDOWN:
+                return Py_BuildValue("i(iffi)", 3, 0, (float)e.button.x, (float)e.button.y, 0);
+            case SDL_MOUSEMOTION:
+                if (e.motion.state) {
+                    return Py_BuildValue("i(iffi)", 3, 1, (float)e.motion.x, (float)e.motion.y, 0);
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                return Py_BuildValue("i(iffi)", 3, 2, (float)e.button.x, (float)e.button.y, 0);
             default:
                 break;
         }
     }
 
-    return Py_BuildValue("OOOO", Py_False, Py_False, Py_None, Py_None);
+    return Py_BuildValue("i()", 0);
 }
 
 static PyMemberDef
