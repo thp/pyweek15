@@ -233,14 +233,27 @@ ShaderProgram_init(ShaderProgramObject *self, PyObject *args, PyObject *kwargs)
 
     self->program_id = glCreateProgram();
 
+#if defined(USE_OPENGL_ES)
+    const char *prefix = "precision mediump float;";
+#else
+    const char *prefix = "";
+#endif
+
+    const char *src[2] = {
+        prefix,
+        vertex_shader_src,
+    };
+
     GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader_id, 1, &vertex_shader_src, NULL);
+    glShaderSource(vertex_shader_id, sizeof(src) / sizeof(src[0]), src, NULL);
     glCompileShader(vertex_shader_id);
     glAttachShader(self->program_id, vertex_shader_id);
     glDeleteShader(vertex_shader_id);
 
+    src[1] = fragment_shader_src;
+
     GLuint fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader_id, 1, &fragment_shader_src, NULL);
+    glShaderSource(fragment_shader_id, sizeof(src) / sizeof(src[0]), src, NULL);
     glCompileShader(fragment_shader_id);
     glAttachShader(self->program_id, fragment_shader_id);
     glDeleteShader(fragment_shader_id);
