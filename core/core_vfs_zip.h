@@ -92,12 +92,13 @@ ReadFileContext_recordCallback(JZFile *zip, int idx, JZFileHeader *header, char 
 
         zip->seek(zip, header->offset, SEEK_SET);
 
-        JZFileHeader header;
-        jzReadLocalFileHeader(zip, &header, NULL, 0);
+        // Read and ignore local file header
+        JZFileHeader lHeader;
+        jzReadLocalFileHeader(zip, &lHeader, NULL, 0);
 
-        ctx->len = header.uncompressedSize;
+        ctx->len = header->uncompressedSize;
         ctx->buf = malloc(ctx->len);
-        jzReadData(zip, &header, ctx->buf);
+        jzReadData(zip, header, ctx->buf);
 
         zip->seek(zip, offset, SEEK_SET);
 
