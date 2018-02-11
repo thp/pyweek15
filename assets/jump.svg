@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64"
+   height="64"
+   viewBox="0 0 16.933333 16.933333"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
+   sodipodi:docname="jump.svg"
+   inkscape:export-filename="/Users/thp/right.png"
+   inkscape:export-xdpi="94.500008"
+   inkscape:export-ydpi="94.500008">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="4"
+     inkscape:cx="-5.5468749"
+     inkscape:cy="61.538429"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1227"
+     inkscape:window-height="755"
+     inkscape:window-x="0"
+     inkscape:window-y="1"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-280.06667)">
+    <circle
+       style="fill:#ffffff;fill-opacity:0.49803922;stroke:none;stroke-width:0.24804682"
+       id="path4504"
+       cx="-8.4666662"
+       cy="-288.53336"
+       r="7.9375"
+       transform="scale(-1)" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.50196078;stroke:none;stroke-width:0.35691643"
+       d="m 13.195775,283.07141 c -0.83584,-0.21409 -1.833118,-0.10145 -2.431379,0.58406 -0.8359807,0.95224 -1.0488167,2.25225 -1.4384932,3.42046 -0.2542692,0.76996 -0.5322122,1.60393 -1.1855937,2.12865 -2.2428515,0.20829 -4.456422,0.64336 -6.6875004,0.94364 0.2793825,-0.69386 0.9561847,-1.20648 1.7117959,-1.20688 1.1467293,-0.0713 2.308127,0.46574 3.4350874,0.0711 0.844859,-0.33426 1.205606,-1.25158 1.4786865,-2.05343 0.4055422,-1.20845 0.5398831,-2.55919 1.353883,-3.5865 0.5778705,-0.7353 1.5765825,-0.88638 2.4448885,-0.76085 0.464973,0.059 0.917239,0.21662 1.318625,0.45974 z"
+       id="path5153"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5167"
+       d="m 14.783276,284.65892 c -0.83584,-0.21409 -1.833118,-0.10145 -2.431379,0.58406 -0.835981,0.95224 -1.048817,2.25225 -1.438494,3.42046 -0.254269,0.76996 -0.532212,1.60393 -1.1855937,2.12865 -2.2428516,0.20829 -4.4564221,0.64336 -6.6875005,0.94364 0.2793825,-0.69386 0.9561847,-1.20648 1.7117959,-1.20688 1.1467293,-0.0713 2.308127,0.46574 3.4350874,0.0711 0.844859,-0.33426 1.205606,-1.25158 1.4786862,-2.05343 0.4055427,-1.20845 0.5398837,-2.55919 1.3538837,-3.5865 0.577871,-0.7353 1.576583,-0.88638 2.444889,-0.76085 0.464973,0.059 0.917239,0.21662 1.318625,0.45974 z"
+       style="fill:#ffffff;fill-opacity:0.50196078;stroke:none;stroke-width:0.35691643" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.15364838px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:0.50196081;stroke:none;stroke-width:0.07884121px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="4.299479"
+       y="294.07355"
+       id="text5171"><tspan
+         sodipodi:role="line"
+         id="tspan5169"
+         x="4.299479"
+         y="294.07355"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Silom;-inkscape-font-specification:Silom;stroke-width:0.07884121px;fill:#ffffff;fill-opacity:0.50196081;">jump</tspan></text>
+  </g>
+</svg>
