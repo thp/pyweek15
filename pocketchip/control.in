@@ -1,0 +1,9 @@
+Package: onewhaletrip
+Description: One Whale Trip - A Love Story (PyWeek Game Port)
+Homepage: https://bitbucket.org/pyugat/pyweek1209
+Maintainer: Thomas Perl <m@thp.io>
+Priority: optional
+Architecture: armhf
+Installed-Size: --SIZE--
+Version: 1.0.0
+Depends: chip-mali-userspace, libc6, libgcc1, libpython3.4, libsdl2-2.0-0, libsdl2-mixer-2.0-0, libstdc++6, libx11-6, zlib1g
