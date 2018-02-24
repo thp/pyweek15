@@ -2,6 +2,10 @@
 
 #include "core_opengl_platform.h"
 
+static struct {
+    GLint viewport[4];
+} g;
+
 static void
 draw_init()
 {
@@ -10,6 +14,7 @@ draw_init()
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glGetIntegerv(GL_VIEWPORT, g.viewport);
 }
 
 typedef struct {
@@ -98,6 +103,8 @@ typedef struct {
     PyObject_HEAD
 
     GLuint framebuffer_id;
+    int width;
+    int height;
     PyObject *texture;
 } FramebufferObject;
 
@@ -115,6 +122,8 @@ Framebuffer_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 
     if (self != NULL) {
         self->framebuffer_id = 0;
+        self->width = 0;
+        self->height = 0;
         self->texture = NULL;
     }
 
@@ -135,6 +144,9 @@ Framebuffer_init(FramebufferObject *self, PyObject *args, PyObject *kwargs)
     Py_DECREF(textureArgs);
 
     glGenFramebuffers(1, &self->framebuffer_id);
+    self->width = width;
+    self->height = height;
+
     glBindFramebuffer(GL_FRAMEBUFFER, self->framebuffer_id);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ((TextureObject *)(self->texture))->texture_id, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -146,6 +158,7 @@ static PyObject *
 Framebuffer_bind(FramebufferObject *self)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, self->framebuffer_id);
+    glViewport(0, 0, self->width, self->height);
     Py_RETURN_NONE;
 }
 
@@ -153,6 +166,7 @@ static PyObject *
 Framebuffer_unbind(FramebufferObject *self)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(g.viewport[0], g.viewport[1], g.viewport[2], g.viewport[3]);
     Py_RETURN_NONE;
 }
 
