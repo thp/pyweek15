@@ -13,6 +13,7 @@ standalone/One Whale Trip\.app
 standalone/.*\.py
 standalone/onewhaletrip
 core/core\.so.*
+core/core\.so
 __pycache__
 .*\.pyc
 \.DS_Store
