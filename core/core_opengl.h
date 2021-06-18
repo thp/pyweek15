@@ -4,7 +4,7 @@
 
 static struct {
     GLint viewport[4];
-} g;
+} g_gl;
 
 static void
 draw_init()
@@ -14,7 +14,7 @@ draw_init()
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-    glGetIntegerv(GL_VIEWPORT, g.viewport);
+    glGetIntegerv(GL_VIEWPORT, g_gl.viewport);
 }
 
 typedef struct {
@@ -166,7 +166,7 @@ static PyObject *
 Framebuffer_unbind(FramebufferObject *self)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(g.viewport[0], g.viewport[1], g.viewport[2], g.viewport[3]);
+    glViewport(g_gl.viewport[0], g_gl.viewport[1], g_gl.viewport[2], g_gl.viewport[3]);
     Py_RETURN_NONE;
 }
 
