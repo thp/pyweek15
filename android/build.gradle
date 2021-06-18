@@ -1,9 +1,17 @@
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:4.2.1'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
     }
 }
 
@@ -11,5 +19,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.3"
+    buildToolsVersion '30.0.2'
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 29
+
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+    }
 }

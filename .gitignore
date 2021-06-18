@@ -1,7 +1,7 @@
 android/obj
 android/libs
 android/build
-android/Python-3\.6\.4
+android/Python-3\.*
 android/\.gradle
 android/\.classpath
 android/\.project
@@ -17,3 +17,4 @@ core/core\.so
 __pycache__
 .*\.pyc
 \.DS_Store
+\.idea

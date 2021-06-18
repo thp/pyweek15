@@ -1,1 +1,1 @@
-../../../../Python-3.6.4/Lib/encodings/latin_1.py
+../../../../Python-3.8.10/Lib/encodings/latin_1.py

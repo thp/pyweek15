@@ -1,4 +1,3 @@
-APP_STL := system
-APP_ABI := armeabi-v7a
+APP_ABI := arm64-v8a
 NDK_TOOLCHAIN_VERSION := clang
 APP_PLATFORM := android-23

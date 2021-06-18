@@ -87,6 +87,19 @@ JNIEXPORT void JNICALL Java_at_pyug_onewhaletrip_android_GameActivity_nativeStar
     setenv("PYTHONPATH", path, 1);
     free(path);
 
+#if 0
+    // This can be used to debug import issues (needs android.permission.WRITE_EXTERNAL_STORAGE)
+
+    Py_VerboseFlag = 2;
+
+    stdout = freopen("/sdcard/owt-out.txt", "w", stdout);
+    fprintf(stdout, "test [out]\n");
+    fflush(stdout);
+    stderr = freopen("/sdcard/owt-err.txt", "w", stderr);
+    fprintf(stderr, "test [err]\n");
+    fflush(stderr);
+#endif
+
     PyImport_AppendInittab("core", PyInit_core);
 
     Py_Initialize();
